@@ -1,4 +1,5 @@
 import { Schema } from "mongoose";
+import accountSchema from "./AccountSchema";
 
 const expenseSchema = new Schema(
   {
@@ -13,7 +14,7 @@ const expenseSchema = new Schema(
       type: String,
     },
     account: {
-      type: String,
+      type: accountSchema,
       required: true,
     },
     payment_method: {
