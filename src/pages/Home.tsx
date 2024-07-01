@@ -2,11 +2,11 @@ import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
-    <div className="container h-dvh font-sans bg-splash-cover bg-cover text-white">
+    <div className="container h-dvh font-sans bg-splash-cover bg-cover">
       <div className="flex flex-col gap-8 h-full justify-end pb-10">
         <div>
-          <h1 className="text-5xl font-bold">DinDin</h1>
-          <span className="text-2xl">
+          <h1 className="text-5xl font-bold text-title">DinDin</h1>
+          <span className="text-2xl text-body">
             Sua vida financeira finalmente ficará organizada e equilibrada.
           </span>
         </div>

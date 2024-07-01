@@ -21,7 +21,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        'green':{
+        green:{
           50: '#DEFFE6',
           100: '#B1F8C5',
           200: '#79F0A0',
@@ -34,7 +34,7 @@ module.exports = {
           900: '#033217',
           950: '#01200C'
         },
-        'red':{
+        red:{
           50: '#FFEEF1',
           100: '#FDDDDF',
           200: '#FDBDB9',
@@ -47,7 +47,7 @@ module.exports = {
           900: '#51010C',
           950: '#300206',
         },
-        'neutral':{
+        neutral:{
           50: '#EFF6FB',
           100: '#E2EBF3',
           200: '#D1DAE2',
@@ -66,8 +66,8 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -93,6 +93,11 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        title: "var(--text-title)",
+        body: "var(--text-body)"
+      },
+      boxShadow: {
+        'button':['inset 0px 0px 0px 2px rgba(255,255,255,0.45)', 'inset 0px 1px 0px 1px rgba(255,255,255,0.75)', '0px 4px 4px 2px rgba(0,0,0,0.25)','0px 2px 2px 1px rgba(0,0,0,0.25)']
       },
       borderRadius: {
         lg: "var(--radius)",
