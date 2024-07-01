@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -12,7 +13,9 @@ export default function Home() {
         </div>
         <div className="flex flex-col gap-6">
           <Button variant={'outline'} size={'lg'}>Já tenho conta</Button>
-          <Button size={'lg'}>Criar Conta</Button>
+          <Link to={'create-profile'} className="flex flex-col">
+            <Button size={'lg'}>Criar Conta</Button>
+          </Link>
         </div>
       </div>
     </div>
