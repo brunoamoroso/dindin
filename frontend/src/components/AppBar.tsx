@@ -1,5 +1,5 @@
 import { ArrowLeft } from "lucide-react";
-import { Button } from "./ui/button";
+import { IconButton } from "./ui/iconButton";
 
 interface IAppBar{
     title: string;
@@ -7,9 +7,9 @@ interface IAppBar{
 
 export default function AppBar({title}: IAppBar) {
   return (
-    <div className="flex items-center">
-        <Button variant={'ghost'} className="neutral-50"><ArrowLeft /></Button>
-        <span className="text-title">{title}</span>
+    <div className="flex items-center px-1 py-2 gap-1">
+        <IconButton variant={"ghost"}><ArrowLeft /></IconButton>
+        <span className="title-small text-title">{title}</span>
     </div>
   )
 }

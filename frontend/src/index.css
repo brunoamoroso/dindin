@@ -32,7 +32,9 @@
       --input: 214.3 31.8% 91.4%;
       --ring: 222.2 84% 4.9%;
 
-      --radius: 0.5rem;
+      --outline: 81.89% 0.015 244.76; /*oklch*/
+
+      --radius: 12px;
 
       --text-title: #EFF6FB;
       --text-body: #E2EBF3;
@@ -75,5 +77,41 @@
     }
     body {
       @apply bg-background text-foreground;
+    }
+
+    .title-large{
+      @apply text-3xl font-bold;
+    }
+
+    .title-medium{
+      @apply text-2xl font-bold;
+    }
+
+    .title-small{
+      @apply text-lg font-bold;
+    }
+
+    .label-large{
+      @apply text-base font-bold;
+    }
+
+    .label-medium{
+      @apply text-sm font-bold;
+    }
+
+    .label-small{
+      @apply text-xs font-bold;
+    }
+
+    .body-large{
+      @apply text-base font-medium;
+    }
+
+    .body-medium{
+      @apply text-sm font-medium;
+    }
+
+    .body-small{
+      @apply text-xs font-medium;
     }
   }
