@@ -1,8 +1,8 @@
 import express from 'express';
-import { CreateProfile } from '../../controllers/profile-controller';
+import { CreateProfile } from '../controllers/profile-controller';
 
-const router = express.Router();
+const profileRoutes = express.Router();
 
-router.post('/create-profile', CreateProfile);
+profileRoutes.post('/create', CreateProfile);
 
-export default router;
+export default profileRoutes;

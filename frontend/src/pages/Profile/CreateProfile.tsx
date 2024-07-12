@@ -27,7 +27,7 @@ export default function CreateProfile() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    api.post("/create-profile", user);
+    api.createProfile(user);
   };
 
   const triggerInputFile = () => {
@@ -54,7 +54,7 @@ export default function CreateProfile() {
           <form className="flex flex-col flex-1 justify-between" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center gap-2" onClick={triggerInputFile}>
-                <Input id="photoFile" type="file" className="hidden" on onChange={changeInputFile} />
+                <Input id="photoFile" type="file" className="hidden" onChange={changeInputFile} />
                 {!user.photo && (
                   <div className="flex bg-primary text-neutral-950 py-11 px-11 rounded-full">
                     <Camera />

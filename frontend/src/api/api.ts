@@ -1,16 +1,12 @@
-import { configDotenv } from "dotenv";
-
-configDotenv();
-
 class Api{
     private baseURL: string;
 
     constructor(){
-        if(process.env.BACKEND_URL === undefined){
+        if(import.meta.env.VITE_BACKEND_URL === undefined){
             throw new Error("BACKEND_URL NOT DEFINED");
         }
 
-        this.baseURL = process.env.BACKEND_URL;
+        this.baseURL = import.meta.env.VITE_BACKEND_URL;
 
     }
 
@@ -50,6 +46,10 @@ class Api{
 
     public delete<T>(endpoint:string): Promise<T>{
         return this.request<T>(endpoint, "DELETE");
+    }
+
+    public createProfile<T>(body: any): Promise<T>{
+        return this.post<T>("/profile/create", body);
     }
 }
 

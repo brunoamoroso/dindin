@@ -1,16 +1,18 @@
 import express from 'express';
+import cors from 'cors';
+import profileRoutes from './routes/profile-routes';
+
 
 const app = express();
 
+app.use(cors());
+
 app.use(express.json());
 
+app.use("/profile", profileRoutes)
 
 app.get("/", (req, res) => {
     res.send('hello world')
-})
-
-app.get("/create-profile", (req, res) => {
-    console.log('oi'); 
 });
 
 app.use((req, res) => {
