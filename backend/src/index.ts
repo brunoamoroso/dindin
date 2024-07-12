@@ -6,7 +6,7 @@ app.use(express.json());
 
 
 app.get("/", (req, res) => {
-    res.send('hellow world')
+    res.send('hello world')
 })
 
 app.get("/create-profile", (req, res) => {

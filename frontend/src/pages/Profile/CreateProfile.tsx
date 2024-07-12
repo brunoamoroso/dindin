@@ -1,9 +1,11 @@
+import api from "@/api/api";
 import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import TextField from "@/components/ui/textfield";
 import { Camera } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
+
 
 export default function CreateProfile() {
   const [user, setUser] = useState({
@@ -25,7 +27,7 @@ export default function CreateProfile() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(user);
+    api.post("/create-profile", user);
   };
 
   const triggerInputFile = () => {
