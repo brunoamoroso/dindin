@@ -2,7 +2,9 @@ import api from "@/api/api";
 import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import PasswordValidator from "@/components/ui/passwordvalidator";
 import TextField from "@/components/ui/textfield";
+import { passwordCheck } from "@/utils/passwordCheck";
 import { Camera } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
 
@@ -16,6 +18,23 @@ export default function CreateProfile() {
     password: "",
   });
 
+  const [validations, setValidations] = useState({
+    hasUppercase: false,
+    hasLowercase: false,
+    hasNumber: false,
+    minLength: false,
+    hasSymbol: false,
+  });
+  const [passwordValid, setPasswordValid] = useState(false);
+
+  const rules = [
+      "Maiúscula",
+      "Minúscula",
+      "Número",
+      "8 Dígitos",
+      "Símbolo"
+  ];
+  
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
 
@@ -27,8 +46,11 @@ export default function CreateProfile() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const userCreation = await api.createProfile(user);
-    console.log(userCreation);
+
+    if(passwordValid){
+      const userCreation = await api.createProfile(user);
+      console.log(userCreation);
+    }
   };
 
   const triggerInputFile = () => {
@@ -46,6 +68,19 @@ export default function CreateProfile() {
       ...prevState,
       "photo": URL.createObjectURL(file)
     }))
+  }
+
+  const handlePasswordValidation = (e: ChangeEvent<HTMLInputElement>) => {
+    const password = e.target.value;
+    const passValidations = passwordCheck(password);
+    setValidations(passValidations);
+
+    if(!Object.values(passValidations).every((check) => check === true)){
+      setPasswordValid(false);
+      return;
+    }
+
+    setPasswordValid(true);
   }
 
   return (
@@ -75,7 +110,10 @@ export default function CreateProfile() {
               />
               <TextField id="surname" label="Sobrenome" required={true} onChange={handleChange} />
               <TextField id="email" label="Email" required={true} onChange={handleChange}/>
-              <TextField id="password" label="Senha"  required={true} onChange={handleChange} />
+              <div className="flex flex-col gap-2.5">
+                <TextField type="password" id="password" label="Senha"  required={true} onChange={handlePasswordValidation} />
+                <PasswordValidator validations={validations} rules={rules}/>
+              </div>
             </div>
 
             <Button

@@ -38,6 +38,9 @@
 
       --text-title: #EFF6FB;
       --text-body: #E2EBF3;
+      --container2: 21.11% 0.025 241.78;
+      --container1: 29.99% 0.025 248.67;
+      --container0: 39.46% 0.025 243.99;
     }
 
     .dark {
