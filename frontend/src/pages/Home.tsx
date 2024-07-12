@@ -13,7 +13,7 @@ export default function Home() {
         </div>
         <div className="flex flex-col gap-6">
           <Button variant={'outline'} size={'lg'}>Já tenho conta</Button>
-          <Link to={'/profile'} className="flex flex-col">
+          <Link to={'/profile/create'} className="flex flex-col">
             <Button size={'lg'}>Criar Conta</Button>
           </Link>
         </div>
