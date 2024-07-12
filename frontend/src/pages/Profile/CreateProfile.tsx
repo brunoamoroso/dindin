@@ -25,9 +25,10 @@ export default function CreateProfile() {
     }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    api.createProfile(user);
+    const userCreation = await api.createProfile(user);
+    console.log(userCreation);
   };
 
   const triggerInputFile = () => {
