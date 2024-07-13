@@ -47,10 +47,14 @@ export default function CreateProfile() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if(passwordValid){
-      const userCreation = await api.createProfile(user);
-      console.log(userCreation);
+    if(!passwordValid){
+      console.log('senha não é válida');
+      return;
     }
+    
+    const userCreation = await api.createProfile(user);
+    console.log(userCreation);
+    
   };
 
   const triggerInputFile = () => {
