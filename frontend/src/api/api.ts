@@ -10,13 +10,10 @@ class Api{
 
     }
 
-    private async request<T>(endpoint: string, method: string, body?: string): Promise<T>{
+    private async request<T>(endpoint: string, method: string, body?: unknown): Promise<T>{
         const response = await fetch(this.baseURL+endpoint, {
             method: method,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
+            body: body as BodyInit
         });
 
         if(!response.ok){
@@ -36,11 +33,11 @@ class Api{
      * @param body 
      * @returns 
      */
-    public post<T>(endpoint: string, body: any): Promise<T>{
+    public post<T>(endpoint: string, body: unknown): Promise<T>{
         return this.request<T>(endpoint, "POST", body);
     }
 
-    public put<T>(endpoint: string, body: any): Promise<T>{
+    public put<T>(endpoint: string, body: unknown): Promise<T>{
         return this.request<T>(endpoint, "PUT", body);
     }
 
@@ -48,7 +45,7 @@ class Api{
         return this.request<T>(endpoint, "DELETE");
     }
 
-    public createProfile<T>(body: any): Promise<T>{
+    public createProfile<T>(body: unknown): Promise<T>{
         return this.post<T>("/profile/create", body);
     }
 }

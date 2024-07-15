@@ -7,11 +7,20 @@ import TextField from "@/components/ui/textfield";
 import { passwordCheck } from "@/utils/passwordCheck";
 import { Camera } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 export default function CreateProfile() {
-  const [user, setUser] = useState({
-    photo: "",
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState<{
+    photo: File | null,
+    name: string,
+    surname: string,
+    email: string,
+    password: string,
+  }>({
+    photo: null,
     name: "",
     surname: "",
     email: "",
@@ -51,9 +60,22 @@ export default function CreateProfile() {
       console.log('senha não é válida');
       return;
     }
-    
-    const userCreation = await api.createProfile(user);
-    console.log(userCreation);
+
+    const formData = new FormData();
+
+    for (const [key, value] of Object.entries(user)){
+      formData.append(key, value as string | File);
+    }
+
+    try{
+        const userCreation = await api.createProfile(formData);
+         
+        if(userCreation.status === 201){
+          navigate("/dashboard");
+        }
+    }catch(err){
+      console.error(err);
+    }    
     
   };
 
@@ -63,14 +85,13 @@ export default function CreateProfile() {
   }
 
   const changeInputFile = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e);
     if(e.target.files === null){
       return;
     }
-    const file = e.target.files[0]
+    const file = e.target.files[0];
     setUser((prevState) => ({
       ...prevState,
-      "photo": URL.createObjectURL(file)
+      "photo": file
     }))
   }
 
@@ -85,6 +106,10 @@ export default function CreateProfile() {
     }
 
     setPasswordValid(true);
+    setUser((prevState) => ({
+      ...prevState,
+      "password": password
+    }))
   }
 
   return (
@@ -101,7 +126,7 @@ export default function CreateProfile() {
                   </div>
                 )}
                 {user.photo && (
-                    <img src={user.photo} alt="User profile picture" className="h-28 w-28 rounded-full"/>
+                    <img src={URL.createObjectURL(user.photo)} alt="User profile picture" className="h-28 w-28 rounded-full"/>
                 )}
                 <Button variant={"ghost"}>Escolher uma foto</Button>
               </div>

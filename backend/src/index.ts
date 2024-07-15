@@ -1,13 +1,15 @@
-import express from 'express';
+import express, { urlencoded } from 'express';
 import cors from 'cors';
 import profileRoutes from './routes/profile-routes';
 
 
 const app = express();
 
-app.use(cors());
 
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+app.use(cors({credentials: true, origin: "http://localhost:5173"}));
 
 app.use("/profile", profileRoutes)
 
