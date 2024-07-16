@@ -71,8 +71,8 @@ module.exports = {
           foreground: "var(--primary-foreground)",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "oklch(var(--secondary))",
+          foreground: "oklch(var(--secondary-foreground))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -98,7 +98,8 @@ module.exports = {
         body: "var(--text-body)",
         container2: "oklch(var(--container2))",
         container1: "oklch(var(--container1))",
-        container0: "oklch(var(--container0))"
+        container0: "oklch(var(--container0))",
+        surface:"oklch(var(--surface-bg))"
       },
       boxShadow: {
         'button':['inset 0px 0px 0px 2px rgba(255,255,255,0.45)', 'inset 0px 1px 0px 1px rgba(255,255,255,0.75)', '0px 4px 4px 2px rgba(0,0,0,0.25)','0px 2px 2px 1px rgba(0,0,0,0.25)']
