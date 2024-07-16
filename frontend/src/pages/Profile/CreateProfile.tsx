@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PasswordValidator from "@/components/ui/passwordvalidator";
 import TextField from "@/components/ui/textfield";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
 import { passwordCheck } from "@/utils/passwordCheck";
 import { Camera } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -12,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function CreateProfile() {
   const navigate = useNavigate();
+  const {toast} = useToast();
 
   const [user, setUser] = useState<{
     photo: File | null,
@@ -68,10 +71,18 @@ export default function CreateProfile() {
     }
 
     try{
-        const userCreation = await api.createProfile(formData);
+        const userCreation: {status: number, message: string} = await api.createProfile(formData);
          
         if(userCreation.status === 201){
           navigate("/dashboard");
+        }
+
+        if(userCreation.status === 422){
+          toast({
+            title: userCreation.message,
+            variant: "destructive",
+            duration: 2000,
+          });
         }
     }catch(err){
       console.error(err);

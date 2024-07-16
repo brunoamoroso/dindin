@@ -17,7 +17,7 @@ class Api{
         });
 
         if(!response.ok){
-            throw new Error(`HTTP ERROR! Status: ${response.status}`);
+            console.error(`HTTP ERROR! Status: ${response.status}`);
         }
 
         return await response.json();
