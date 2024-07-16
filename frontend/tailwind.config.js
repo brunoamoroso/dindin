@@ -99,7 +99,9 @@ module.exports = {
         container2: "oklch(var(--container2))",
         container1: "oklch(var(--container1))",
         container0: "oklch(var(--container0))",
-        surface:"oklch(var(--surface-bg))"
+        surface:"oklch(var(--surface-bg))",
+        positive: "oklch(var(--text-green))",
+        negative: "oklch(var(--text-red))",
       },
       boxShadow: {
         'button':['inset 0px 0px 0px 2px rgba(255,255,255,0.45)', 'inset 0px 1px 0px 1px rgba(255,255,255,0.75)', '0px 4px 4px 2px rgba(0,0,0,0.25)','0px 2px 2px 1px rgba(0,0,0,0.25)']
