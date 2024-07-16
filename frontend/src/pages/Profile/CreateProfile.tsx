@@ -123,7 +123,7 @@ export default function CreateProfile() {
   }
 
   return (
-    <div className="h-dvh flex flex-col bg-neutral-950">
+    <div className="h-dvh flex flex-col bg-surface">
       <AppBar title="Configurar Conta" />
       <div className="container flex flex-1 py-10">
           <form className="flex flex-col flex-1 justify-between" onSubmit={handleSubmit}>

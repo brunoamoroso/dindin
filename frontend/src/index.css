@@ -16,8 +16,8 @@
       --primary: #11B761;
       --primary-foreground: #01200C;
 
-      --secondary: 210 40% 96.1%;
-      --secondary-foreground: 222.2 47.4% 11.2%;
+      --secondary: 96.93% 0.01 238.51 / 0.01;
+      --secondary-foreground: 96.93% 0.01 238.51;
 
       --muted: 210 40% 96.1%;
       --muted-foreground: 215.4 16.3% 46.9%;
@@ -36,8 +36,11 @@
 
       --radius: 12px;
 
+      --surface-bg: 15.93% 0.013 237.23;
       --text-title: #EFF6FB;
       --text-body: #E2EBF3;
+      --text-red: 69% 0.195 22.03;
+      --text-green: 74.42% 0.184 152.62;
       --container2: 21.11% 0.025 241.78;
       --container1: 29.99% 0.025 248.67;
       --container0: 39.46% 0.025 243.99;

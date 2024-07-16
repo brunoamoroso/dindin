@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import clientDB from "../db/conn";
-import { EdgeDBError } from "edgedb";
 
 export const CreateProfile = async (req: Request, res:Response) => {
     const {name, surname, email, password} = req.body;
