@@ -60,6 +60,7 @@ module.exports = {
           900: '#0E1A23',
           950: '#080E12'
         },
+        outline:"oklch(var(--outline))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -94,15 +95,20 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
         title: "var(--text-title)",
-        body: "var(--text-body)"
+        body: "var(--text-body)",
+        container2: "oklch(var(--container2))",
+        container1: "oklch(var(--container1))",
+        container0: "oklch(var(--container0))"
       },
       boxShadow: {
         'button':['inset 0px 0px 0px 2px rgba(255,255,255,0.45)', 'inset 0px 1px 0px 1px rgba(255,255,255,0.75)', '0px 4px 4px 2px rgba(0,0,0,0.25)','0px 2px 2px 1px rgba(0,0,0,0.25)']
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        sm: "calc(var(--radius) - 8px)",
+        default: "var(--radius)",
+        md: "calc(var(--radius) + 8px)",
+        lg: "calc(var(--radius) + 20px)",
+        xl: "calc(var(--radius) + 52px)"
       },
       keyframes: {
         "accordion-down": {

@@ -1,5 +1,6 @@
 module default {
     type User{
+        photo: str;
         required name: str;
         required surname: str;
         required email: str {constraint exclusive};
