@@ -1,3 +1,5 @@
+const { subtle } = require('crypto');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -100,6 +102,7 @@ module.exports = {
         container1: "oklch(var(--container1))",
         container0: "oklch(var(--container0))",
         surface:"oklch(var(--surface-bg))",
+        subtle: "oklch(var(--text-subtle))",
         positive: "oklch(var(--text-green))",
         negative: "oklch(var(--text-red))",
       },

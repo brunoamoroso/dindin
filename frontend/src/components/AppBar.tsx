@@ -1,5 +1,5 @@
 import { ArrowLeft } from "lucide-react";
-import { IconButton } from "./ui/iconButton";
+import { IconButton } from "./ui/icon-button";
 
 interface IAppBar{
     title: string;

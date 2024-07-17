@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { IconButton } from "@/components/ui/iconButton";
+import { IconButton } from "@/components/ui/icon-button";
 import { ChevronDown, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 

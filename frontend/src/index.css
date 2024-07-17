@@ -40,6 +40,7 @@
       --text-title: #EFF6FB;
       --text-body: #E2EBF3;
       --text-red: 69% 0.195 22.03;
+      --text-subtle: 81.89% 0.015 244.76;
       --text-green: 74.42% 0.184 152.62;
       --container2: 21.11% 0.025 241.78;
       --container1: 29.99% 0.025 248.67;
@@ -83,6 +84,18 @@
     }
     body {
       @apply bg-background text-foreground;
+    }
+
+    .headline-large{
+      @apply text-6xl font-black;
+    }
+
+    .headline-medium{
+      @apply text-5xl font-black;
+    }
+
+    .headline-small{
+      @apply text-4xl font-black;
     }
 
     .title-large{
