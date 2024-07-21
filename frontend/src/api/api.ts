@@ -48,6 +48,10 @@ class Api{
     public createProfile<T>(body: unknown): Promise<T>{
         return this.post<T>("/profile/create", body);
     }
+
+    public getCategories<T>(type: string): Promise<T>{
+        return this.get<T>(`/categories/${type}`);
+    }
 }
 
 const instance = new Api();

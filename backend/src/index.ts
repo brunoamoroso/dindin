@@ -1,6 +1,7 @@
 import express, { urlencoded } from 'express';
 import cors from 'cors';
 import profileRoutes from './routes/profile-routes';
+import categoriesRoutes from './routes/categories-routes';
 
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(cors({credentials: true, origin: "http://localhost:5173"}));
 
 app.use("/profile", profileRoutes)
+app.use("/categories", categoriesRoutes)
 
 app.get("/", (req, res) => {
     res.send('hello world')
