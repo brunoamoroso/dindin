@@ -1,5 +1,3 @@
-const { subtle } = require('crypto');
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
