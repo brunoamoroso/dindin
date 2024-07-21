@@ -6,6 +6,7 @@ import { Toaster } from './components/ui/toaster'
 import Dashboard from './pages/Dashboard'
 import Transaction from './pages/Transactions/Transaction'
 import Categories from './pages/Transactions/Categories'
+import SubCategories from './pages/Transactions/SubCategories'
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
           <Route path='/dashboard' element={<Dashboard />}/>
           <Route path='/transaction' element={<Transaction />}/>
           <Route path='/categories/:type' element={<Categories />} />
+          <Route path='/categories/sub/:category' element={<SubCategories />} />
         </Routes>
         <Toaster />
       </BrowserRouter>

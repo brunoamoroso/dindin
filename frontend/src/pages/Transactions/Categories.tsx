@@ -33,13 +33,13 @@ export default function Categories() {
             if(arr.length - 1 === index){
               //last item
               return (                
-                <Link to="/" key={index}>
+                <Link to={`/categories/sub/${category.desc}`} key={index}>
                   <MenuListItem size="lg" >{category.desc}</MenuListItem>
                 </Link>
               )
             }else{
               return (                
-                <Link to="/" key={index}>
+                <Link to={`/categories/sub/${category.desc}`} key={index}>
                   <MenuListItem size="lg">{category.desc}</MenuListItem>
                   <Separator />
                 </Link>
