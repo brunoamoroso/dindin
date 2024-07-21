@@ -49,8 +49,8 @@ class Api{
         return this.post<T>("/profile/create", body);
     }
 
-    public getGainCategories<T>(): Promise<T>{
-        return this.get<T>("/categories/gain");
+    public getCategories<T>(type: string): Promise<T>{
+        return this.get<T>(`/categories/${type}`);
     }
 }
 
