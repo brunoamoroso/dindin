@@ -7,13 +7,16 @@ module default {
         required password: str;
     }
 
+    scalar type CategoryType extending enum<gain, expense>;
+
     type Category{
         required desc: str;
         required is_public: bool{
             default := false;
         }
         multi subCategories: subCategory;
-        created_by: User;
+        required type: CategoryType;
+        required created_by: User;
     }
 
     type subCategory{
