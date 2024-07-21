@@ -1,7 +1,11 @@
 import AppBar from "@/components/AppBar"
 import { Button } from "@/components/ui/button"
 import { InlineTabs, InlineTabsList, InlineTabsTrigger } from "@/components/ui/inline-tabs"
+import {InputChips} from "@/components/ui/input-chips";
+import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
+import { Landmark, RefreshCw, Tag } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Transaction() {
   const handleSubmit = () => {
@@ -27,11 +31,39 @@ export default function Transaction() {
         </div>
       </div>
       <div className="container rounded-t-lg bg-container2 py-10">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-16">
           <div className="flex flex-col gap-6">
             <TextField label="Descrição" placeholder="Escreva uma descrição"/>
-            <div>
+            <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Categoria</span>
+              <Link to="/">
+                <MenuListItem>
+                  <Tag />Escolha uma categoria
+                </MenuListItem>
+              </Link>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <span className="label-large text-title">Conta</span>
+              <Link to="/">
+                <MenuListItem>
+                  <Landmark />Escolha uma conta
+                </MenuListItem>
+              </Link>
+            </div>
+            <div className="py-3 flex flex-col gap-1.5">
+              <span className="label-large text-title">Quando recebeu?</span>
+              <div className="flex gap-2">
+                <InputChips>Hoje</InputChips>
+                <InputChips>Outra Data</InputChips>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <span className="label-large text-title">Repetir esse ganho</span>
+              <Link to="/">
+                <MenuListItem>
+                  <RefreshCw />Nunca
+                </MenuListItem>
+              </Link>
             </div>
           </div>
           <Button type="submit" size={"lg"}>Adicionar Transação</Button>
