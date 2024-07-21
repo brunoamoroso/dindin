@@ -34,13 +34,13 @@ export default function Categories() {
               //last item
               return (                
                 <Link to="/" key={index}>
-                  <MenuListItem size="lg" trailingIcon={false}>{category.desc}</MenuListItem>
+                  <MenuListItem size="lg" >{category.desc}</MenuListItem>
                 </Link>
               )
             }else{
               return (                
                 <Link to="/" key={index}>
-                  <MenuListItem size="lg" trailingIcon={false}>{category.desc}</MenuListItem>
+                  <MenuListItem size="lg">{category.desc}</MenuListItem>
                   <Separator />
                 </Link>
               )
