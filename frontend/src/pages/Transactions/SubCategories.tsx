@@ -16,7 +16,7 @@ export default function SubCategories() {
       }
 
       const response: {status: number, message: []} = await api.getSubCategories(category);
-      console.log(subCategories);
+      
       if(response.status === 200){
           setSubCategories(response.message)
       }
@@ -26,9 +26,9 @@ export default function SubCategories() {
   }, [category]);
 
   return (
-    <div className="bg-surface h-dvh">
+    <div className="bg-surface flex flex-col h-dvh">
       <AppBar title={`SubCategorias de ${category}`}/>
-      <div className="container flex flex-col bg-container2 h-dvh rounded-t-lg py-10">
+      <div className="container flex flex-1 flex-col bg-container2 rounded-t-lg py-10">
           {subCategories.map((subCategory, index, arr) => {
             if(arr.length - 1 === index){
               //last item

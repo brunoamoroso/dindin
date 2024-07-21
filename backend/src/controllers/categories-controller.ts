@@ -48,7 +48,6 @@ export const getSubCategories = async (req: Request, res:Response) => {
         if(subCategories.length === 0){
             return res.status(200).send({status: 204, message: "Essa categoria não possuí nenhuma sub categoria ainda"})
         }
-        console.log(subCategories)
 
         return res.status(200).send({status: 200, message: subCategories});
     }catch(err: unknown){
