@@ -24,22 +24,22 @@ export default function Categories() {
   }, [type]);
 
   return (
-    <div className="bg-surface h-dvh">
+    <div className="bg-surface h-dvh flex flex-col">
       <AppBar title="Escolha uma categoria"/>
-      <div className="container flex flex-col bg-container2 h-dvh rounded-t-lg py-10 gap-6">
+      <div className="container flex flex-1 flex-col bg-container2 rounded-t-lg py-10 gap-6">
         <TextField label="Buscar" placeholder="Busque por uma categoria ou subcategoria"/>
         <div className="flex flex-col">
           {categories.map((category, index, arr) => {
             if(arr.length - 1 === index){
               //last item
               return (                
-                <Link to="/" key={index}>
+                <Link to={`/categories/sub/${category.desc}`} key={index}>
                   <MenuListItem size="lg" >{category.desc}</MenuListItem>
                 </Link>
               )
             }else{
               return (                
-                <Link to="/" key={index}>
+                <Link to={`/categories/sub/${category.desc}`} key={index}>
                   <MenuListItem size="lg">{category.desc}</MenuListItem>
                   <Separator />
                 </Link>
