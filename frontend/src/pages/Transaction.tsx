@@ -36,7 +36,7 @@ export default function Transaction() {
             <TextField label="Descrição" placeholder="Escreva uma descrição"/>
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Categoria</span>
-              <Link to="/">
+              <Link to="/categories/gain">
                 <MenuListItem>
                   <Tag />Escolha uma categoria
                 </MenuListItem>
@@ -44,7 +44,7 @@ export default function Transaction() {
             </div>
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Conta</span>
-              <Link to="/">
+              <Link to="/accounts/list">
                 <MenuListItem>
                   <Landmark />Escolha uma conta
                 </MenuListItem>
@@ -59,7 +59,7 @@ export default function Transaction() {
             </div>
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Repetir esse ganho</span>
-              <Link to="/">
+              <Link to="/recurrency">
                 <MenuListItem>
                   <RefreshCw />Nunca
                 </MenuListItem>
