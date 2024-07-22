@@ -6,8 +6,12 @@ import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
 import { Landmark, RefreshCw, Tag } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 
 export default function Transaction() {
+  const {contextCategory}  = useTransactionsContext();
+  console.log(contextCategory);
+
   const handleSubmit = () => {
     return;
   }
@@ -38,7 +42,14 @@ export default function Transaction() {
               <span className="label-large text-title">Categoria</span>
               <Link to="/categories/gain">
                 <MenuListItem>
-                  <Tag />Escolha uma categoria
+                  <Tag />
+                  {!contextCategory && ("Escolha uma categoria")}
+                  {contextCategory && (
+                  <div className="flex flex-col">
+                    {contextCategory?.category}
+                    <span className="body-small text-subtle">{contextCategory?.subCategory}</span>
+                  </div>
+                  )}
                 </MenuListItem>
               </Link>
             </div>

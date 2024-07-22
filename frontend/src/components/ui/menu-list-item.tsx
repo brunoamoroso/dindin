@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import { ChevronRight } from "lucide-react";
+import { Separator } from "./separator";
 
 const containerMenuVariants = cva("py-4 px-3 flex justify-between text-title", {
   variants: {
@@ -27,20 +28,29 @@ const contentMenuVariants = cva("flex gap-3 items-center", {
 })
 
 interface MenuListItemProps{
-  size?: "md" | "lg",
-  children?: React.ReactNode,
-  trailingIcon?: boolean,
+  size?: "md" | "lg";
+  children?: React.ReactNode;
+  trailingIcon?: boolean;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  value?: string;
+  separator?: boolean;
 }
 
-const MenuListItem = ({size = "md", children, trailingIcon = true}: MenuListItemProps) => {
+
+const MenuListItem = ({size = "md", children, trailingIcon = true, onClick, value, separator = false}: MenuListItemProps) => {
   return (
-    <div className={cn(containerMenuVariants({size}))}>
-        <div className={cn(contentMenuVariants({size}))}>
-            {children}
-        </div>
-        {trailingIcon && (
-          <ChevronRight />
-        )}
+    <div onClick={onClick} data-value={value}>
+      <div className={cn(containerMenuVariants({size}))} >
+          <div className={cn(contentMenuVariants({size}))}>
+              {children}
+          </div>
+          {trailingIcon && (
+            <ChevronRight />
+          )}
+      </div>
+          {separator && (
+          <Separator /> 
+          )}
     </div>
   )
 }

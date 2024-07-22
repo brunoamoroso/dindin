@@ -7,9 +7,9 @@ import Dashboard from './pages/Dashboard'
 import Transaction from './pages/Transactions/Transaction'
 import Categories from './pages/Transactions/Categories'
 import SubCategories from './pages/Transactions/SubCategories'
+import { TransactionsContextProvider } from './context/TransactionsContext'
 
 function App() {
-
   return (
     <>
       <BrowserRouter>
@@ -17,9 +17,13 @@ function App() {
           <Route path='/' element={<Home />}/>
           <Route path='/profile/create' element={<CreateProfile />}/>
           <Route path='/dashboard' element={<Dashboard />}/>
-          <Route path='/transaction' element={<Transaction />}/>
-          <Route path='/categories/:type' element={<Categories />} />
-          <Route path='/categories/sub/:category' element={<SubCategories />} />
+
+          <Route element={<TransactionsContextProvider />}>
+            <Route path='/transaction' element={<Transaction />}/>
+            <Route path='/categories/:type' element={<Categories />} />
+            <Route path='/categories/sub/:category' element={<SubCategories />} />
+          </Route>
+          
         </Routes>
         <Toaster />
       </BrowserRouter>
