@@ -11,7 +11,7 @@ export default function Dashboard() {
                 <Button variant={"ghost"}>
                     <ChevronDown /> Julho
                 </Button>
-                <Link to={"/transactions"}>
+                <Link to={"/transaction"}>
                     <IconButton>
                         <Plus strokeWidth={3}/>
                     </IconButton>
