@@ -55,7 +55,7 @@ export default function Transaction() {
             </div>
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Conta</span>
-              <Link to="/accounts/list">
+              <Link to="/transaction-accounts/list">
                 <MenuListItem>
                   <Landmark />Escolha uma conta
                 </MenuListItem>
