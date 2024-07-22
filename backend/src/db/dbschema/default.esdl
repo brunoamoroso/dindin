@@ -27,7 +27,6 @@ module default {
         created_by: User;
     }
 
-    scalar type AccountType extending enum<wallet, card>;
 
     type Account{
         required description: str;
@@ -35,11 +34,16 @@ module default {
         required amount: int32{
             default := 0;
         };
-        required account_type: AccountType{
-            default := AccountType.card;
-        };
-        card_exp_date: cal::local_date;
+        multi cards: Card;
         required created_by: User;
+    }
+
+    scalar type CardType extending enum<credit, debit, credit_debit>;
+
+    type Card{
+        required description: str;
+        required type: CardType;
+        card_exp_date: cal::local_date;
     }
 
     scalar type Recurrency extending enum<`never`, day, week, biweek, month, quarter, semester, annual>;
