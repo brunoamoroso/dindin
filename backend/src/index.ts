@@ -2,6 +2,7 @@ import express, { urlencoded } from 'express';
 import cors from 'cors';
 import profileRoutes from './routes/profile-routes';
 import categoriesRoutes from './routes/categories-routes';
+import accountsRoutes from './routes/account-routes';
 
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(cors({credentials: true, origin: "http://localhost:5173"}));
 
 app.use("/profile", profileRoutes)
 app.use("/categories", categoriesRoutes)
+app.use("/accounts", accountsRoutes);
 
 app.get("/", (req, res) => {
     res.send('hello world')

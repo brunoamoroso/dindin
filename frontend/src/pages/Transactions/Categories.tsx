@@ -1,6 +1,5 @@
 import AppBar from "@/components/AppBar";
 import MenuListItem from "@/components/ui/menu-list-item";
-import { Separator } from "@/components/ui/separator";
 import TextField from "@/components/ui/textfield";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -40,8 +39,7 @@ export default function Categories() {
             }else{
               return (                
                 <Link to={`/categories/sub/${category.desc}`} key={index}>
-                  <MenuListItem size="lg">{category.desc}</MenuListItem>
-                  <Separator />
+                  <MenuListItem size="lg" separator={true}>{category.desc}</MenuListItem>
                 </Link>
               )
             }

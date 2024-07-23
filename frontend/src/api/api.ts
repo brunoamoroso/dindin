@@ -56,6 +56,10 @@ class Api{
     public getSubCategories<T>(category: string): Promise<T>{
         return this.get<T>(`/categories/sub/${category}`);
     }
+
+    public getAccounts<T>(): Promise<T>{
+        return this.get<T>(`/accounts/list`);
+    }
 }
 
 const instance = new Api();
