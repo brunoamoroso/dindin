@@ -9,8 +9,7 @@ import { Link } from "react-router-dom";
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 
 export default function Transaction() {
-  const {contextCategory}  = useTransactionsContext();
-  console.log(contextCategory);
+  const {contextCategory, contextAccount}  = useTransactionsContext();
 
   const handleSubmit = () => {
     return;
@@ -57,7 +56,9 @@ export default function Transaction() {
               <span className="label-large text-title">Conta</span>
               <Link to="/transaction-accounts/list">
                 <MenuListItem>
-                  <Landmark />Escolha uma conta
+                  <Landmark />
+                  {!contextAccount && ("Escolha uma conta")}
+                  {contextAccount && (contextAccount.desc)}
                 </MenuListItem>
               </Link>
             </div>

@@ -28,6 +28,7 @@ const contentMenuVariants = cva("flex gap-3 items-center", {
 })
 
 interface MenuListItemProps{
+  dataId?: string;
   size?: "md" | "lg";
   children?: React.ReactNode;
   trailingIcon?: boolean;
@@ -37,9 +38,9 @@ interface MenuListItemProps{
 }
 
 
-const MenuListItem = ({size = "md", children, trailingIcon = true, onClick, value, separator = false}: MenuListItemProps) => {
+const MenuListItem = ({dataId, size = "md", children, trailingIcon = true, onClick, value, separator = false}: MenuListItemProps) => {
   return (
-    <div onClick={onClick} data-value={value}>
+    <div onClick={onClick} data-id={dataId} data-value={value}>
       <div className={cn(containerMenuVariants({size}))} >
           <div className={cn(contentMenuVariants({size}))}>
               {children}
