@@ -45,8 +45,8 @@ export default function Transaction() {
                   {!contextCategory && ("Escolha uma categoria")}
                   {contextCategory && (
                   <div className="flex flex-col">
-                    {contextCategory?.category}
-                    <span className="body-small text-subtle">{contextCategory?.subCategory}</span>
+                    {contextCategory.category.desc}
+                    <span className="body-small text-subtle">{contextCategory.subCategory.desc}</span>
                   </div>
                   )}
                 </MenuListItem>
