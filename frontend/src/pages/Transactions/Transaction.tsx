@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 
 export default function Transaction() {
-  const {contextCategory, contextAccount}  = useTransactionsContext();
+  const {contextCategory, contextAccount, contextRecurrency}  = useTransactionsContext();
 
   const handleSubmit = () => {
     return;
@@ -73,7 +73,8 @@ export default function Transaction() {
               <span className="label-large text-title">Repetir esse ganho</span>
               <Link to="/recurrency">
                 <MenuListItem>
-                  <RefreshCw />Nunca
+                  <RefreshCw />
+                  {contextRecurrency.desc}
                 </MenuListItem>
               </Link>
             </div>
