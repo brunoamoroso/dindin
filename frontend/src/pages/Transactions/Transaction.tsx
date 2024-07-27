@@ -10,7 +10,7 @@ import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 
 export default function Transaction() {
   const {contextCategory, contextAccount, contextRecurrency}  = useTransactionsContext();
-
+  
   const handleSubmit = () => {
     return;
   }
@@ -45,7 +45,7 @@ export default function Transaction() {
                   {!contextCategory && ("Escolha uma categoria")}
                   {contextCategory && (
                   <div className="flex flex-col">
-                    {contextCategory.category.desc}
+                    {contextCategory.category?.desc}
                     {contextCategory.subCategory && (
                       <span className="body-small text-subtle">{contextCategory.subCategory.desc}</span>
                     )}
