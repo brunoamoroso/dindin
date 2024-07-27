@@ -59,9 +59,9 @@ export default function Recurrency() {
         <div className="container bg-container2 flex flex-1 flex-col rounded-t-lg py-10">
             {options.map((option, index, arr) => {
                 if(arr.length - 1 === index){
-                    return <MenuListItem key={index} trailingIcon={false} dataId={option.value} value={option.desc} onClick={handleClick}>{option.desc}</MenuListItem>
+                    return <MenuListItem size="lg" key={index} trailingIcon={false} dataId={option.value} value={option.desc} onClick={handleClick}>{option.desc}</MenuListItem>
                 }else{
-                    return <MenuListItem key={index} separator={true} trailingIcon={false} dataId={option.value} value={option.desc} onClick={handleClick}>{option.desc}</MenuListItem>
+                    return <MenuListItem size="lg" key={index} separator={true} trailingIcon={false} dataId={option.value} value={option.desc} onClick={handleClick}>{option.desc}</MenuListItem>
                 }
             })}
         </div>

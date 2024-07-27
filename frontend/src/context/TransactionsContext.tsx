@@ -12,8 +12,8 @@ interface SubCategoryType{
 }
 
 interface ContextCategoryType{
-    category: CategoryType;
-    subCategory: SubCategoryType;
+    category?: CategoryType;
+    subCategory?: SubCategoryType;
 }
 
 interface AccountType{

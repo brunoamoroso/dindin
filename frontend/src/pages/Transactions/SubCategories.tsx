@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 export default function SubCategories() {
   const navigate = useNavigate();
   const {category} = useParams();
-  const [subCategories, setSubCategories] = useState<{desc: string, type: string}[]>([]);
+  const [subCategories, setSubCategories] = useState<{id: string; desc: string;}[]>([]);
   const {setContextCategory} = useTransactionsContext();
 
   useEffect(() => {
@@ -29,13 +29,21 @@ export default function SubCategories() {
   }, [category]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if(category === undefined){ 
-      throw new Error("category undefined");
+    const id = e.currentTarget.dataset.id;
+    const desc = e.currentTarget.dataset.value;
+
+    if((id === undefined) || (desc === undefined)){
+      throw new Error("subcategory undefined");
     }
 
-    if(setContextCategory){
-      setContextCategory({category: category, subCategory: e.currentTarget.dataset.value});
-    }
+    setContextCategory((prevState) => ({
+      ...prevState,
+      subCategory: {
+        id: id,
+        desc: desc
+      }
+    }));
+
     navigate("/transaction");
   }
 
@@ -48,11 +56,11 @@ export default function SubCategories() {
                 if(arr.length - 1 === index){
                 //last item
                 return (                
-                    <MenuListItem size="lg" trailingIcon={false} key={index} value={subCategory.desc} onClick={handleClick}>{subCategory.desc}</MenuListItem>
+                    <MenuListItem size="lg" trailingIcon={false} key={index} dataId={subCategory.id} value={subCategory.desc} onClick={handleClick}>{subCategory.desc}</MenuListItem>
                 )
                 }else{
                 return (
-                    <MenuListItem size="lg" trailingIcon={false} key={index} value={subCategory.desc} onClick={handleClick} separator={true}>{subCategory.desc}</MenuListItem>          
+                    <MenuListItem size="lg" trailingIcon={false} key={index} dataId={subCategory.id} value={subCategory.desc} onClick={handleClick} separator={true}>{subCategory.desc}</MenuListItem>          
                   )
                 }
             })}

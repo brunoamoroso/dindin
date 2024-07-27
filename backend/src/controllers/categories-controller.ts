@@ -7,8 +7,8 @@ export const getCategories = async (req: Request, res:Response) => {
     try{
         const categories = await clientDB.query(`
             select Category {
-                desc,
-                type
+                id,
+                desc
             } filter .type = <default::CategoryType>$type`,
             {
                 type: type

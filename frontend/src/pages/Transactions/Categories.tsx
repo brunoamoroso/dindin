@@ -1,13 +1,16 @@
 import AppBar from "@/components/AppBar";
 import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { MouseEvent, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import api from '@/api/api';
+import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 
 export default function Categories() {
   const {type} = useParams();
-  const [categories, setCategories] = useState([{desc: "", type: ""}]);
+  const [categories, setCategories] = useState([{id: "", desc: ""}]);
+  const navigate = useNavigate();
+  const {setContextCategory} = useTransactionsContext();
 
   useEffect(() => {
     const getCategories = async () => {
@@ -22,6 +25,25 @@ export default function Categories() {
     getCategories();
   }, [type]);
 
+  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    const id = e.currentTarget.dataset.id;
+    const desc = e.currentTarget.dataset.value;
+
+    if((id === undefined) || (desc === undefined)){
+      throw new Error("Category is undefined");
+    }
+
+    setContextCategory((prevState) => ({
+      ...prevState,
+      category: {
+        id: id,
+        desc: desc
+      }
+    }))
+
+    navigate(`/categories/sub/${desc}`);
+  }
+
   return (
     <div className="bg-surface h-dvh flex flex-col">
       <AppBar title="Escolha uma categoria"/>
@@ -32,15 +54,11 @@ export default function Categories() {
             if(arr.length - 1 === index){
               //last item
               return (                
-                <Link to={`/categories/sub/${category.desc}`} key={index}>
-                  <MenuListItem size="lg" >{category.desc}</MenuListItem>
-                </Link>
+                  <MenuListItem size="lg" key={index} dataId={category.id} value={category.desc} onClick={handleClick}>{category.desc}</MenuListItem>
               )
             }else{
               return (                
-                <Link to={`/categories/sub/${category.desc}`} key={index}>
-                  <MenuListItem size="lg" separator={true}>{category.desc}</MenuListItem>
-                </Link>
+                  <MenuListItem size="lg" key={index} dataId={category.id} value={category.desc} onClick={handleClick} separator={true}>{category.desc}</MenuListItem>
               )
             }
           })}
