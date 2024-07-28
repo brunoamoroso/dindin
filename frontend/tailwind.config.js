@@ -69,6 +69,8 @@ module.exports = {
         primary: {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",
+          pressed: "oklch(var(--primary-pressed))",
+          "on-pressed": "oklch(var(--primary-on-pressed))",
         },
         secondary: {
           DEFAULT: "oklch(var(--secondary))",

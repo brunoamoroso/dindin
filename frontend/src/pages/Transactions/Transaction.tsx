@@ -5,12 +5,28 @@ import {InputChips} from "@/components/ui/input-chips";
 import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
 import { Landmark, RefreshCw, Tag } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
+import { MouseEvent, useState } from "react";
 
 export default function Transaction() {
-  const {contextCategory, contextAccount, contextRecurrency}  = useTransactionsContext();
-  
+  const {contextCategory, contextAccount, contextRecurrency, contextDate, setContextDate}  = useTransactionsContext();
+  const [todayChipPressed, setTodayChipPressed] = useState(false);
+  const [otherDateChipPressed, setOtherDateChipPressed] = useState(false);
+  const location = useLocation();
+
+  const handleDateToday = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const date = new Date();
+    const day = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    
+    const today = new Date(year, month, day);
+    setContextDate(today);
+    setTodayChipPressed(true);
+  }
+
   const handleSubmit = () => {
     return;
   }
@@ -67,8 +83,10 @@ export default function Transaction() {
             <div className="py-3 flex flex-col gap-1.5">
               <span className="label-large text-title">Quando recebeu?</span>
               <div className="flex gap-2">
-                <InputChips>Hoje</InputChips>
-                <InputChips>Outra Data</InputChips>
+                <InputChips value={"today"} variant={todayChipPressed ? "pressed" : "default"} onClick={handleDateToday} pressed={todayChipPressed}>Hoje</InputChips>
+                <Link to={"/transaction/date"} state={{previousLocation: location}}>
+                  <InputChips value={"searchDate"}>Outra Data</InputChips>
+                </Link>
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -83,7 +101,6 @@ export default function Transaction() {
           </div>
           <Button type="submit" size={"lg"}>Adicionar Transação</Button>
         </form>
-        
       </div>
     </div>
   )
