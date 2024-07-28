@@ -36,6 +36,8 @@ interface TransactionsContextType{
     setContextRecurrency: React.Dispatch<React.SetStateAction<RecurrencyType>>;
     contextDate: Date | undefined;
     setContextDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+    otherDateChipPressed: boolean;
+    setOtherDateChipPressed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const TransactionsContext = createContext<TransactionsContextType | null>(null);
@@ -45,11 +47,12 @@ export const TransactionsContextProvider = () => {
   const [contextAccount, setContextAccount] = useState<AccountType | null>(null);
   const [contextRecurrency, setContextRecurrency] = useState<RecurrencyType>({id:"never", desc: "Nunca"});
   const [contextDate, setContextDate] = useState<Date | undefined>();
+  const [otherDateChipPressed, setOtherDateChipPressed] = useState(false);
 
 
   return (
     <TransactionsContext.Provider
-      value={{ contextCategory, setContextCategory, contextAccount, setContextAccount, contextRecurrency, setContextRecurrency, contextDate, setContextDate }}
+      value={{ contextCategory, setContextCategory, contextAccount, setContextAccount, contextRecurrency, setContextRecurrency, contextDate, setContextDate, otherDateChipPressed, setOtherDateChipPressed }}
     >
       <Outlet />
     </TransactionsContext.Provider>

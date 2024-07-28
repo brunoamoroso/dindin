@@ -10,21 +10,27 @@ import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 import { MouseEvent, useState } from "react";
 
 export default function Transaction() {
-  const {contextCategory, contextAccount, contextRecurrency, contextDate, setContextDate}  = useTransactionsContext();
+  const {contextCategory, contextAccount, contextRecurrency, contextDate, setContextDate, otherDateChipPressed, setOtherDateChipPressed}  = useTransactionsContext();
   const [todayChipPressed, setTodayChipPressed] = useState(false);
-  const [otherDateChipPressed, setOtherDateChipPressed] = useState(false);
   const location = useLocation();
 
   const handleDateToday = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const date = new Date();
-    const day = date.getDate();
-    const month = date.getMonth();
-    const year = date.getFullYear();
-    
-    const today = new Date(year, month, day);
-    setContextDate(today);
-    setTodayChipPressed(true);
+    if(!todayChipPressed){
+      const date = new Date();
+      const day = date.getDate();
+      const month = date.getMonth();
+      const year = date.getFullYear();
+      
+      const today = new Date(year, month, day);
+      setOtherDateChipPressed(false);
+      setContextDate(today);
+      setTodayChipPressed(true);
+      return;
+    }
+
+    setTodayChipPressed(false);
+    setContextDate(undefined);
   }
 
   const handleSubmit = () => {
@@ -85,7 +91,10 @@ export default function Transaction() {
               <div className="flex gap-2">
                 <InputChips value={"today"} variant={todayChipPressed ? "pressed" : "default"} onClick={handleDateToday} pressed={todayChipPressed}>Hoje</InputChips>
                 <Link to={"/transaction/date"} state={{previousLocation: location}}>
-                  <InputChips value={"searchDate"}>Outra Data</InputChips>
+                  <InputChips value={"searchDate"} variant={otherDateChipPressed ? "pressed" : "default"} pressed={otherDateChipPressed}>
+                  {(!todayChipPressed && contextDate !== undefined) && (contextDate.toLocaleDateString())}
+                  {!otherDateChipPressed && ("Outra Data")}
+                  </InputChips>
                 </Link>
               </div>
             </div>
