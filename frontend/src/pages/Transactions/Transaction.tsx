@@ -7,7 +7,8 @@ import TextField from "@/components/ui/textfield";
 import { Landmark, RefreshCw, Tag } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
-import { MouseEvent, useState } from "react";
+import { ChangeEvent, KeyboardEvent, MouseEvent, useState } from "react";
+import { Input } from "@/components/ui/input";
 
 export default function Transaction() {
   const {contextCategory, contextAccount, contextRecurrency, contextDate, setContextDate, otherDateChipPressed, setOtherDateChipPressed}  = useTransactionsContext();
@@ -33,6 +34,27 @@ export default function Transaction() {
     setContextDate(undefined);
   }
 
+  const handleClickAmountPlaceholder = (e: MouseEvent<HTMLSpanElement>) => {
+    const placeholder = e.currentTarget;
+    const ghostInput = document.getElementById("amount_input");
+    if(ghostInput?.classList.contains("hidden")){
+      placeholder.classList.add("hidden");
+      ghostInput.classList.remove("hidden");
+      ghostInput.focus();
+      return;
+    }
+
+  }
+
+  const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let cleanInput = parseInt(e.target.value.replace(/[^0-9]+/g, ''))/100;
+    if(isNaN(cleanInput)){
+      cleanInput = 0;
+    }
+    const formattedValue = new Intl.NumberFormat("pt-BR", {style: "currency", currency: "BRL"}).format(cleanInput).slice(3);
+    e.target.value = formattedValue;
+  }
+
   const handleSubmit = () => {
     return;
   }
@@ -51,7 +73,8 @@ export default function Transaction() {
           <span className="label-medium text-subtle">Valor Recebido</span>
           <div className="flex gap-1">
             <span className="headline-small text-title">R$</span>
-            <span className="headline-small text-positive">0,00</span>
+            <span className="headline-small text-positive" onClick={handleClickAmountPlaceholder}>0,00</span>
+            <Input variant={"ghost"} inputMode="numeric" pattern="[0-9]" id="amount_input" type="text" className="hidden text-positive" placeholder="0,00" onChange={handleAmountChange} />
           </div>
         </div>
       </div>
