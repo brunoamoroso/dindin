@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import './App.css'
 import Home from './pages/Home'
 import CreateProfile from './pages/Profile/CreateProfile'
@@ -10,25 +10,44 @@ import SubCategories from './pages/Transactions/SubCategories'
 import { TransactionsContextProvider } from './context/TransactionsContext'
 import TransactionAccount from './pages/Transactions/TransactionAccount'
 import Recurrency from './pages/Transactions/Recurrency'
+import TransactionDate from './pages/Transactions/TransactionDate'
 
-function App() {
+function AppRoutes(){
+  const location = useLocation();
+  const previousLocation = location.state?.previousLocation;
   return (
     <>
-      <BrowserRouter>
-        <Routes>
+        <Routes location={previousLocation || location}>
           <Route path='/' element={<Home />}/>
           <Route path='/profile/create' element={<CreateProfile />}/>
           <Route path='/dashboard' element={<Dashboard />}/>
 
           <Route element={<TransactionsContextProvider />}>
-            <Route path='/transaction' element={<Transaction />}/>
-            <Route path='/categories/:type' element={<Categories />} />
-            <Route path='/categories/sub/:category' element={<SubCategories />} />
-            <Route path='/transaction-accounts/list' element={<TransactionAccount />} />
-            <Route path='/recurrency' element={<Recurrency />} />
+              {previousLocation && (
+                <Route element={<TransactionDate />}> 
+                  <Route path='/transaction' element={<Transaction />}/>
+                </Route>
+              )}
+              {!previousLocation && (
+                <Route path='/transaction' element={<Transaction />}/>
+              )}
+              <Route path='/categories/:type' element={<Categories />} />
+              <Route path='/categories/sub/:category' element={<SubCategories />} />
+              <Route path='/transaction-accounts/list' element={<TransactionAccount />} />
+              <Route path='/recurrency' element={<Recurrency />} />
           </Route>
-          
-        </Routes>
+      </Routes>
+
+    </>
+  );
+}
+
+function App() {
+
+  return (
+    <>
+      <BrowserRouter>
+        <AppRoutes /> 
         <Toaster />
       </BrowserRouter>
     </>

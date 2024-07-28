@@ -15,6 +15,8 @@
 
       --primary: #11B761;
       --primary-foreground: #01200C;
+      --primary-pressed:  34% 0.085 152.65;
+      --primary-on-pressed: 74.42% 0.184 152.62;
 
       --secondary: 96.93% 0.01 238.51 / 0.01;
       --secondary-foreground: 96.93% 0.01 238.51;
