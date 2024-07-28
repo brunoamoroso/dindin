@@ -10,6 +10,7 @@ import SubCategories from './pages/Transactions/SubCategories'
 import { TransactionsContextProvider } from './context/TransactionsContext'
 import TransactionAccount from './pages/Transactions/TransactionAccount'
 import Recurrency from './pages/Transactions/Recurrency'
+import TransactionDate from './pages/Transactions/TransactionDate'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path='/categories/sub/:category' element={<SubCategories />} />
             <Route path='/transaction-accounts/list' element={<TransactionAccount />} />
             <Route path='/recurrency' element={<Recurrency />} />
+            <Route path='/transaction/date' element={<TransactionDate />} />
           </Route>
           
         </Routes>
