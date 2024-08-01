@@ -4,11 +4,11 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 export default function TransactionDate() {
   const navigate = useNavigate();
-  const {setContextDate, setOtherDateChipPressed} = useTransactionsContext();
+  const {setContextDate, setChipPressed} = useTransactionsContext();
 
   const handleDayClick = (day: Date) => {
     setContextDate(day);
-    setOtherDateChipPressed(true);
+    setChipPressed("otherDate");
     navigate("/transaction");
   }
 

@@ -28,6 +28,10 @@ interface RecurrencyType{
 
 
 interface TransactionsContextType{
+    contextAmount: number;
+    setContextAmount: React.Dispatch<React.SetStateAction<number>>;
+    contextDescription: string;
+    setContextDescription: React.Dispatch<React.SetStateAction<string>>;
     contextCategory: ContextCategoryType | null; 
     setContextCategory: React.Dispatch<React.SetStateAction<ContextCategoryType| null>>;
     contextAccount: AccountType | null;
@@ -36,23 +40,25 @@ interface TransactionsContextType{
     setContextRecurrency: React.Dispatch<React.SetStateAction<RecurrencyType>>;
     contextDate: Date | undefined;
     setContextDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
-    otherDateChipPressed: boolean;
-    setOtherDateChipPressed: React.Dispatch<React.SetStateAction<boolean>>;
+    chipPressed: "none" | "today" | "otherDate";
+    setChipPressed: React.Dispatch<React.SetStateAction<"none" | "today" | "otherDate">>;
 }
 
 export const TransactionsContext = createContext<TransactionsContextType | null>(null);
 
 export const TransactionsContextProvider = () => {
+  const [contextAmount, setContextAmount] = useState<number>(0);
+  const [contextDescription, setContextDescription] = useState<string>("");
   const [contextCategory, setContextCategory] = useState<ContextCategoryType | null>(null);
   const [contextAccount, setContextAccount] = useState<AccountType | null>(null);
   const [contextRecurrency, setContextRecurrency] = useState<RecurrencyType>({id:"never", desc: "Nunca"});
   const [contextDate, setContextDate] = useState<Date | undefined>();
-  const [otherDateChipPressed, setOtherDateChipPressed] = useState(false);
+  const [chipPressed, setChipPressed] = useState<"none" | "today" | "otherDate">("none");
 
 
   return (
     <TransactionsContext.Provider
-      value={{ contextCategory, setContextCategory, contextAccount, setContextAccount, contextRecurrency, setContextRecurrency, contextDate, setContextDate, otherDateChipPressed, setOtherDateChipPressed }}
+      value={{contextAmount, setContextAmount, contextDescription, setContextDescription, contextCategory, setContextCategory, contextAccount, setContextAccount, contextRecurrency, setContextRecurrency, contextDate, setContextDate, chipPressed, setChipPressed }}
     >
       <Outlet />
     </TransactionsContext.Provider>
