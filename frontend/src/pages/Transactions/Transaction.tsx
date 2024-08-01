@@ -12,9 +12,8 @@ import { Input } from "@/components/ui/input";
 import { currencyFormat } from "@/utils/currencyFormat";
 
 export default function Transaction() {
-  const {contextAmount, setContextAmount, contextDescription, setContextDescription, contextCategory, contextAccount, contextRecurrency, contextDate, setContextDate, otherDateChipPressed, setOtherDateChipPressed}  = useTransactionsContext();
+  const {contextAmount, setContextAmount, contextDescription, setContextDescription, contextCategory, contextAccount, contextRecurrency, contextDate, setContextDate, chipPressed, setChipPressed}  = useTransactionsContext();
   const [transaction, setTransaction] = useState({});
-  const [todayChipPressed, setTodayChipPressed] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -38,20 +37,19 @@ export default function Transaction() {
 
   const handleDateToday = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if(!todayChipPressed){
+    if(chipPressed !== "today"){
       const date = new Date();
       const day = date.getDate();
       const month = date.getMonth();
       const year = date.getFullYear();
       
       const today = new Date(year, month, day);
-      setOtherDateChipPressed(false);
+      setChipPressed("today");
       setContextDate(today);
-      setTodayChipPressed(true);
       return;
     }
 
-    setTodayChipPressed(false);
+    setChipPressed("none");
     setContextDate(undefined);
   }
 
@@ -143,11 +141,11 @@ export default function Transaction() {
             <div className="py-3 flex flex-col gap-1.5">
               <span className="label-large text-title">Quando recebeu?</span>
               <div className="flex gap-2">
-                <InputChips value={"today"} variant={todayChipPressed ? "pressed" : "default"} onClick={handleDateToday} pressed={todayChipPressed}>Hoje</InputChips>
+                <InputChips value={"today"} variant={chipPressed === "today" ? "pressed" : "default"} onClick={handleDateToday} pressed={chipPressed === "today" ? true :  false}>Hoje</InputChips>
                 <Link to={"/transaction/date"} state={{previousLocation: location}}>
-                  <InputChips value={"searchDate"} variant={otherDateChipPressed ? "pressed" : "default"} pressed={otherDateChipPressed}>
-                  {(!todayChipPressed && contextDate !== undefined) && (contextDate.toLocaleDateString())}
-                  {!otherDateChipPressed && ("Outra Data")}
+                  <InputChips value={"searchDate"} variant={chipPressed === "otherDate" ? "pressed" : "default"} pressed={chipPressed === "otherDate" ? true : false}>
+                  {(chipPressed === "otherDate" && contextDate !== undefined) && (contextDate.toLocaleDateString())}
+                  {chipPressed !== "otherDate" && ("Outra Data")}
                   </InputChips>
                 </Link>
               </div>
