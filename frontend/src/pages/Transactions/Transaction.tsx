@@ -7,13 +7,34 @@ import TextField from "@/components/ui/textfield";
 import { Landmark, RefreshCw, Tag } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
-import { ChangeEvent, KeyboardEvent, MouseEvent, useState } from "react";
+import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { currencyFormat } from "@/utils/currencyFormat";
 
 export default function Transaction() {
-  const {contextCategory, contextAccount, contextRecurrency, contextDate, setContextDate, otherDateChipPressed, setOtherDateChipPressed}  = useTransactionsContext();
+  const {contextAmount, setContextAmount, contextDescription, setContextDescription, contextCategory, contextAccount, contextRecurrency, contextDate, setContextDate, otherDateChipPressed, setOtherDateChipPressed}  = useTransactionsContext();
+  const [transaction, setTransaction] = useState({});
   const [todayChipPressed, setTodayChipPressed] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const amountPlaceholder = document.getElementById("amount_placeholder");
+
+    if((contextAmount !== 0) && (amountPlaceholder !== null)){
+      amountPlaceholder.innerHTML = currencyFormat(contextAmount);
+    }
+
+    setTransaction((prevTransaction) => ({
+        ...prevTransaction,
+        amount: contextAmount,
+        desc: contextDescription,
+        category: contextCategory,
+        account: contextAccount,
+        date: contextDate,
+        recurrency: contextRecurrency
+      }
+    ));
+  }, [contextAmount, contextDescription, contextCategory, contextAccount, contextDate, contextRecurrency]);
 
   const handleDateToday = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -43,19 +64,29 @@ export default function Transaction() {
       ghostInput.focus();
       return;
     }
-
   }
 
   const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
-    let cleanInput = parseInt(e.target.value.replace(/[^0-9]+/g, ''))/100;
-    if(isNaN(cleanInput)){
-      cleanInput = 0;
-    }
-    const formattedValue = new Intl.NumberFormat("pt-BR", {style: "currency", currency: "BRL"}).format(cleanInput).slice(3);
-    e.target.value = formattedValue;
+    const amountInt = parseInt(e.target.value.replace(/[^0-9]+/g, ''));
+    e.target.value = currencyFormat(amountInt);
+    setContextAmount(amountInt);
+    setTransaction((prevState) => ({
+      ...prevState,
+      amount: amountInt
+    }));
   }
 
-  const handleSubmit = () => {
+  const handleDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setContextDescription(e.target.value);
+    setTransaction((prevTransaction) => ({
+      ...prevTransaction,
+      [e.target.id]: e.target.value
+    }));
+  }
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(transaction);
     return;
   }
 
@@ -73,7 +104,7 @@ export default function Transaction() {
           <span className="label-medium text-subtle">Valor Recebido</span>
           <div className="flex gap-1">
             <span className="headline-small text-title">R$</span>
-            <span className="headline-small text-positive" onClick={handleClickAmountPlaceholder}>0,00</span>
+            <span id="amount_placeholder" className="headline-small text-positive" onClick={handleClickAmountPlaceholder}>0,00</span>
             <Input variant={"ghost"} inputMode="numeric" pattern="[0-9]" id="amount_input" type="text" className="hidden text-positive" placeholder="0,00" onChange={handleAmountChange} />
           </div>
         </div>
@@ -81,7 +112,7 @@ export default function Transaction() {
       <div className="container rounded-t-lg bg-container2 py-10">
         <form onSubmit={handleSubmit} className="flex flex-col gap-16">
           <div className="flex flex-col gap-6">
-            <TextField label="Descrição" placeholder="Escreva uma descrição"/>
+            <TextField id="description" label="Descrição" value={contextDescription} placeholder="Escreva uma descrição" onChange={handleDescriptionChange}/>
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Categoria</span>
               <Link to="/categories/gain">
