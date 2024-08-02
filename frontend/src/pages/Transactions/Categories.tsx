@@ -10,7 +10,7 @@ export default function Categories() {
   const {type} = useParams();
   const [categories, setCategories] = useState([{id: "", desc: ""}]);
   const navigate = useNavigate();
-  const {setContextCategory} = useTransactionsContext();
+  const {setContextTransactionData} = useTransactionsContext();
 
   useEffect(() => {
     const getCategories = async () => {
@@ -33,8 +33,8 @@ export default function Categories() {
       throw new Error("Category is undefined");
     }
 
-    setContextCategory((prevState) => ({
-      ...prevState,
+    setContextTransactionData((prevTransaction) => ({
+      ...prevTransaction,
       category: {
         id: id,
         desc: desc

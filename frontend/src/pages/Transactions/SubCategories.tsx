@@ -10,7 +10,7 @@ export default function SubCategories() {
   const navigate = useNavigate();
   const {category} = useParams();
   const [subCategories, setSubCategories] = useState<{id: string; desc: string;}[]>([]);
-  const {setContextCategory} = useTransactionsContext();
+  const {setContextTransactionData} = useTransactionsContext();
 
   useEffect(() => {
     const getSubCategories = async () => {
@@ -36,8 +36,8 @@ export default function SubCategories() {
       throw new Error("subcategory undefined");
     }
 
-    setContextCategory((prevState) => ({
-      ...prevState,
+    setContextTransactionData((prevTransaction) => ({
+      ...prevTransaction,
       subCategory: {
         id: id,
         desc: desc

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function TransactionAccount() {
   const [accountsList, setAccountsList] = useState([]);
-  const {setContextAccount} = useTransactionsContext();
+  const {setContextTransactionData} = useTransactionsContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,10 +27,14 @@ export default function TransactionAccount() {
       throw new Error("Account undefined");
     }
     
-    setContextAccount({
-      id: id,
-      desc: value
-    })
+    setContextTransactionData((prevTransaction) => ({
+      ...prevTransaction,
+      account: {
+        id: id,
+        desc: value
+      }
+    }));
+    
     navigate('/transaction');
   }
 

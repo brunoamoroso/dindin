@@ -17,7 +17,7 @@ interface GainTransactionType{
 }
 
 export default function GainTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit}: GainTransactionType) {
-  const {contextCategory, contextAccount, contextRecurrency, contextDate, chipPressed}  = useTransactionsContext();
+  const {contextTransactionData, chipPressed}  = useTransactionsContext();
   const location = useLocation(); 
   return (
     <>
@@ -50,9 +50,9 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
         <form onSubmit={handleSubmit} className="flex flex-col gap-16">
           <div className="flex flex-col gap-6">
             <TextField
-              id="description"
+              id="desc"
               label="Descrição"
-            //   value={contextDescription}
+              value={contextTransactionData.desc}
               placeholder="Escreva uma descrição"
               onChange={handleInputChange}
             />
@@ -61,13 +61,13 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
               <Link to="/categories/gain">
                 <MenuListItem>
                   <Tag />
-                  {!contextCategory && "Escolha uma categoria"}
-                  {contextCategory && (
+                  {!contextTransactionData.category && "Escolha uma categoria"}
+                  {contextTransactionData.category && (
                     <div className="flex flex-col">
-                      {contextCategory.category?.desc}
-                      {contextCategory.subCategory && (
+                      {contextTransactionData.category.desc}
+                      {contextTransactionData.subCategory && (
                         <span className="body-small text-subtle">
-                          {contextCategory.subCategory.desc}
+                          {contextTransactionData.subCategory.desc}
                         </span>
                       )}
                     </div>
@@ -80,8 +80,8 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
               <Link to="/transaction-accounts/list">
                 <MenuListItem>
                   <Landmark />
-                  {!contextAccount && "Escolha uma conta"}
-                  {contextAccount && contextAccount.desc}
+                  {!contextTransactionData.account && "Escolha uma conta"}
+                  {contextTransactionData.account && contextTransactionData.account.desc}
                 </MenuListItem>
               </Link>
             </div>
@@ -108,8 +108,8 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
                     pressed={chipPressed === "otherDate" ? true : false}
                   >
                     {chipPressed === "otherDate" &&
-                      contextDate !== undefined &&
-                      contextDate.toLocaleDateString()}
+                      contextTransactionData.date !== undefined &&
+                      contextTransactionData.date.toLocaleDateString()}
                     {chipPressed !== "otherDate" && "Outra Data"}
                   </InputChips>
                 </Link>
@@ -120,7 +120,7 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
               <Link to="/recurrency">
                 <MenuListItem>
                   <RefreshCw />
-                  {contextRecurrency.desc}
+                  {contextTransactionData.recurrency.desc}
                 </MenuListItem>
               </Link>
             </div>

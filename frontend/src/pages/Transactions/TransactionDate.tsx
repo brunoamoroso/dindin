@@ -5,7 +5,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 export default function TransactionDate() {
   const navigate = useNavigate();
-  const { contextDate, setContextDate, setChipPressed } = useTransactionsContext();
+  const {contextTransactionData, setContextTransactionData, setChipPressed } = useTransactionsContext();
 
   const handleOutsideClose = (e: MouseEvent<HTMLDivElement>) => {
     if (e.target !== e.currentTarget) return;
@@ -14,7 +14,10 @@ export default function TransactionDate() {
 
   const handleDayClick = (day: Date) => {
     console.log(day);
-    setContextDate(day);
+    setContextTransactionData((prevTransaction) => ({
+      ...prevTransaction,
+      date: day
+    }))
     setChipPressed("otherDate");
     navigate("/transaction");
   };
@@ -22,7 +25,7 @@ export default function TransactionDate() {
   return (
     <>
       <div className="fixed bg-neutral-950/95 h-dvh w-full flex container flex items-center justify-center" onClick={handleOutsideClose}>
-        <Calendar selected={contextDate} onDayClick={handleDayClick} />
+        <Calendar selected={contextTransactionData.date} onDayClick={handleDayClick} />
       </div>
       <div className="overflow-hidden">
         <Outlet />
