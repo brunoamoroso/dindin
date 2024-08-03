@@ -5,9 +5,12 @@ import { ChangeEvent, FormEvent, MouseEvent, useEffect } from "react";
 import { currencyFormat } from "@/utils/currencyFormat";
 import GainTransaction from "./GainTransaction";
 import ExpenseTransaction from "./ExpenseTransaction";
+import { useToast } from "@/components/ui/use-toast";
+import { ReceiptRussianRuble } from "lucide-react";
 
 export default function Transaction() {
   const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
+  const {toast} = useToast();
 
   useEffect(() => {
     const amountPlaceholder = document.getElementById("amount_placeholder");
@@ -85,6 +88,74 @@ export default function Transaction() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const {type, amount, category, account, date, paymentMethod, paymentCondition, installments} = contextTransactionData;
+
+    if(amount === 0){
+      toast({
+        title: "Sua transação não tem um valor",
+        variant: "destructive",
+        duration: 2000,
+      });
+
+      return;
+    }
+
+    if(category === undefined){
+      toast({
+        title: "Selecione ao menos uma categoria",
+        variant: "destructive",
+        duration: 2000,
+      });
+
+      return;
+    }
+
+    if(account === undefined){
+      toast({
+        title: "Selecione uma conta para a transação",
+        variant: "destructive",
+        duration: 2000,
+      });
+      return;
+    }
+
+    if(date.value === undefined){
+      toast({
+        title: "Selecione quando foi a transação",
+        variant: "destructive",
+        duration: 2000
+      });
+      return;
+    }
+
+    if((type === "expense") && (paymentMethod === "none")){
+      toast({
+        title: "Selecione a Forma de Pagamento da transação",
+        variant: "destructive",
+        duration: 2000,
+      });
+      return;
+    }
+
+    if((type === "expense") && (paymentCondition === "none")){  
+      toast({
+        title: "Selecione uma Condição de Pagamento para a transação",
+        variant: "destructive",
+        duration: 2000,
+      });
+      return;
+    }
+
+    if((paymentCondition === "multi") && (installments === "0")){
+      toast({
+        title: "Informe quantas parcelas terá a sua transação",
+        variant: "destructive",
+        duration: 2000,
+      });
+      return;
+    }
+
+
     console.log(contextTransactionData);
     return;
   }
