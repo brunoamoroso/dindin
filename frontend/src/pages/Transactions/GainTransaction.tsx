@@ -17,7 +17,7 @@ interface GainTransactionType{
 }
 
 export default function GainTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit}: GainTransactionType) {
-  const {contextTransactionData, chipPressed}  = useTransactionsContext();
+  const {contextTransactionData}  = useTransactionsContext();
   const location = useLocation(); 
   return (
     <>
@@ -90,9 +90,9 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
               <div className="flex gap-2">
                 <InputChips
                   value={"today"}
-                  variant={chipPressed === "today" ? "pressed" : "default"}
+                  variant={contextTransactionData.date.chip === "today" ? "pressed" : "default"}
                   onClick={handleDateToday}
-                  pressed={chipPressed === "today" ? true : false}
+                  pressed={contextTransactionData.date.chip === "today" ? true : false}
                 >
                   Hoje
                 </InputChips>
@@ -103,14 +103,14 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
                   <InputChips
                     value={"searchDate"}
                     variant={
-                      chipPressed === "otherDate" ? "pressed" : "default"
+                      contextTransactionData.date.chip === "otherDate" ? "pressed" : "default"
                     }
-                    pressed={chipPressed === "otherDate" ? true : false}
+                    pressed={contextTransactionData.date.chip === "otherDate" ? true : false}
                   >
-                    {chipPressed === "otherDate" &&
-                      contextTransactionData.date !== undefined &&
-                      contextTransactionData.date.toLocaleDateString()}
-                    {chipPressed !== "otherDate" && "Outra Data"}
+                    {contextTransactionData.date.chip === "otherDate" &&
+                      contextTransactionData.date.value !== undefined &&
+                      contextTransactionData.date.value.toLocaleDateString()}
+                    {contextTransactionData.date.chip !== "otherDate" && "Outra Data"}
                   </InputChips>
                 </Link>
               </div>

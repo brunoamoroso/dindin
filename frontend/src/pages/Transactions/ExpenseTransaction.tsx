@@ -17,8 +17,39 @@ interface ExpenseTransactionType{
 }
 
 export default function ExpenseTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit}: ExpenseTransactionType) {
-  const {contextTransactionData, chipPressed}  = useTransactionsContext();
+  const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
   const location = useLocation(); 
+
+  const handlePaymentChips = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const target = e.target as HTMLButtonElement;
+
+    if((contextTransactionData.paymentMethod === target.value) || (contextTransactionData.paymentCondition === target.value)){
+      setContextTransactionData((prevTransaction) => ({
+        ...prevTransaction,
+        [target.id]: "none"
+      }));
+      return;
+    }
+
+    setContextTransactionData((prevTransaction) => ({
+      ...prevTransaction,
+      [target.id]: target.value
+    }))
+  }
+
+  const handleInstallmentsChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let sanitized = parseInt(e.target.value.replace(/[^0-9]+/g, ''));
+
+    if(isNaN(sanitized)){
+      sanitized = 0;
+    }
+
+    e.target.value = sanitized.toString();
+
+    handleInputChange(e);
+  }
+
   return (
     <>
       <div className="container">
@@ -92,65 +123,61 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
               </div>
               <div className="flex gap-2">
                 <InputChips
-                  value={"today"}
-                  variant={chipPressed === "today" ? "pressed" : "default"}
-                  onClick={handleDateToday}
-                  pressed={chipPressed === "today" ? true : false}
+                  id="paymentMethod"
+                  value={"credit"}
+                  variant={contextTransactionData.paymentMethod === "credit" ? "pressed" : "default"}
+                  onClick={handlePaymentChips}
+                  pressed={contextTransactionData.paymentMethod === "credit" ? true : false}
                 >
                   Crédito
                 </InputChips>
-                <Link
-                  to={"/transaction/date"}
-                  state={{ previousLocation: location }}
-                >
-                  <InputChips
-                    value={"searchDate"}
+                <InputChips
+                    id="paymentMethod"
+                    value={"debit"}
                     variant={
-                      chipPressed === "otherDate" ? "pressed" : "default"
+                      contextTransactionData.paymentMethod === "debit" ? "pressed" : "default"
                     }
-                    pressed={chipPressed === "otherDate" ? true : false}
+                    onClick={handlePaymentChips}
+                    pressed={contextTransactionData.paymentMethod === "debit" ? true : false}
                   >
                     Débito
-                  </InputChips>
-                </Link>
+                </InputChips>
               </div>
             </div>
             <div className="py-3 flex flex-col gap-1.5">
               <span className="label-large text-title">Condição de Pagamento</span>
               <div className="flex gap-2">
                 <InputChips
-                  value={"today"}
-                  variant={chipPressed === "today" ? "pressed" : "default"}
-                  onClick={handleDateToday}
-                  pressed={chipPressed === "today" ? true : false}
+                  id="paymentCondition"
+                  value={"single"}
+                  variant={contextTransactionData.paymentCondition === "single" ? "pressed" : "default"}
+                  onClick={handlePaymentChips}
+                  pressed={contextTransactionData.paymentCondition === "single" ? true : false}
                 >
                   À vista
                 </InputChips>
-                <Link
-                  to={"/transaction/date"}
-                  state={{ previousLocation: location }}
-                >
-                  <InputChips
-                    value={"searchDate"}
+                <InputChips
+                    id="paymentCondition"
+                    value={"multi"}
                     variant={
-                      chipPressed === "otherDate" ? "pressed" : "default"
+                      contextTransactionData.paymentCondition === "multi" ? "pressed" : "default"
                     }
-                    pressed={chipPressed === "otherDate" ? true : false}
+                    onClick={handlePaymentChips}
+                    pressed={contextTransactionData.paymentCondition === "multi" ? true : false}
                   >
                     Parcelado
-                  </InputChips>
-                </Link>
+                </InputChips>
               </div>
             </div>
-            <TextField label="Número de Parcelas" placeholder="Número de Parcelas"/>
+            <TextField id="installments" label="Número de Parcelas" onChange={handleInstallmentsChange} pattern="[0-9]*" inputMode="numeric"/>
             <div className="py-3 flex flex-col gap-1.5">
               <span className="label-large text-title">Quando pagou</span>
               <div className="flex gap-2">
                 <InputChips
                   value={"today"}
-                  variant={chipPressed === "today" ? "pressed" : "default"}
+                  variant={contextTransactionData.date.chip === "today" ? "pressed" : "default"}
                   onClick={handleDateToday}
-                  pressed={chipPressed === "today" ? true : false}
+                  pressed={contextTransactionData.date.chip === "today" ? true : false}
                 >
                   Hoje
                 </InputChips>
@@ -161,14 +188,14 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
                   <InputChips
                     value={"searchDate"}
                     variant={
-                      chipPressed === "otherDate" ? "pressed" : "default"
+                      contextTransactionData.date.chip === "otherDate" ? "pressed" : "default"
                     }
-                    pressed={chipPressed === "otherDate" ? true : false}
+                    pressed={contextTransactionData.date.chip === "otherDate" ? true : false}
                   >
-                    {chipPressed === "otherDate" &&
-                      contextTransactionData.date !== undefined &&
-                      contextTransactionData.date.toLocaleDateString()}
-                    {chipPressed !== "otherDate" && "Outra Data"}
+                    {contextTransactionData.date.chip === "otherDate" &&
+                      contextTransactionData.date.value !== undefined &&
+                      contextTransactionData.date.value.toLocaleDateString()}
+                    {contextTransactionData.date.chip !== "otherDate" && "Outra Data"}
                   </InputChips>
                 </Link>
               </div>

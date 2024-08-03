@@ -7,7 +7,7 @@ import GainTransaction from "./GainTransaction";
 import ExpenseTransaction from "./ExpenseTransaction";
 
 export default function Transaction() {
-  const {contextTransactionData, setContextTransactionData, chipPressed, setChipPressed}  = useTransactionsContext();
+  const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
 
   useEffect(() => {
     const amountPlaceholder = document.getElementById("amount_placeholder");
@@ -19,25 +19,29 @@ export default function Transaction() {
 
   const handleDate = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if(chipPressed !== "today"){
+    if(contextTransactionData.date.chip !== "today"){
       const date = new Date();
       const day = date.getDate();
       const month = date.getMonth();
       const year = date.getFullYear();
       
       const today = new Date(year, month, day);
-      setChipPressed("today");
       setContextTransactionData((prevTransaction) => ({
         ...prevTransaction,
-        date: today
+        date: {
+          chip: "today",
+          value: today
+        }
       }))
       return;
     }
 
-    setChipPressed("none");
     setContextTransactionData((prevTransaction) => ({
       ...prevTransaction,
-      date: undefined
+      date: {
+        chip: "none",
+        value: undefined
+      }
     }))
   }
 

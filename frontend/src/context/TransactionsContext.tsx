@@ -29,15 +29,20 @@ interface TransactionDataType{
   subCategory: SubCategoryType | undefined;
   account: AccountType | undefined;
   recurrency: RecurrencyType;
-  date: Date | undefined;
+  date: {
+    chip: "none" | "today" | "otherDate",
+    value: Date | undefined
+  };
+  paymentMethod: "none" | "credit" | "debit",
+  paymentCondition: "none" | "single" | "multi"
+  installments: string;
+
 }
 
 
 interface TransactionsContextType{
     contextTransactionData: TransactionDataType;
     setContextTransactionData: React.Dispatch<React.SetStateAction<TransactionDataType>>;
-    chipPressed: "none" | "today" | "otherDate";
-    setChipPressed: React.Dispatch<React.SetStateAction<"none" | "today" | "otherDate">>;
 }
 
 export const TransactionsContext = createContext<TransactionsContextType | null>(null);
@@ -51,14 +56,18 @@ export const TransactionsContextProvider = () => {
     subCategory: undefined,
     account: undefined,
     recurrency: {id: "never", desc: "Nunca"},
-    date: undefined
+    date: {
+      chip: "none",
+      value: undefined
+    },
+    paymentMethod: "none",
+    paymentCondition: "none",
+    installments: "0",
   });
-  const [chipPressed, setChipPressed] = useState<"none" | "today" | "otherDate">("none");
-
 
   return (
     <TransactionsContext.Provider
-      value={{contextTransactionData, setContextTransactionData, chipPressed, setChipPressed }}
+      value={{contextTransactionData, setContextTransactionData}}
     >
       <Outlet />
     </TransactionsContext.Provider>
