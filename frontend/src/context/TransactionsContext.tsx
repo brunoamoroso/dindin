@@ -22,6 +22,7 @@ interface RecurrencyType{
 }
 
 interface TransactionDataType{
+  type: "gain" | "expense";
   amount: number | 0;
   desc: string;
   category: CategoryType | undefined;
@@ -43,6 +44,7 @@ export const TransactionsContext = createContext<TransactionsContextType | null>
 
 export const TransactionsContextProvider = () => {
   const [contextTransactionData, setContextTransactionData] = useState<TransactionDataType>({
+    type: "gain",
     amount: 0,
     desc: "",
     category: undefined,

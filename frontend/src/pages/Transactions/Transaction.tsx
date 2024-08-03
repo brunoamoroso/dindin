@@ -67,6 +67,15 @@ export default function Transaction() {
     }));
   }
 
+  const handleTypeTransaction = (e: string) => {
+    if(e === "gain" || e === "expense"){
+      setContextTransactionData((prevTransaction) => ({
+        ...prevTransaction,
+        type: e
+      }))
+    }
+  }
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(contextTransactionData);
@@ -76,8 +85,8 @@ export default function Transaction() {
   return (
     <div className="bg-surface h-dvh">
       <AppBar title="Adicionar Transação"/>
-      <InlineTabs defaultValue="gain" className="pt-8">
-        <InlineTabsList>
+      <InlineTabs defaultValue="gain" className="pt-8" onValueChange={handleTypeTransaction}>
+        <InlineTabsList >
           <InlineTabsTrigger value="gain">Ganho</InlineTabsTrigger>
           <InlineTabsTrigger value="expense" className="data-[state=active]:text-negative data-[state=active]:border-negative">Despesa</InlineTabsTrigger>
         </InlineTabsList>
