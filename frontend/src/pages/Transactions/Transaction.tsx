@@ -4,6 +4,7 @@ import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 import { ChangeEvent, FormEvent, MouseEvent, useEffect } from "react";
 import { currencyFormat } from "@/utils/currencyFormat";
 import GainTransaction from "./GainTransaction";
+import ExpenseTransaction from "./ExpenseTransaction";
 
 export default function Transaction() {
   const {contextTransactionData, setContextTransactionData, chipPressed, setChipPressed}  = useTransactionsContext();
@@ -92,6 +93,9 @@ export default function Transaction() {
         </InlineTabsList>
         <InlineTabsContent value="gain">
           <GainTransaction handleAmountChange={handleAmountChange} handleInputChange={handleInputChange} handleAmountPlaceholder={handleAmountPlaceholder} handleDateToday={handleDate} handleSubmit={handleSubmit}/>
+        </InlineTabsContent>
+        <InlineTabsContent value="expense">
+        <ExpenseTransaction handleAmountChange={handleAmountChange} handleInputChange={handleInputChange} handleAmountPlaceholder={handleAmountPlaceholder} handleDateToday={handleDate} handleSubmit={handleSubmit} />
         </InlineTabsContent>
       </InlineTabs>
     </div>

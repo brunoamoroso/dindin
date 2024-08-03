@@ -8,7 +8,7 @@ import { Landmark, RefreshCw, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-interface GainTransactionType{
+interface ExpenseTransactionType{
     handleAmountChange: (e: ChangeEvent<HTMLInputElement>) => void;
     handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
     handleAmountPlaceholder: (e: MouseEvent<HTMLDivElement>) => void;
@@ -16,19 +16,19 @@ interface GainTransactionType{
     handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
 }
 
-export default function GainTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit}: GainTransactionType) {
+export default function ExpenseTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit}: ExpenseTransactionType) {
   const {contextTransactionData, chipPressed}  = useTransactionsContext();
   const location = useLocation(); 
   return (
     <>
       <div className="container">
         <div className="py-8 ">
-          <span className="label-medium text-subtle">Valor Recebido</span>
+          <span className="label-medium text-subtle">Valor Gasto</span>
           <div className="flex gap-1">
             <span className="headline-small text-title">R$</span>
             <span
               id="amount_placeholder"
-              className="headline-small text-positive"
+              className="headline-small text-negative"
               onClick={handleAmountPlaceholder}
             >
               0,00
@@ -39,7 +39,7 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
               pattern="[0-9]"
               id="amount_input"
               type="text"
-              className="hidden text-positive"
+              className="hidden text-negative"
               placeholder="0,00"
               onChange={handleAmountChange}
             />
@@ -58,7 +58,7 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
             />
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Categoria</span>
-              <Link to="/categories/gain">
+              <Link to="/categories/expense">
                 <MenuListItem>
                   <Tag />
                   {!contextTransactionData.category && "Escolha uma categoria"}
@@ -86,7 +86,65 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
               </Link>
             </div>
             <div className="py-3 flex flex-col gap-1.5">
-              <span className="label-large text-title">Quando recebeu</span>
+              <div className="flex flex-col gap-1">
+                <span className="label-large text-title">Forma de Pagamento</span>
+                <span className="body-small text-subtle">Pagamentos de boleto, no pix ou em dinheiro também devem ser considerados como débito</span>
+              </div>
+              <div className="flex gap-2">
+                <InputChips
+                  value={"today"}
+                  variant={chipPressed === "today" ? "pressed" : "default"}
+                  onClick={handleDateToday}
+                  pressed={chipPressed === "today" ? true : false}
+                >
+                  Crédito
+                </InputChips>
+                <Link
+                  to={"/transaction/date"}
+                  state={{ previousLocation: location }}
+                >
+                  <InputChips
+                    value={"searchDate"}
+                    variant={
+                      chipPressed === "otherDate" ? "pressed" : "default"
+                    }
+                    pressed={chipPressed === "otherDate" ? true : false}
+                  >
+                    Débito
+                  </InputChips>
+                </Link>
+              </div>
+            </div>
+            <div className="py-3 flex flex-col gap-1.5">
+              <span className="label-large text-title">Condição de Pagamento</span>
+              <div className="flex gap-2">
+                <InputChips
+                  value={"today"}
+                  variant={chipPressed === "today" ? "pressed" : "default"}
+                  onClick={handleDateToday}
+                  pressed={chipPressed === "today" ? true : false}
+                >
+                  À vista
+                </InputChips>
+                <Link
+                  to={"/transaction/date"}
+                  state={{ previousLocation: location }}
+                >
+                  <InputChips
+                    value={"searchDate"}
+                    variant={
+                      chipPressed === "otherDate" ? "pressed" : "default"
+                    }
+                    pressed={chipPressed === "otherDate" ? true : false}
+                  >
+                    Parcelado
+                  </InputChips>
+                </Link>
+              </div>
+            </div>
+            <TextField label="Número de Parcelas" placeholder="Número de Parcelas"/>
+            <div className="py-3 flex flex-col gap-1.5">
+              <span className="label-large text-title">Quando pagou</span>
               <div className="flex gap-2">
                 <InputChips
                   value={"today"}
