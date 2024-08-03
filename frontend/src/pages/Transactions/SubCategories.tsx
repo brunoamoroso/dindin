@@ -58,7 +58,7 @@ export default function SubCategories() {
         
         {isLoading && (
           <div className="flex flex-col gap-6">
-            {Array.from({length: 5}).map((x, i, arr) => {
+            {Array.from({length: 5}).map((_x, i, arr) => {
               if(arr.length - 1 === i){
                 return (
                   <div key={i} className="flex flex-col gap-4">
