@@ -18,23 +18,15 @@ export default function Categories() {
     throw new Error("type undefined");
   }
 
-  const {data, isError, isLoading} = useQuery({
+  interface CategoryType{
+    id: string;
+    desc: string;
+  }
+
+  const {data, isError, isLoading} = useQuery<CategoryType[]>({
     queryKey: ['allCategories', type],
     queryFn: () => api.getCategories(type)
   });
-
-  // useEffect(() => {
-  //   const getCategories = async () => {
-  //     if(type === undefined){
-  //       throw new Error("type undefined");
-  //     }
-
-  //     const response: {status: string, message: []} = await api.getCategories(type);
-  //     setCategories(response.message)
-  //   }
-    
-  //   getCategories();
-  // }, [type]);
 
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     const id = e.currentTarget.dataset.id;
@@ -55,26 +47,30 @@ export default function Categories() {
     navigate(`/categories/sub/${desc}`);
   }
 
-  const categories = data?.message || [];
-
   return (
     <div className="bg-surface h-dvh flex flex-col">
       <AppBar title="Escolha uma categoria"/>
       <div className="container flex flex-1 flex-col bg-container2 rounded-t-lg py-10 gap-6">
         <TextField label="Buscar" placeholder="Busque por uma categoria ou subcategoria"/>
 
+        {isError && (
+          <span className="title-medium text-title">
+            Tivemos um problema ao carregar as categorias
+          </span>
+        )}
+
         {isLoading && (
           <div className="flex flex-col gap-6">
-            {Array.from({length: 5}).map((item, i, arr) => {
+            {Array.from({length: 5}).map((_x, i, arr) => {
               if(arr.length - 1 === i){
                 return (
-                  <div className="flex flex-col gap-4">
+                  <div key={i} className="flex flex-col gap-4">
                     <Skeleton className="w-full h-4 rounded-xl"/>
                   </div>
                 );
               }else{
                 return (
-                  <div className="flex flex-col gap-4">
+                  <div key={i} className="flex flex-col gap-4">
                     <Skeleton className="w-full h-4 rounded-xl"/>
                     <Separator />
                   </div>
@@ -84,9 +80,9 @@ export default function Categories() {
           </div>
         )}
 
-        {!isLoading && (
+        {(!isLoading && data !== undefined) && (
           <div className="flex flex-col">
-            {categories.map((category, index, arr) => {
+            {data.map((category, index, arr) => {
               if(arr.length - 1 === index){
                 //last item
                 return (                

@@ -17,10 +17,10 @@ export const getCategories = async (req: Request, res:Response) => {
                 throw new Error(err);
             });
 
-        return res.status(200).send({status: 200, message: categories});
+        return res.status(200).send(categories);
     }catch(err: unknown){
         console.log(err);
-        return res.status(422).send({status: 404, message: "Não conseguimos encontrar nenhuma categoria nesse momento."});
+        return res.status(422).send("Não conseguimos encontrar nenhuma categoria nesse momento.");
     }
 }
 
@@ -46,10 +46,10 @@ export const getSubCategories = async (req: Request, res:Response) => {
         const subCategories = query[0]!.subCategories;
         
         if(subCategories.length === 0){
-            return res.status(200).send({status: 204, message: "Essa categoria não possuí nenhuma sub categoria ainda"})
+            return res.status(204).send("Essa categoria não possuí nenhuma sub categoria ainda")
         }
 
-        return res.status(200).send({status: 200, message: subCategories});
+        return res.status(200).send(subCategories);
     }catch(err: unknown){
         console.log(err);
         return res.status(422).send({status: 404, message: "Não conseguimos encontrar nenhuma categoria nesse momento."});
