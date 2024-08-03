@@ -169,7 +169,7 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
                 </InputChips>
               </div>
             </div>
-            <TextField id="installments" label="Número de Parcelas" onChange={handleInstallmentsChange} pattern="[0-9]*" inputMode="numeric"/>
+            <TextField id="installments" label="Número de Parcelas" placeholder="Número de Parcelas" onChange={handleInstallmentsChange} pattern="[0-9]*" inputMode="numeric"/>
             <div className="py-3 flex flex-col gap-1.5">
               <span className="label-large text-title">Quando pagou</span>
               <div className="flex gap-2">

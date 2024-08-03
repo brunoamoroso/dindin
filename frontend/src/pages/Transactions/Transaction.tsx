@@ -76,7 +76,9 @@ export default function Transaction() {
     if(e === "gain" || e === "expense"){
       setContextTransactionData((prevTransaction) => ({
         ...prevTransaction,
-        type: e
+        type: e,
+        category: undefined,
+        subCategory: undefined,
       }))
     }
   }
@@ -90,7 +92,7 @@ export default function Transaction() {
   return (
     <div className="bg-surface h-dvh">
       <AppBar title="Adicionar Transação"/>
-      <InlineTabs defaultValue="gain" className="pt-8" onValueChange={handleTypeTransaction}>
+      <InlineTabs defaultValue={contextTransactionData.type} className="pt-8" onValueChange={handleTypeTransaction}>
         <InlineTabsList >
           <InlineTabsTrigger value="gain">Ganho</InlineTabsTrigger>
           <InlineTabsTrigger value="expense" className="data-[state=active]:text-negative data-[state=active]:border-negative">Despesa</InlineTabsTrigger>
