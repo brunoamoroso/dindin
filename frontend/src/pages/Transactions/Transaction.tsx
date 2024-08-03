@@ -6,7 +6,6 @@ import { currencyFormat } from "@/utils/currencyFormat";
 import GainTransaction from "./GainTransaction";
 import ExpenseTransaction from "./ExpenseTransaction";
 import { useToast } from "@/components/ui/use-toast";
-import { ReceiptRussianRuble } from "lucide-react";
 
 export default function Transaction() {
   const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();

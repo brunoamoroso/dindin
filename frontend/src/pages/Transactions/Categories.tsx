@@ -5,25 +5,34 @@ import { MouseEvent, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from '@/api/api';
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Categories() {
   const {type} = useParams();
-  const [categories, setCategories] = useState([{id: "", desc: ""}]);
   const navigate = useNavigate();
   const {setContextTransactionData} = useTransactionsContext();
 
-  useEffect(() => {
-    const getCategories = async () => {
-      if(type === undefined){
-        throw new Error("type undefined");
-      }
+  if(type === undefined){
+    throw new Error("type undefined");
+  }
 
-      const response: {status: string, message: []} = await api.getCategories(type);
-      setCategories(response.message)
-    }
+  const {data, isError, isLoading} = useQuery({
+    queryKey: ['allCategories', type],
+    queryFn: () => api.getCategories(type)
+  });
+
+  // useEffect(() => {
+  //   const getCategories = async () => {
+  //     if(type === undefined){
+  //       throw new Error("type undefined");
+  //     }
+
+  //     const response: {status: string, message: []} = await api.getCategories(type);
+  //     setCategories(response.message)
+  //   }
     
-    getCategories();
-  }, [type]);
+  //   getCategories();
+  // }, [type]);
 
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     const id = e.currentTarget.dataset.id;
@@ -43,6 +52,8 @@ export default function Categories() {
 
     navigate(`/categories/sub/${desc}`);
   }
+
+  const categories = data?.message || [];
 
   return (
     <div className="bg-surface h-dvh flex flex-col">

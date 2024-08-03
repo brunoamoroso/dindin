@@ -11,6 +11,7 @@ import { TransactionsContextProvider } from './context/TransactionsContext'
 import TransactionAccount from './pages/Transactions/TransactionAccount'
 import Recurrency from './pages/Transactions/Recurrency'
 import TransactionDate from './pages/Transactions/TransactionDate'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 function AppRoutes(){
   const location = useLocation();
@@ -43,12 +44,14 @@ function AppRoutes(){
 }
 
 function App() {
-
+  const queryClient = new QueryClient();
   return (
     <>
       <BrowserRouter>
-        <AppRoutes /> 
-        <Toaster />
+        <QueryClientProvider client={queryClient}>
+          <AppRoutes /> 
+          <Toaster />
+        </QueryClientProvider>
       </BrowserRouter>
     </>
   )
