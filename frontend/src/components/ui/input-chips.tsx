@@ -2,7 +2,7 @@ import {cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 
-const inputChipsVariants = cva("rounded shadow-button text-title label-medium py-1.5 px-3 flex gap-1 items-center", {
+const inputChipsVariants = cva("rounded shadow-button text-title label-medium py-1.5 px-3 flex gap-1 items-center disabled:text-disabled disabled:opacity-50", {
     variants: {
         variant: {
             default: "",

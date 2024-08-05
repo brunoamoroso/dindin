@@ -96,6 +96,11 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        disabled:{
+          DEFAULT: "oklch(var(--disabled))",
+          "on-disabled": "oklch(var(--on-disabled))",
+        },
+        
         title: "var(--text-title)",
         body: "var(--text-body)",
         container2: "oklch(var(--container2))",
