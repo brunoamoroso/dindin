@@ -5,7 +5,7 @@ import { MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Recurrency() {
-    const {setContextRecurrency} = useTransactionsContext();
+    const {setContextTransactionData} = useTransactionsContext();
     const navigate = useNavigate();
     // this comes from a scalar type in the database
     const options = [
@@ -50,7 +50,10 @@ export default function Recurrency() {
         if((id === undefined) || (desc === undefined)){
             throw new Error("Recurrency value undefined");
         }
-        setContextRecurrency({id: id, desc: desc});
+        setContextTransactionData((prevTransaction) => ({
+            ...prevTransaction,
+            recurrency: {id: id, desc: desc}
+        }));
         navigate("/transaction");
     }
   return (
