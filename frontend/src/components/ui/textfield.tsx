@@ -12,10 +12,10 @@ interface textFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const TextField = ({label, ...props} : textFieldProps) => {
   return(
-    <div className="flex gap-1.5 flex-col w-full">
-        <Label htmlFor={props.id}>{label}</Label>
-        <Input {...props} />
-    </div>
+    <Label htmlFor={props.id} className="flex gap-1.5 flex-col w-full">
+    {label}
+      <Input {...props} />
+    </Label>
   );
 }
 
