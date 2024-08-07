@@ -6,6 +6,8 @@ import { currencyFormat } from "@/utils/currencyFormat";
 import GainTransaction from "./GainTransaction";
 import ExpenseTransaction from "./ExpenseTransaction";
 import { useToast } from "@/components/ui/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import api from '../../api/api';
 
 export default function Transaction() {
   const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
@@ -85,7 +87,10 @@ export default function Transaction() {
     }
   }
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+
+  const mutation = useMutation({mutationFn: (data: FormData) => api.addTransaction(data)});
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const {type, amount, category, account, date, paymentMethod, paymentCondition, installments} = contextTransactionData;
 
@@ -154,6 +159,13 @@ export default function Transaction() {
       return;
     }
 
+    const formData = new FormData();
+
+    for (const [key, value] of Object.entries(contextTransactionData)){
+      formData.append(key, value);
+    }
+
+    mutation.mutate(formData);
 
     console.log(contextTransactionData);
     return;

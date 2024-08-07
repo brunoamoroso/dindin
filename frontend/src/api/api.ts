@@ -60,6 +60,10 @@ class Api{
     public getAccounts<T>(): Promise<T>{
         return this.get<T>(`/accounts/list`);
     }
+
+    public addTransaction<T>(body: unknown): Promise<T>{
+        return this.post<T>("/transaction/add", body);
+    }
 }
 
 const instance = new Api();

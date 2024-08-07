@@ -13,7 +13,7 @@ const IconButtonVariants = cva(
         ghost: "rounded-full bg-transparent text-title",
       },
       size: {
-        default: "h-10 px-4 py-2",
+        default: "h-10 w-14 px-4 py-2",
       },
     },
     defaultVariants: {
