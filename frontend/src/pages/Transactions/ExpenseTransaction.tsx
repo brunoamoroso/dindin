@@ -43,6 +43,13 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
         paymentCondition: "single"
       }))
     }
+
+    if(contextTransactionData.paymentMethod === "credit" && target.value === "single"){
+      setContextTransactionData((prevTransaction) => ({
+        ...prevTransaction,
+        installments: ""
+      }))
+    }
   }
 
   const handleInstallmentsChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -130,15 +137,6 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
               </div>
               <div className="flex gap-2">
                 <InputChips
-                  id="paymentMethod"
-                  value={"credit"}
-                  variant={contextTransactionData.paymentMethod === "credit" ? "pressed" : "default"}
-                  onClick={handlePaymentChips}
-                  pressed={contextTransactionData.paymentMethod === "credit" ? true : false}
-                >
-                  Crédito
-                </InputChips>
-                <InputChips
                     id="paymentMethod"
                     value={"debit"}
                     variant={
@@ -148,6 +146,15 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
                     pressed={contextTransactionData.paymentMethod === "debit" ? true : false}
                   >
                     Débito
+                </InputChips>
+                <InputChips
+                  id="paymentMethod"
+                  value={"credit"}
+                  variant={contextTransactionData.paymentMethod === "credit" ? "pressed" : "default"}
+                  onClick={handlePaymentChips}
+                  pressed={contextTransactionData.paymentMethod === "credit" ? true : false}
+                >
+                  Crédito
                 </InputChips>
               </div>
             </div>
@@ -177,7 +184,18 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
                 </InputChips>
               </div>
             </div>
-            <TextField id="installments" label="Número de Parcelas" placeholder="Número de Parcelas" onChange={handleInstallmentsChange} pattern="[0-9]*" inputMode="numeric"/>
+
+            <TextField 
+              id="installments"
+              label="Número de Parcelas" 
+              placeholder="Número de Parcelas" 
+              onChange={handleInstallmentsChange} 
+              pattern="[0-9]*" 
+              inputMode="numeric"
+              disabled={contextTransactionData.paymentMethod === "debit" || contextTransactionData.paymentCondition === "single"}
+              value={contextTransactionData.installments}
+            />
+            
             <div className="py-3 flex flex-col gap-1.5">
               <span className="label-large text-title">Quando pagou</span>
               <div className="flex gap-2">
