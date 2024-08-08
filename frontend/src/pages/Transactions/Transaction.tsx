@@ -8,6 +8,7 @@ import ExpenseTransaction from "./ExpenseTransaction";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import api from '../../api/api';
+import { TransactionDataType } from "@/context/TransactionsContext";
 
 export default function Transaction() {
   const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
@@ -88,7 +89,7 @@ export default function Transaction() {
   }
 
 
-  const mutation = useMutation({mutationFn: (data: FormData) => api.addTransaction(data)});
+  const mutation = useMutation({mutationFn: (data: TransactionDataType) => api.addTransaction(data)});
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -159,15 +160,8 @@ export default function Transaction() {
       return;
     }
 
-    const formData = new FormData();
-
-    for (const [key, value] of Object.entries(contextTransactionData)){
-      formData.append(key, value);
-    }
-
-    mutation.mutate(formData);
-
-    console.log(contextTransactionData);
+    mutation.mutate(contextTransactionData);
+    
     return;
   }
 

@@ -11,8 +11,8 @@ export default function TransactionAccount() {
   const {setContextTransactionData} = useTransactionsContext();
   const navigate = useNavigate();
 
-  const {data, isError, isLoading} = useQuery<{id: string, desc: string}[]>({
-    queryKey: ['accounts'],
+  const {data, isError, isLoading} = useQuery<{id: string, description: string}[]>({
+    queryKey: ['accountsList'],
     queryFn: () => api.getAccounts()
   });
 
@@ -69,11 +69,11 @@ export default function TransactionAccount() {
             if(arr.length - 1 === index){
             //last item
             return (                
-                <MenuListItem size="lg" trailingIcon={false} key={index} dataId={account.id} value={account.desc} onClick={handleClick}>{account.desc}</MenuListItem>
+                <MenuListItem size="lg" trailingIcon={false} key={index} dataId={account.id} value={account.description} onClick={handleClick}>{account.description}</MenuListItem>
             )
             }else{
             return (   
-                <MenuListItem size="lg" trailingIcon={false} key={index} dataId={account.id} value={account.desc} onClick={handleClick} separator={true}>{account.desc}</MenuListItem>          
+                <MenuListItem size="lg" trailingIcon={false} key={index} dataId={account.id} value={account.description} onClick={handleClick} separator={true}>{account.description}</MenuListItem>          
               )
             }
           })

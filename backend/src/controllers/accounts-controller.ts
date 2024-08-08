@@ -12,7 +12,7 @@ export const getAccounts = async (req: Request, res: Response) => {
                 }
             `);
 
-        return res.status(200).send({status: 200, message: accounts});
+        return res.status(200).send(accounts);
 
     }catch(err){
         throw new Error(err as string);
