@@ -36,6 +36,13 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
       ...prevTransaction,
       [target.id]: target.value
     }))
+
+    if(target.value === "debit"){
+      setContextTransactionData((prevTransaction) => ({
+        ...prevTransaction,
+        paymentCondition: "single"
+      }))
+    }
   }
 
   const handleInstallmentsChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -150,9 +157,9 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
                 <InputChips
                   id="paymentCondition"
                   value={"single"}
-                  variant={contextTransactionData.paymentCondition === "single" ? "pressed" : "default"}
+                  variant={(contextTransactionData.paymentCondition === "single" || contextTransactionData.paymentMethod ===  "debit") ? "pressed" : "default"}
                   onClick={handlePaymentChips}
-                  pressed={contextTransactionData.paymentCondition === "single" ? true : false}
+                  pressed={(contextTransactionData.paymentCondition === "single" || contextTransactionData.paymentMethod === "debit" ) ? true : false}
                 >
                   À vista
                 </InputChips>
@@ -160,10 +167,11 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
                     id="paymentCondition"
                     value={"multi"}
                     variant={
-                      contextTransactionData.paymentCondition === "multi" ? "pressed" : "default"
+                      (contextTransactionData.paymentCondition === "multi" && contextTransactionData.paymentMethod !== "debit") ? "pressed" : "default"
                     }
                     onClick={handlePaymentChips}
-                    pressed={contextTransactionData.paymentCondition === "multi" ? true : false}
+                    pressed={(contextTransactionData.paymentCondition === "multi" && contextTransactionData.paymentMethod !== "debit") ? true : false}
+                    disabled={contextTransactionData.paymentMethod === "debit"}
                   >
                     Parcelado
                 </InputChips>
