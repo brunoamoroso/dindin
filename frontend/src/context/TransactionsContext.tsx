@@ -21,7 +21,7 @@ interface RecurrencyType{
   desc: string;
 }
 
-interface TransactionDataType{
+export interface TransactionDataType{
   type: "gain" | "expense";
   amount: number | 0;
   desc: string;

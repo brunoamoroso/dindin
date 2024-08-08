@@ -10,9 +10,12 @@ class Api{
 
     }
 
-    private async request<T>(endpoint: string, method: string, body?: unknown): Promise<T>{
+    private async request<T>(endpoint: string, method: string, body?: unknown, headers?: HeadersInit): Promise<T>{
+        const isFormData = body instanceof FormData;
+
         const response = await fetch(this.baseURL+endpoint, {
             method: method,
+            headers: isFormData ? headers : {...headers, "Content-Type": "application/json"},
             body: body as BodyInit
         });
 
@@ -59,6 +62,10 @@ class Api{
 
     public getAccounts<T>(): Promise<T>{
         return this.get<T>(`/accounts/list`);
+    }
+
+    public addTransaction<T>(body: unknown): Promise<T>{
+        return this.post<T>("/transactions/add", JSON.stringify(body));
     }
 }
 

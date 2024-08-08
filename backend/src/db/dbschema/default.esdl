@@ -52,6 +52,7 @@ module default {
         required description: str;
         required amount: int32;
         required category: Category;
+        subCategory: subCategory;
         required account: Account;
         required date_earned: cal::local_date;
         required recurrency: Recurrency {
@@ -64,6 +65,7 @@ module default {
         required description: str;
         required amount: int32;
         required category: Category;
+        subCategory: subCategory;
         required account: Account;
         required date_paid: cal::local_date;
         payment_method: str;

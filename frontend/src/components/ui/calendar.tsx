@@ -6,6 +6,7 @@ import { DayPicker } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+import { IconButtonVariants } from "./icon-button"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
@@ -18,7 +19,7 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-5 bg-container0 rounded shadow-2xl border border-outline", className)}
+      className={cn("p-5 bg-container0 rounded-md shadow-2xl border border-outline", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-8",
@@ -26,7 +27,7 @@ function Calendar({
         caption_label: "label-large",
         nav: "space-x-1 flex items-center",
         nav_button: cn(
-          buttonVariants({ variant: "ghost" })
+          IconButtonVariants({ variant: "ghost"}),
         ),
         nav_button_previous: "absolute left-1",
         nav_button_next: "absolute right-1",
