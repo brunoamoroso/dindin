@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import api from '../../api/api';
 import { TransactionDataType } from "@/context/TransactionsContext";
 import { useNavigate } from "react-router-dom";
+import { CircleCheck } from "lucide-react";
 
 export default function Transaction() {
   const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
@@ -166,6 +167,16 @@ export default function Transaction() {
 
     mutation.mutate(contextTransactionData, {
       onSuccess: () => {
+        toast({
+          title: (
+              <div className="flex gap-3 items-center">
+                <CircleCheck />
+                Transação registrada com sucesso!
+              </div>
+          ),
+          duration: 2500,
+          variant: "positive"
+        })
         navigate("/dashboard");
       }
     });
