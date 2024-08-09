@@ -20,7 +20,8 @@ class Api{
         });
 
         if(!response.ok){
-            console.error(`HTTP ERROR! Status: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`HTTP Error! Status: ${response.status}, Message: ${errorText}`);
         }
 
         return await response.json();
