@@ -65,10 +65,11 @@ export const addTransaction = async (req: Request, res: Response) => {
                     paymentCondition: paymentCondition,
                     installments: parseInt(installments)
                 });
+                
         }catch(err){
             throw new Error(err as string);
         }
     }
 
-
+    return res.status(201).json({message: "Transactron created"});
 }

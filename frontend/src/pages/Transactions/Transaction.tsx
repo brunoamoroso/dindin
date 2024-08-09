@@ -9,9 +9,11 @@ import { useToast } from "@/components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import api from '../../api/api';
 import { TransactionDataType } from "@/context/TransactionsContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Transaction() {
   const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
+  const navigate = useNavigate();
   const {toast} = useToast();
 
   useEffect(() => {
@@ -89,7 +91,9 @@ export default function Transaction() {
   }
 
 
-  const mutation = useMutation({mutationFn: (data: TransactionDataType) => api.addTransaction(data)});
+  const mutation = useMutation({
+    mutationFn: (data: TransactionDataType) =>  {return api.addTransaction(data)}
+  });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -160,9 +164,11 @@ export default function Transaction() {
       return;
     }
 
-    mutation.mutate(contextTransactionData);
-    
-    return;
+    mutation.mutate(contextTransactionData, {
+      onSuccess: () => {
+        navigate("/dashboard");
+      }
+    });
   }
 
   return (
