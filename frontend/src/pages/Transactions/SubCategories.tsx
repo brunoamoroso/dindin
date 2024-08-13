@@ -97,7 +97,7 @@ export default function SubCategories() {
               )}
           </div>
           <div className="flex flex-col gap-6">
-              <Button variant={"ghost"}>Não escolher subcategoria</Button>
+              <Button variant={"ghost"} onClick={() => {navigate('/transaction')}}>Não escolher subcategoria</Button>
           </div>
           </>
         )}
