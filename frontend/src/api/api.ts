@@ -10,14 +10,18 @@ class Api{
 
     }
 
-    private async request<T>(endpoint: string, method: string, body?: unknown): Promise<T>{
+    private async request<T>(endpoint: string, method: string, body?: unknown, headers?: HeadersInit): Promise<T>{
+        const isFormData = body instanceof FormData;
+
         const response = await fetch(this.baseURL+endpoint, {
             method: method,
+            headers: isFormData ? headers : {...headers, "Content-Type": "application/json"},
             body: body as BodyInit
         });
 
         if(!response.ok){
-            console.error(`HTTP ERROR! Status: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`HTTP Error! Status: ${response.status}, Message: ${errorText}`);
         }
 
         return await response.json();
@@ -47,6 +51,22 @@ class Api{
 
     public createProfile<T>(body: unknown): Promise<T>{
         return this.post<T>("/profile/create", body);
+    }
+
+    public getCategories<T>(type: string): Promise<T>{
+        return this.get<T>(`/categories/${type}`);
+    }
+
+    public getSubCategories<T>(category: string): Promise<T>{
+        return this.get<T>(`/categories/sub/${category}`);
+    }
+
+    public getAccounts<T>(): Promise<T>{
+        return this.get<T>(`/accounts/list`);
+    }
+
+    public addTransaction<T>(body: unknown): Promise<T>{
+        return this.post<T>("/transactions/add", JSON.stringify(body));
     }
 }
 

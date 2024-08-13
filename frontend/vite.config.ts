@@ -22,7 +22,12 @@ export default defineConfig({
         name: "DinDin",
         short_name: "DinDin",
         description: "Track your money",
-        theme_color: "#ffffff",
+        theme_color: "#080e12",
+        background_color: "#080e12",
+        display: "standalone",
+        orientation: "portrait",
+        start_url: "/",
+        
       },
 
       injectManifest: {

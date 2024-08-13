@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { IconButton } from "@/components/ui/iconButton";
+import { IconButton } from "@/components/ui/icon-button";
 import { ChevronDown, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -11,7 +11,7 @@ export default function Dashboard() {
                 <Button variant={"ghost"}>
                     <ChevronDown /> Julho
                 </Button>
-                <Link to={"/transactions"}>
+                <Link to={"/transaction"}>
                     <IconButton>
                         <Plus strokeWidth={3}/>
                     </IconButton>
