@@ -10,7 +10,7 @@ export const CreateProfile = async (req: Request, res:Response) => {
     }
 
     try{
-        await clientDB.execute(`
+        const newUser = await clientDB.execute(`
             insert User {
                 photo := <str>$photo,
                 name := <str>$name,
@@ -27,6 +27,7 @@ export const CreateProfile = async (req: Request, res:Response) => {
                 res.status(422);
                 throw new Error(err);
             });
+        console.log(newUser);
     }catch(err: unknown){
         if(err.message.includes("email")){
             return res.status(422).send({status: 422, message: "O email que você usou já está cadastrado."});
@@ -35,5 +36,5 @@ export const CreateProfile = async (req: Request, res:Response) => {
         return res.status(422).send({status: 422, message: "Erro inesperado. Avise um administrador"});
     }
 
-    return res.status(201).send({status: 201, message: "user created"});
+    return res.status(201).send({message: "user created"});
 }

@@ -1,6 +1,6 @@
 import express from 'express';
 import { CreateProfile } from '../controllers/profile-controller';
-import imageUploader from '../utils/imageUploader';
+import imageUploader from '../utils/image-uploader';
 
 const profileRoutes = express.Router();
 
