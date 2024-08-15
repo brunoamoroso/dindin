@@ -4,6 +4,7 @@ module default {
         required name: str;
         required surname: str;
         required email: str {constraint exclusive};
+        required username: str {constraint exclusive};
         required password: str;
     }
 
