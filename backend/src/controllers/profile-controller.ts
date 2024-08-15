@@ -39,13 +39,16 @@ export const CreateProfile = async (req: Request, res:Response) => {
             return res.status(422).json({message: "O nome de usuário já está em uso"})
         }
 
-
+        //hash the password
+        const salt = await bcrypt.genSalt(12);
+        const passwordHash = await bcrypt.hash(password, salt);
+        
         const insert = e.insert(e.User, {
             photo: e.str(photo),
             name: e.str(name),
             surname: e.str(surname),
             email: e.str(email),
-            password: e.str(password),
+            password: e.str(passwordHash),
             username: e.str(username),
         });
 
@@ -54,10 +57,6 @@ export const CreateProfile = async (req: Request, res:Response) => {
         await createUserToken(newUser, req, res);
 
     }catch(err: unknown){
-        if(err.message.includes("email")){
-            return res.status(422).send({status: 422, message: "O email que você usou já está cadastrado."});
-        }
-
-        return res.status(422).send({status: 422, message: "Erro inesperado. Avise um administrador"});
+        return res.status(422).json({message: "Error inesperado."});
     }
 }
