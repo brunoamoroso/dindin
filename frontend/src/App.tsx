@@ -13,6 +13,7 @@ import Recurrency from './pages/Transactions/Recurrency'
 import TransactionDate from './pages/Transactions/TransactionDate'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthContextProvider } from './context/AuthContext'
+import SignIn from './pages/Profile/SignIn'
 
 function AppRoutes(){
   const location = useLocation();
@@ -22,6 +23,7 @@ function AppRoutes(){
         <Routes location={previousLocation || location}>
           <Route path='/' element={<Home />}/>
           <Route path='/profile/create' element={<CreateProfile />}/>
+          <Route path='profile/signin' element={<SignIn />} />
 
           <Route element={<AuthContextProvider />}>
             <Route path='/dashboard' element={<Dashboard />}/>
