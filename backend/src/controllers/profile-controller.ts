@@ -1,4 +1,4 @@
-import { query, Request, Response } from "express";
+import { Request, Response } from "express";
 import clientDB from "../db/conn";
 import e from '../db/dbschema/edgeql-js';
 import { createUserToken } from "../utils/create-user-token";
@@ -42,7 +42,7 @@ export const CreateProfile = async (req: Request, res:Response) => {
         //hash the password
         const salt = await bcrypt.genSalt(12);
         const passwordHash = await bcrypt.hash(password, salt);
-        
+
         const insert = e.insert(e.User, {
             photo: e.str(photo),
             name: e.str(name),
@@ -58,5 +58,17 @@ export const CreateProfile = async (req: Request, res:Response) => {
 
     }catch(err: unknown){
         return res.status(422).json({message: "Error inesperado."});
+    }
+}
+
+export const SignIn = async (req: Request, res: Response) => {
+    const {email, password, username} = req.body;
+
+    if(!email && !username){
+        return res.status(422).json({message: "Usuário ou email são obrigatórios"});
+    }
+
+    if(!password){
+        return res.status(422).json({message: "A senha é obrigatória"});
     }
 }
