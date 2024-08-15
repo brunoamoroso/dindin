@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import clientDB from "../db/conn";
 import e from '../db/dbschema/edgeql-js';
 import { createUserToken } from "../utils/create-user-token";
@@ -71,4 +71,26 @@ export const SignIn = async (req: Request, res: Response) => {
     if(!password){
         return res.status(422).json({message: "A senha é obrigatória"});
     }
+
+    const queryUser = e.select(e.User, () => ({
+        id: true,
+        username: true,
+        password: true,
+        filter_single: {username: e.str(username)}
+    }));
+    
+    const user = await queryUser.run(clientDB);
+
+    if(!user){
+        return res.status(422).json({message: "Usuário não existe"})
+    }
+
+    //check password
+    const checkPassword = await bcrypt.compare(password, user.password);
+
+    if(!checkPassword){
+        return res.status(422).json({message: "Senha inválida"});
+    }
+
+    await createUserToken(user, req, res);
 }
