@@ -16,7 +16,7 @@ class Api{
         const response = await fetch(this.baseURL+endpoint, {
             method: method,
             headers: isFormData ? headers : {...headers, "Content-Type": "application/json"},
-            body: isFormData ? JSON.stringify(body) : body as BodyInit
+            body: isFormData ? body as BodyInit: JSON.stringify(body)
         });
 
         if(!response.ok){
@@ -53,7 +53,8 @@ class Api{
         return this.post<T>("/profile/create", body);
     }
     
-    public signIn<T>(body: {user: string; password: string;}): Promise<T>{
+    public signIn<T>(body: {username: string; password: string;}): Promise<T>{
+        console.log(body);
         return this.post<T>("/profile/signin", body);
     }
 

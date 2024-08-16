@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
 
 export default function SignIn() {
-  const [userData, setUserData] = useState({ user: "", password: "" });
+  const [userData, setUserData] = useState({ username: "", password: "" });
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ export default function SignIn() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!userData.user || userData.user === undefined) {
+    if (!userData.username || userData.username === undefined) {
       toast({
         title: "Preencha um nome de usuário ou email",
         variant: "destructive",
@@ -51,7 +51,7 @@ export default function SignIn() {
 
       if (userAuthenticated.token) {
         Cookies.set("token", userAuthenticated.token);
-        navigate("dashboard");
+        navigate("/dashboard");
       }
     } catch (err) {
       toast({
@@ -71,7 +71,7 @@ export default function SignIn() {
           <div className="flex flex-col gap-6">
             <TextField
               label="Nome de Usuário ou Email"
-              id="user"
+              id="username"
               placeholder="Nome de Usuário ou Email"
               onChange={handleChange}
             />
