@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Cookies from 'js-cookie';
 
 
@@ -12,7 +12,6 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthContextProvider = () => {
     const [token, setToken] = useState<string | null>(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const cookieToken = Cookies.get('token')
@@ -21,10 +20,6 @@ export const AuthContextProvider = () => {
             setToken(cookieToken);
         }
     }, []);
-
-    if(!token){
-        navigate("/");
-    }
 
     return(
         <AuthContext.Provider value={{token, setToken}}>
