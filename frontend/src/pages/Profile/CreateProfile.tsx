@@ -6,6 +6,8 @@ import PasswordValidator from "@/components/ui/passwordvalidator";
 import TextField from "@/components/ui/textfield";
 import { useToast } from "@/components/ui/use-toast";
 import { passwordCheck } from "@/utils/passwordCheck";
+import { useMutation } from "@tanstack/react-query";
+import Cookies from "js-cookie";
 import { Camera } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -55,6 +57,15 @@ export default function CreateProfile() {
     }));
   };
 
+  interface CreationResponse{
+    message: string;
+    token: string;
+  }
+  
+  const mutation = useMutation<CreationResponse, Error, FormData>({
+    mutationFn: (data: FormData) => {return api.createProfile(data)}
+  });
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -70,19 +81,20 @@ export default function CreateProfile() {
     }
 
     try{
-        const userCreation: {status: number, message: string} = await api.createProfile(formData);
-         
-        if(userCreation.status === 201){
-          navigate("/dashboard");
-        }
-
-        if(userCreation.status === 422){
-          toast({
-            title: userCreation.message,
-            variant: "destructive",
-            duration: 2000,
-          });
-        }
+        mutation.mutate(formData, {
+          onSuccess: (data) => {
+              console.log(data);
+              Cookies.set("token", data.token);
+              navigate("/dashboard");
+          },
+          onError: () => {
+            toast({
+              title: "Tivemos um problema ao tentar criar a sua conta",
+              variant: "destructive",
+              duration: 2000,
+            })
+          }
+        })
     }catch(err){
       console.error(err);
     }    
@@ -148,6 +160,7 @@ export default function CreateProfile() {
                 onChange={handleChange}
               />
               <TextField id="surname" label="Sobrenome" required={true} onChange={handleChange} />
+              <TextField id="username" label="Nome de Usuário" required={true} onChange={handleChange} />
               <TextField id="email" label="Email" required={true} onChange={handleChange}/>
               <div className="flex flex-col gap-2.5">
                 <TextField type="password" id="password" label="Senha"  required={true} onChange={handlePasswordValidation} />

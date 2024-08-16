@@ -16,7 +16,7 @@ class Api{
         const response = await fetch(this.baseURL+endpoint, {
             method: method,
             headers: isFormData ? headers : {...headers, "Content-Type": "application/json"},
-            body: body as BodyInit
+            body: isFormData ? body as BodyInit: JSON.stringify(body)
         });
 
         if(!response.ok){
@@ -27,7 +27,7 @@ class Api{
         return await response.json();
     }
 
-    public get<T>(endpoint: string): Promise<T>{
+    private get<T>(endpoint: string): Promise<T>{
         return this.request<T>(endpoint, "GET");
     }
 
@@ -37,20 +37,25 @@ class Api{
      * @param body 
      * @returns 
      */
-    public post<T>(endpoint: string, body: unknown): Promise<T>{
+    private post<T>(endpoint: string, body: unknown): Promise<T>{
         return this.request<T>(endpoint, "POST", body);
     }
 
-    public put<T>(endpoint: string, body: unknown): Promise<T>{
+    private put<T>(endpoint: string, body: unknown): Promise<T>{
         return this.request<T>(endpoint, "PUT", body);
     }
 
-    public delete<T>(endpoint:string): Promise<T>{
+    private delete<T>(endpoint:string): Promise<T>{
         return this.request<T>(endpoint, "DELETE");
     }
 
     public createProfile<T>(body: unknown): Promise<T>{
         return this.post<T>("/profile/create", body);
+    }
+    
+    public signIn<T>(body: {username: string; password: string;}): Promise<T>{
+        console.log(body);
+        return this.post<T>("/profile/signin", body);
     }
 
     public getCategories<T>(type: string): Promise<T>{
