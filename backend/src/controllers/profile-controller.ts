@@ -62,9 +62,9 @@ export const CreateProfile = async (req: Request, res:Response) => {
 }
 
 export const SignIn = async (req: Request, res: Response) => {
-    const {email, password, username} = req.body;
+    const {username, password} = req.body;
 
-    if(!email && !username){
+    if(!username){
         return res.status(422).json({message: "Usuário ou email são obrigatórios"});
     }
 
@@ -72,12 +72,17 @@ export const SignIn = async (req: Request, res: Response) => {
         return res.status(422).json({message: "A senha é obrigatória"});
     }
 
-    const queryUser = e.select(e.User, () => ({
-        id: true,
-        username: true,
-        password: true,
-        filter_single: {username: e.str(username)}
-    }));
+    const queryUser = e.select(e.User, (userSelect) => {
+        const isUsername = e.op(userSelect.username, "=", username);
+        const isEmail = e.op(userSelect.email, "=", username);
+
+        return{
+            id: true,
+            username: true,
+            password: true,
+            filter_single: e.op(isUsername, 'or', isEmail)
+        }
+    });
     
     const user = await queryUser.run(clientDB);
 
