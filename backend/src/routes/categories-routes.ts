@@ -5,6 +5,6 @@ import { checkToken } from '../utils/check-token';
 const categoriesRoutes = express.Router();
 
 categoriesRoutes.get('/:type', checkToken, getCategories);
-categoriesRoutes.get('/sub/:category', getSubCategories);
+categoriesRoutes.get('/sub/:category', checkToken, getSubCategories);
 
 export default categoriesRoutes;
