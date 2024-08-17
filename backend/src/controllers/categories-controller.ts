@@ -1,23 +1,40 @@
 import { Request, Response } from "express";
 import clientDB from "../db/conn";
+import e from '../db/dbschema/edgeql-js';
+import { User } from "../db/dbschema/edgeql-js/modules/default";
 
 export const getCategories = async (req: Request, res:Response) => {
     const {type} = req.params;
 
-    try{
-        const categories = await clientDB.query(`
-            select Category {
-                id,
-                desc
-            } filter .type = <default::CategoryType>$type`,
-            {
-                type: type
-            }).catch((err) => {
-                res.status(422);
-                throw new Error(err);
-            });
+    if(req.user === undefined){
+        throw new Error("User Unauthenticated");
+    }
 
-        return res.status(200).send(categories);
+    try{
+        const categories = e.select(e.Category, (category) => {
+
+            const userLink = e.select(e.User, (user) => ({
+                id: true,
+                filter: e.op(user.id, "=", e.uuid(req.user as string))
+            }))
+
+            const createdByUser = e.op(category.created_by.id, "=", userLink.id);
+            const createdBySystem = e.op(category.is_public, "=", true);
+            const filterType = e.op(category.type, "=", e.cast(e.CategoryType, type));
+
+            return{
+                id: true,
+                desc: true,
+                filter: e.op(
+                    filterType,
+                    "and", 
+                    e.op(createdBySystem, 'or', createdByUser))
+            }
+        });
+
+        const categoriesResult = await categories.run(clientDB);
+
+        return res.status(200).send(categoriesResult);
     }catch(err: unknown){
         console.log(err);
         return res.status(422).send("Não conseguimos encontrar nenhuma categoria nesse momento.");
