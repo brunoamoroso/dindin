@@ -81,7 +81,7 @@ class Api{
     }
 
     public addTransaction<T>(body: unknown): Promise<T>{
-        return this.post<T>("/transactions/add", JSON.stringify(body));
+        return this.post<T>("/transactions/add", body);
     }
 }
 

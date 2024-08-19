@@ -4,6 +4,7 @@ import { LocalDate } from "edgedb";
 import e from '../db/dbschema/edgeql-js';
 
 export const addTransaction = async (req: Request, res: Response) => {
+    console.log(req.body);
     const {type, amount, desc, category, subCategory, account, recurrency, date, paymentMethod, paymentCondition} = req.body;
     const datePart = date.value.split("T");
     const [year, month, day] = datePart[0].split("-").map(Number);
@@ -24,7 +25,8 @@ export const addTransaction = async (req: Request, res: Response) => {
             });
 
             const gainTransaction = await queryGainTransaction.run(clientDB);
-            res.status(201).json(gainTransaction);
+
+            res.status(201).json({message: "Transaction created"});
             return;
         }
 
@@ -56,10 +58,54 @@ export const addTransaction = async (req: Request, res: Response) => {
             });
 
             const expenseTransaction = await queryExpenseTransaction.run(clientDB);
-            return res.status(201).json(expenseTransaction);
+            return res.status(201).json({message: "Transaction Created"});
         }
     }catch(err){
         res.status(422).json({message: "Couldn't create the transaction"})
+        throw new Error(err as string);
+    }
+}
+
+export const getAllTransactionByMonth = async (req: Request, res: Response) => {
+    const {selectedDate} = req.body;
+    const startDate = new Date(selectedDate);
+    const endMonthDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+
+    console.log(selectedDate);
+    console.log(startDate);
+    console.log(endMonthDate);
+
+    try{
+        const queryAllGainTransactionsByMonth = e.select(e.Gain, (gain) => {
+    
+            const filterCreatedByUser = e.op(gain.created_by.id, "=", e.uuid(req.user as string));
+            const filterByDate = e.op(
+                e.op(gain.date_earned, ">=", e.cal.local_datetime(startDate.toISOString())),
+                "and",
+                e.op(gain.date_earned, "<=", e.cal.local_datetime(endMonthDate.toISOString()))
+            )
+
+            return{
+                description: true,
+                amount: true,
+                account: {
+                    description: true,
+                },
+                category: {
+                    desc: true
+                },
+                subCategory: {
+                    desc: true
+                },
+                date_earned: true,
+                amountGained: e.sum(gain.amount),
+                filter: e.op(filterCreatedByUser, "and", filterByDate)
+            }
+        });
+    
+        const AllGainTransactionsByMonth = await queryAllGainTransactionsByMonth.run(clientDB);
+        return res.status(200).json(AllGainTransactionsByMonth);
+    }catch(err){
         throw new Error(err as string);
     }
 }
