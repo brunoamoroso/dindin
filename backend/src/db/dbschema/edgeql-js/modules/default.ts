@@ -82,13 +82,13 @@ export type $ExpenseλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f7384
   "category": $.LinkDesc<$Category, $.Cardinality.One, {}, false, false,  false, false>;
   "created_by": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
   "amount": $.PropertyDesc<_std.$int32, $.Cardinality.One, false, false, false, false>;
+  "date_paid": $.PropertyDesc<_cal.$local_date, $.Cardinality.One, false, false, false, false>;
   "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "installments": $.PropertyDesc<_std.$int16, $.Cardinality.AtMostOne, false, false, false, false>;
+  "payment_condition": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
+  "payment_method": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "recurrency": $.PropertyDesc<$Recurrency, $.Cardinality.One, false, false, false, true>;
   "subCategory": $.LinkDesc<$subCategory, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
-  "date_paid": $.PropertyDesc<_cal.$local_datetime, $.Cardinality.One, false, false, false, false>;
-  "payment_condition": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
-  "payment_method": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
 }>;
 type $Expense = $.ObjectType<"default::Expense", $ExpenseλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
@@ -102,10 +102,10 @@ export type $GainλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c2
   "category": $.LinkDesc<$Category, $.Cardinality.One, {}, false, false,  false, false>;
   "created_by": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
   "amount": $.PropertyDesc<_std.$int32, $.Cardinality.One, false, false, false, false>;
+  "date_earned": $.PropertyDesc<_cal.$local_date, $.Cardinality.One, false, false, false, false>;
   "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "recurrency": $.PropertyDesc<$Recurrency, $.Cardinality.One, false, false, false, true>;
   "subCategory": $.LinkDesc<$subCategory, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
-  "date_earned": $.PropertyDesc<_cal.$local_datetime, $.Cardinality.One, false, false, false, false>;
 }>;
 type $Gain = $.ObjectType<"default::Gain", $GainλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
