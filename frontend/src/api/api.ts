@@ -1,3 +1,5 @@
+import Cookies from "js-cookie";
+
 class Api{
     private baseURL: string;
 
@@ -10,12 +12,20 @@ class Api{
 
     }
 
-    private async request<T>(endpoint: string, method: string, body?: unknown, headers?: HeadersInit): Promise<T>{
+    private async request<T>(endpoint: string, method: string, body?: unknown): Promise<T>{
         const isFormData = body instanceof FormData;
+        const headers = new Headers();
+        const token = Cookies.get('token');
+
+        if(!isFormData){
+            headers.append("Content-Type","application/json");
+        }
+
+        headers.append("Authorization", `Bearer ${token}`);
 
         const response = await fetch(this.baseURL+endpoint, {
             method: method,
-            headers: isFormData ? headers : {...headers, "Content-Type": "application/json"},
+            headers: headers,
             body: isFormData ? body as BodyInit: JSON.stringify(body)
         });
 
