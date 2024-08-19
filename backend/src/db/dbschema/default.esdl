@@ -55,7 +55,7 @@ module default {
         required category: Category;
         subCategory: subCategory;
         required account: Account;
-        required date_earned: cal::local_date;
+        required date_earned: cal::local_datetime;
         required recurrency: Recurrency {
             default := Recurrency.`never`;
         };
@@ -68,9 +68,9 @@ module default {
         required category: Category;
         subCategory: subCategory;
         required account: Account;
-        required date_paid: cal::local_date;
-        payment_method: str;
-        payment_condition: str;
+        required date_paid: cal::local_datetime;
+        required payment_method: str;
+        required payment_condition: str;
         installments: int16;
         required recurrency: Recurrency {
             default := Recurrency.`never`;
