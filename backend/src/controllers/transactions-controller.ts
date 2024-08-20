@@ -65,7 +65,7 @@ export const addTransaction = async (req: Request, res: Response) => {
 }
 
 export const getAllTransactionsByMonth = async (req: Request, res: Response) => {
-    const {selectedDate} = req.body;
+    const {selectedDate} = req.params;
     const startDate = toLocalDate(selectedDate);
     const date = new Date(selectedDate); 
     const createEndDate = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString();
@@ -102,7 +102,7 @@ export const getAllTransactionsByMonth = async (req: Request, res: Response) => 
 
         const sumAllAmountGained = allTransactionGainsByMonth.reduce((accumulator, currentValue) => accumulator + currentValue.amount, 0);
 
-        const queryAllExpenseTransactionByMonth = e.select(e.Expense, (expense) => {
+        const queryAllTransactionExpenseByMonth = e.select(e.Expense, (expense) => {
             const filterByUser = e.op(expense.created_by.id, "=", e.uuid(req.user));
             const filterByDate = e.op(
                 e.op(expense.date_paid, ">=", e.cal.local_date(startDate)),
@@ -127,11 +127,11 @@ export const getAllTransactionsByMonth = async (req: Request, res: Response) => 
             }
         });
 
-        const allExpenseTransactionByMonth = await queryAllExpenseTransactionByMonth.run(clientDB);
+        const allTransactionExpenseByMonth = await queryAllTransactionExpenseByMonth.run(clientDB);
 
-        const sumAllAmountExpend = allExpenseTransactionByMonth.reduce((accumulator, currentValue) => accumulator + currentValue.amount, 0);
+        const sumAllAmountExpend = allTransactionExpenseByMonth.reduce((accumulator, currentValue) => accumulator + currentValue.amount, 0);
 
-        return res.status(200).json({allTransactionGainsByMonth, sumAllAmountGained, allExpenseTransactionByMonth, sumAllAmountExpend});
+        return res.status(200).json({allTransactionGainsByMonth, sumAllAmountGained, allTransactionExpenseByMonth, sumAllAmountExpend});
 
     }catch(err){
         throw new Error(err as string);

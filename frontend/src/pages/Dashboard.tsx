@@ -1,9 +1,26 @@
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
+import api from '@/api/api';
+import { currencyFormat } from "@/utils/currencyFormat";
+
+interface AllTransactionsByMonthType{
+    allTransactionGainByMonth: [];
+    sumAllAmountGained: number;
+    allTransactionExpenseByMonth: [];
+    sumAllAmountExpend: number;
+}
 
 export default function Dashboard() {
+    const {data, isLoading, isError} = useQuery<AllTransactionsByMonthType>({
+        queryKey: ["dashboard-data"],
+        queryFn: () => api.getAllTransactionsByMonth("2024-08-01T03:00:00.000Z")
+    });
+
+    console.log(data);
+
   return (
     <div className="bg-surface h-dvh flex flex-col text-body">
         <div className="container">
@@ -11,20 +28,15 @@ export default function Dashboard() {
                 <Button variant={"ghost"}>
                     <ChevronDown /> Julho
                 </Button>
-                <Link to={"/transaction"}>
-                    <IconButton>
-                        <Plus strokeWidth={3}/>
-                    </IconButton>
-                </Link>
             </div>
             <div className="flex gap-6">
                 <div className="flex flex-col flex-1 bg-container2 p-6 rounded-lg">
                     <span className="label-small text-title">Você ganhou</span>
-                    <span className="title-medium text-positive">R$10.000</span>
+                    <span className="title-medium text-positive">R${currencyFormat(data.sumAllAmountGained)}</span>
                 </div>
                 <div className="flex flex-col flex-1 bg-container2 p-6 rounded-lg">
                     <span className="label-small text-title">Você gastou</span>
-                    <span className="title-medium text-negative">R$10.000</span>
+                    <span className="title-medium text-negative">R${currencyFormat(data.sumAllAmountExpend)}</span>
                 </div>
             </div>
         </div>

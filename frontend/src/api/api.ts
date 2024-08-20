@@ -83,6 +83,10 @@ class Api{
     public addTransaction<T>(body: unknown): Promise<T>{
         return this.post<T>("/transactions/add", body);
     }
+
+    public getAllTransactionsByMonth<T>(date: string): Promise<T>{
+        return this.get<T>(`/transactions/all-month/${date}`);
+    }
 }
 
 const instance = new Api();
