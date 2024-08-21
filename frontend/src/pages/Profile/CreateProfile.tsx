@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import PasswordValidator from "@/components/ui/passwordvalidator";
 import TextField from "@/components/ui/textfield";
 import { useToast } from "@/components/ui/use-toast";
-import { passwordCheck } from "@/utils/passwordCheck";
+import { passwordCheck } from "@/utils/password-check";
 import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { Camera } from "lucide-react";

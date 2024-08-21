@@ -5,11 +5,12 @@ import api from '@/api/api';
 import { currencyFormat } from "@/utils/currency-format";
 import BottomNav from "@/components/BottomNav";
 import LastTransactions from "./LastTransactions";
+import { useEffect, useState } from "react";
 
 interface AllTransactionsByMonthType{
-    allTransactionGainByMonth: [];
+    allTransactionGainsByMonth: [object];
     sumAllAmountGained: number;
-    allTransactionExpenseByMonth: [];
+    allTransactionExpenseByMonth: [object];
     sumAllAmountExpend: number;
 }
 
@@ -20,6 +21,18 @@ export default function Dashboard() {
     });
 
     console.log(data);
+    const [lastTransactionData, setLastTransactionData] = useState([{}]);
+
+    useEffect(() => {
+        if(data !== undefined){
+            const sliceSomeExpense = data.allTransactionExpenseByMonth.slice(2);
+            const sliceSomeGain = data.allTransactionGainsByMonth.slice(2);
+            const combinedArr = sliceSomeExpense.concat(sliceSomeGain);
+            setLastTransactionData(combinedArr);
+        }
+    }, [data]);
+
+    // console.log(data);
 
   return (
     <div className="bg-surface h-dvh flex flex-col text-body">
@@ -44,7 +57,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <LastTransactions />
+            <LastTransactions dataLast={lastTransactionData}/>
         </div>
         <BottomNav />
     </div>
