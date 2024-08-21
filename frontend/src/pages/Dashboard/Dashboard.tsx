@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, Plus } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import api from '@/api/api';
-import { currencyFormat } from "@/utils/currencyFormat";
+import { currencyFormat } from "@/utils/currency-format";
 import BottomNav from "@/components/BottomNav";
+import LastTransactions from "./LastTransactions";
 
 interface AllTransactionsByMonthType{
     allTransactionGainByMonth: [];
@@ -22,7 +23,7 @@ export default function Dashboard() {
 
   return (
     <div className="bg-surface h-dvh flex flex-col text-body">
-        <div className="container">
+        <div className="container flex flex-col gap-6">
             <div className="flex justify-center py-6">
                 <Button variant={"ghost"}>
                     <ChevronDown /> Julho
@@ -42,6 +43,8 @@ export default function Dashboard() {
                     </span>
                 </div>
             </div>
+
+            <LastTransactions />
         </div>
         <BottomNav />
     </div>
