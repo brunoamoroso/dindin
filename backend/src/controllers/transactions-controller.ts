@@ -94,7 +94,11 @@ export const getAllTransactionsByMonth = async (req: Request, res: Response) => 
                     desc: true,
                 },
                 date_earned: true,
-                filter: e.op(filterByUser, "and", filterByDate)
+                filter: e.op(filterByUser, "and", filterByDate),
+                order_by: {
+                    expression: gain.date_earned,
+                    direction: e.DESC
+                }
             }
         });
 
@@ -123,7 +127,11 @@ export const getAllTransactionsByMonth = async (req: Request, res: Response) => 
                     desc: true
                 },
                 date_paid: true,
-                filter: e.op(filterByUser,  "and", filterByDate)
+                filter: e.op(filterByUser,  "and", filterByDate),
+                order_by: {
+                    expression: expense.date_paid,
+                    direction: e.DESC
+                }
             }
         });
 
