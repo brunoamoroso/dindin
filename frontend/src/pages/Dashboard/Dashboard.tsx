@@ -8,9 +8,8 @@ import LastTransactions from "./LastTransactions";
 import { useEffect, useState } from "react";
 
 interface AllTransactionsByMonthType{
-    allTransactionGainsByMonth: [object];
+    allTransactionsByMonth: [object];
     sumAllAmountGained: number;
-    allTransactionExpenseByMonth: [object];
     sumAllAmountExpend: number;
 }
 
@@ -20,19 +19,13 @@ export default function Dashboard() {
         queryFn: () => api.getAllTransactionsByMonth("2024-08-01T03:00:00.000Z")
     });
 
-    console.log(data);
-    const [lastTransactionData, setLastTransactionData] = useState([{}]);
+    const [lastTransactionData, setLastTransactionData] = useState<[object]>();
 
     useEffect(() => {
-        if(data !== undefined){
-            const sliceSomeExpense = data.allTransactionExpenseByMonth.slice(2);
-            const sliceSomeGain = data.allTransactionGainsByMonth.slice(2);
-            const combinedArr = sliceSomeExpense.concat(sliceSomeGain);
-            setLastTransactionData(combinedArr);
+        if(!isLoading && data !== undefined){
+            setLastTransactionData(data?.allTransactionsByMonth);
         }
-    }, [data]);
-
-    // console.log(data);
+    }, [data, isLoading])
 
   return (
     <div className="bg-surface h-dvh flex flex-col text-body">
@@ -57,7 +50,10 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <LastTransactions dataLast={lastTransactionData}/>
+            {(!isLoading && data) && (
+                <LastTransactions dataLast={lastTransactionData}/>
+            )}
+
         </div>
         <BottomNav />
     </div>

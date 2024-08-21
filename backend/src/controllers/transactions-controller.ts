@@ -72,20 +72,21 @@ export const getAllTransactionsByMonth = async (req: Request, res: Response) => 
     const endDate = toLocalDate(createEndDate);
 
     try{    
-        const queryAllTransactionGainsByMonth = e.select(e.Gain, (gain) => {
+        const queryAllTransactionsByMonth = e.select(e.Transaction, (transaction) => {
 
-            const filterByUser = e.op(gain.created_by.id, "=", e.uuid(req.user));
+            const filterByUser = e.op(transaction.created_by.id, "=", e.uuid(req.user));
             const filterByDate = e.op(
-                e.op(gain.date_earned, ">=", e.cal.local_date(startDate)),
+                e.op(transaction.date, ">=", e.cal.local_date(startDate)),
                 "and",
-                e.op(gain.date_earned, "<=", e.cal.local_date(endDate))
+                e.op(transaction.date, "<=", e.cal.local_date(endDate))
             )
 
             return{
-                description: true,
+                type: true,
+                desc: true,
                 amount: true,
                 account: {
-                    description: true
+                    desc: true
                 },
                 category: {
                     desc: true,
@@ -93,53 +94,32 @@ export const getAllTransactionsByMonth = async (req: Request, res: Response) => 
                 subCategory: {
                     desc: true,
                 },
-                date_earned: true,
+                date: true,
                 filter: e.op(filterByUser, "and", filterByDate),
                 order_by: {
-                    expression: gain.date_earned,
+                    expression: transaction.date,
                     direction: e.DESC
                 }
             }
         });
 
-        const allTransactionGainsByMonth = await queryAllTransactionGainsByMonth.run(clientDB);
+        const allTransactionsByMonth = await queryAllTransactionsByMonth.run(clientDB);
 
-        const sumAllAmountGained = allTransactionGainsByMonth.reduce((accumulator, currentValue) => accumulator + currentValue.amount, 0);
-
-        const queryAllTransactionExpenseByMonth = e.select(e.Expense, (expense) => {
-            const filterByUser = e.op(expense.created_by.id, "=", e.uuid(req.user));
-            const filterByDate = e.op(
-                e.op(expense.date_paid, ">=", e.cal.local_date(startDate)),
-                "and",
-                e.op(expense.date_paid, "<=", e.cal.local_date(endDate))
-            )
-
-            return {
-                description: true,
-                amount: true,
-                account: {
-                    description: true
-                },
-                category: {
-                    desc: true
-                },
-                subCategory: {
-                    desc: true
-                },
-                date_paid: true,
-                filter: e.op(filterByUser,  "and", filterByDate),
-                order_by: {
-                    expression: expense.date_paid,
-                    direction: e.DESC
-                }
+        const sumAllAmountGained = allTransactionsByMonth.reduce((accumulator, currentValue) => {
+            if(currentValue.type === "gain"){
+                return accumulator + currentValue.amount
             }
-        });
+            return accumulator;
+        }, 0);
 
-        const allTransactionExpenseByMonth = await queryAllTransactionExpenseByMonth.run(clientDB);
+        const sumAllAmountExpend = allTransactionsByMonth.reduce((accumulator, currentValue) => {
+            if(currentValue.type === "expense"){
+                return accumulator + currentValue.amount
+            }
+            return accumulator;
+        }, 0);
 
-        const sumAllAmountExpend = allTransactionExpenseByMonth.reduce((accumulator, currentValue) => accumulator + currentValue.amount, 0);
-
-        return res.status(200).json({allTransactionGainsByMonth, sumAllAmountGained, allTransactionExpenseByMonth, sumAllAmountExpend});
+        return res.status(200).json({allTransactionsByMonth, sumAllAmountGained, sumAllAmountExpend});
 
     }catch(err){
         throw new Error(err as string);

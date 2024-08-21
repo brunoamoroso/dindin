@@ -51,7 +51,7 @@ module default {
 
     type Transaction{
         required type: str{
-            constraint one_of("Gain",  "Expense");
+            constraint one_of("gain",  "expense");
         };
         required desc: str;
         required amount: int32;
