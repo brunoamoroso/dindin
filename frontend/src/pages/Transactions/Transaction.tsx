@@ -2,7 +2,7 @@ import AppBar from "@/components/AppBar"
 import { InlineTabs, InlineTabsContent, InlineTabsList, InlineTabsTrigger } from "@/components/ui/inline-tabs"
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 import { ChangeEvent, FormEvent, MouseEvent, useEffect } from "react";
-import { currencyFormat } from "@/utils/currencyFormat";
+import { currencyFormat } from "@/utils/currency-format";
 import GainTransaction from "./GainTransaction";
 import ExpenseTransaction from "./ExpenseTransaction";
 import { useToast } from "@/components/ui/use-toast";
