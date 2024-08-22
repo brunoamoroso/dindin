@@ -12,14 +12,15 @@ export const addTransaction = async (req: Request, res: Response) => {
 
     try{
         if(type === "gain"){
-            const queryGainTransaction = e.insert(e.Gain, {
-                description: e.str(desc),
+            const queryGainTransaction = e.insert(e.Transaction, {
+                type: type,
+                desc: e.str(desc),
                 amount: e.int32(amount),
                 category: e.cast(e.Category, e.uuid(category.id)),
                 subCategory: hasSubCategory,
                 account: e.cast(e.Account, e.uuid(account.id)),
                 recurrency: e.cast(e.Recurrency, recurrency.id),
-                date_earned: e.cal.local_date(localDate),
+                date: e.cal.local_date(localDate),
                 created_by: e.cast(e.User, e.uuid(req.user))
             });
 
@@ -41,14 +42,15 @@ export const addTransaction = async (req: Request, res: Response) => {
                 installments = 1;
             }
 
-            const queryExpenseTransaction = e.insert(e.Expense, {
-                description: e.str(desc),
+            const queryExpenseTransaction = e.insert(e.Transaction, {
+                type: type,
+                desc: e.str(desc),
                 amount: e.int32(amount),
                 category: e.cast(e.Category, e.uuid(category.id)),
                 subCategory: e.cast(e.subCategory, e.uuid(subCategory.id)),
                 account: e.cast(e.Account, e.uuid(account.id)),
                 recurrency: e.cast(e.Recurrency, recurrency.id),
-                date_paid: e.cal.local_date(localDate),
+                date: e.cal.local_date(localDate),
                 created_by: e.cast(e.User, e.uuid(req.user)),
                 payment_condition: e.str(paymentCondition),
                 payment_method: e.str(paymentMethod),
