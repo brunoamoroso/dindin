@@ -7,7 +7,7 @@ export const getAccounts = async (req: Request, res: Response) => {
         const queryAccounts = e.select(e.Account, (account) => {
             return{
                 id: true,
-                description: true,
+                desc: true,
                 bank: true,
                 filter: e.op(account.created_by.id, "=", e.uuid(req.user as string))
             }

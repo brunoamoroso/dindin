@@ -69,11 +69,11 @@ export default function TransactionAccount() {
             if(arr.length - 1 === index){
             //last item
             return (                
-                <MenuListItem size="lg" trailingIcon={false} key={index} dataId={account.id} value={account.description} onClick={handleClick}>{account.description}</MenuListItem>
+                <MenuListItem size="lg" trailingIcon={false} key={index} dataId={account.id} value={account.desc} onClick={handleClick}>{account.desc}</MenuListItem>
             )
             }else{
             return (   
-                <MenuListItem size="lg" trailingIcon={false} key={index} dataId={account.id} value={account.description} onClick={handleClick} separator={true}>{account.description}</MenuListItem>          
+                <MenuListItem size="lg" trailingIcon={false} key={index} dataId={account.id} value={account.desc} onClick={handleClick} separator={true}>{account.desc}</MenuListItem>          
               )
             }
           })

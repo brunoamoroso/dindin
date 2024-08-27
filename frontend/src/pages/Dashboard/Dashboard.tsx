@@ -6,6 +6,7 @@ import { currencyFormat } from "@/utils/currency-format";
 import BottomNav from "@/components/BottomNav";
 import LastTransactions from "./LastTransactions";
 import { useEffect, useState } from "react";
+import ExpenseByCatChart from "./ExpenseByCatChart";
 
 interface AllTransactionsByMonthType{
     allTransactionsByMonth: [object];
@@ -28,8 +29,8 @@ export default function Dashboard() {
     }, [data, isLoading])
 
   return (
-    <div className="bg-surface h-dvh flex flex-col text-body">
-        <div className="container flex flex-col gap-6">
+    <div className="bg-surface flex flex-col text-body">
+        <div className="container flex flex-col gap-6 pb-32">
             <div className="flex justify-center py-6">
                 <Button variant={"ghost"}>
                     <ChevronDown /> Julho
@@ -53,6 +54,11 @@ export default function Dashboard() {
             {(!isLoading && data) && (
                 <LastTransactions dataLast={lastTransactionData}/>
             )}
+
+            {(!isLoading && data) && (
+                <ExpenseByCatChart data={data.allTransactionsByMonth}/>
+            )}
+            
 
         </div>
         <BottomNav />

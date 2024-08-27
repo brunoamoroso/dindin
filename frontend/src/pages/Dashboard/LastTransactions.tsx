@@ -8,15 +8,15 @@ export default function LastTransactions({dataLast, selectedDate}: {dataLast?: o
         if(dataLast !== undefined){ 
             return(
                 <div className="flex flex-col bg-container2 rounded-lg py-4">
-                    <span className="title-small text-title px-6 pb-1">
+                    <h1 className="title-small text-title px-6 pb-1">
                         Últimas Transações
-                    </span>
+                    </h1>
                     <div className="px-2 max-h-44 overflow-hidden">
                         {
                             dataLast.map((d, i) => (
                                 <div key={i} className="flex px-4 py-3.5 gap-4 justify-between items-center">
                                     <div className="flex gap-4 items-center">
-                                        <div>{getCategoryIcon(d.category.desc)}</div>
+                                        <div>{getCategoryIcon(d.category.desc).icon}</div>
                                         <div className="flex flex-col">
                                             <span className="label-large text-title">{d.desc}</span>
                                             <span className="body-medium text-subtle">{new Date(d.date).toLocaleDateString()}</span>
