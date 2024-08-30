@@ -14,6 +14,7 @@ import TransactionAccount from './pages/Transactions/TransactionAccount'
 import Recurrency from './pages/Transactions/Recurrency'
 import TransactionDate from './pages/Transactions/TransactionDate'
 import SignIn from './pages/Profile/SignIn'
+import DashboardDate from './pages/Dashboard/DashboardDate';
 
 //context
 import { TransactionsContextProvider } from './context/TransactionsContext'
@@ -36,7 +37,15 @@ function AppRoutes(){
             </Route>
 
             <Route element={<AuthenticatedRoutesContext />}>
-                <Route path='/dashboard' element={<Dashboard />}/>
+                {previousLocation && (
+                  <Route element={<DashboardDate />}>
+                    <Route path='/dashboard' element={<Dashboard />}/>
+                  </Route>
+                )}
+                {!previousLocation && (
+                  <Route path='/dashboard' element={<Dashboard />}/>
+                )}
+
                 <Route element={<TransactionsContextProvider />}>
                   {previousLocation && (
                     <Route element={<TransactionDate />}> 

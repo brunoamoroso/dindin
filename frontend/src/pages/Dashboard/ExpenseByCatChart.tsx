@@ -1,25 +1,82 @@
 import { Separator } from '@/components/ui/separator';
 import { currencyFormat } from '@/utils/currency-format';
 import getCategoryIcon from '@/utils/get-category-icon';
-import {Chart, DoughnutController, ArcElement} from 'chart.js/auto';
+import {Chart, DoughnutController, ArcElement, ChartTypeRegistry} from 'chart.js/auto';
 import ChartDataLabels, { Context } from 'chartjs-plugin-datalabels';
-import { useEffect } from 'react';
-import ReactDOMServer from 'react-dom/server';
+import { useEffect, useMemo, useRef } from 'react';
+import * as Types from '@/types/TransactionTypes';
 
-export default function ExpenseByCatChart({data} : {data?: any}){
-    const dataExtractExpenses = data.filter((o) => o.type === "expense");
-    const dataSorted = Object.groupBy(dataExtractExpenses, ({category}) => category.desc);
-    const totalAllAmount = data.reduce((acc, cV) => acc + cV.amount, 0);
+export default function ExpenseByCatChart({data} : {data: Types.AllTransactionType[]}){
+    const chartRef = useRef<Chart<keyof ChartTypeRegistry> | null>(null);
+    const dataExtractExpenses = useMemo(() => data.filter((o) => o.type === "expense"), [data]);
+    const dataSorted = useMemo(() => Object.groupBy(dataExtractExpenses, ({category}) => category.desc) as {[desc: string]: Types.AllTransactionType[]}, [dataExtractExpenses]);
+    const totalAllAmount = useMemo(() => data.reduce((acc, cV) => acc + cV.amount, 0), [data]);
+    
+    const labelsData = (data: {[desc: string]: Types.AllTransactionType[]} ) => Object.keys(data);
+    
+    const valuesData = (data: {[desc: string]: Types.AllTransactionType[]} ) => Object.values(data).map((i) => i.reduce((acc, cV) => acc + cV.amount, 0));
+    
+    const bgColors = (data: {[desc: string]: Types.AllTransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizColor);
+    
+    const borderColors = (data: {[desc: string]: Types.AllTransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizBorderColor);
 
-    const labelsData = (data:any) => Object.keys(data);
+    useEffect(() => {
+        if(dataSorted !== undefined){
+            if(chartRef.current){
+                chartRef.current.destroy();
+            }
+            const chart =  document.getElementById("chart") as HTMLCanvasElement;
+            Chart.register(DoughnutController, ArcElement, ChartDataLabels);
+            chartRef.current = new Chart<keyof ChartTypeRegistry>(
+                    chart,
+                    {
+                        type: "doughnut",
+                        data: {
+                            labels: labelsData(dataSorted),
+                            datasets: [{
+                                data: valuesData(dataSorted),
+                                backgroundColor: bgColors(dataSorted),
+                                borderColor: borderColors(dataSorted),
+                            }]
+                        },
+                        options: {
+                            layout: {
+                                padding: 80,
+                            },
+                            datasets:{
+                                doughnut:{
+                                    borderRadius: 4,
+                                    borderWidth: 4,
+                                    spacing: 4,
+                                },
+                            },
+                            plugins:{
+                                datalabels: {
+                                    align: "end",
+                                    anchor: "end",
+                                    padding: 12,
+                                    color: "#FFFFFF",
+                                    formatter: (value: number, ctx: Context) => {
+                                        if(ctx.chart.data.labels !== undefined){
+                                            const percentage = Math.round((value/totalAllAmount) * 100);
+                                            return ctx.chart.data.labels[ctx.dataIndex] + `\n ${percentage}%`;
+                                        }
+                                    },
+                                },
+                                legend:{
+                                    display: false,
+                                },
+                                tooltip:{
+                                    enabled: false,
+                                }
+                            }   
+                        }
+                    }
+                );
+            }
+        }, [dataSorted, totalAllAmount]); 
 
-    const valuesData = (data: any) => Object.values(data).map((i) => i.reduce((acc, cV) => acc + cV.amount, 0));
-
-    const bgColors = (data: any) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizColor);
-
-    const borderColors = (data: any) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizBorderColor);
-
-    const categoriesList = (dataSorted) => {
+    const categoriesList = (dataSorted : {[desc: string]: Types.AllTransactionType[]}) => {
         const el = [];
         let i = 1;
         for (const desc in dataSorted){
@@ -55,71 +112,20 @@ export default function ExpenseByCatChart({data} : {data?: any}){
         return el;
     }
 
-    useEffect(() => {
-        if(data !== undefined){
-            Chart.register(DoughnutController, ArcElement, ChartDataLabels);
-            (async function() {
-                new Chart(
-                    "chart",
-                    {
-                        type: "doughnut",
-                        data: {
-                            labels: labelsData(dataSorted),
-                            datasets: [{
-                                data: valuesData(dataSorted),
-                                backgroundColor: bgColors(dataSorted),
-                                borderColor: borderColors(dataSorted),
-                            }]
-                        },
-                        options: {
-                            layout: {
-                                padding: 80,
-                            },
-                            datasets:{
-                                doughnut:{
-                                    borderRadius: 4,
-                                    borderWidth: 4,
-                                    spacing: 4,
-                                },
-                            },
-                            plugins:{
-                                datalabels: {
-                                    align: "end",
-                                    anchor: "end",
-                                    padding: 12,
-                                    color: "#FFFFFF",
-                                    formatter: (value: number, ctx: Context) => {
-                                        console.log(ctx);
-                                        if(ctx.chart.data.labels !== undefined){
-                                            const percentage = Math.round((value/totalAllAmount) * 100);
-                                            return ctx.chart.data.labels[ctx.dataIndex] + `\n ${percentage}%`;
-                                        }
-                                    },
-                                },
-                                legend:{
-                                    display: false,
-                                },
-                                tooltip:{
-                                    enabled: false,
-                                }
-                            }   
-                        }
-                    }
-                )
-            })();
-        }
-    }, [data])
 
     return(
         <div className="bg-container2 rounded-lg py-4">
             <h1 className="title-small text-title px-6">Gasto por Categoria</h1>
-            <div className='flex justify-center'>
-                <canvas id="chart"></canvas>
-            </div>
-            <div>
-                {categoriesList(dataSorted)}
-            </div>
-
+            {data !== undefined && (
+                <div className='flex justify-center'>
+                    <canvas id="chart"></canvas>
+                </div>
+            )}
+            {data !== undefined && (
+                <div>
+                    {categoriesList(dataSorted)}
+                </div>
+            )}
         </div>
     )
 }

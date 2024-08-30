@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 
 export default function SubCategories() {
-  const navigate = useNavigate();``
+  const navigate = useNavigate();
   const {category} = useParams();
   const {setContextTransactionData} = useTransactionsContext();
 

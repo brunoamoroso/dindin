@@ -138,4 +138,30 @@
     .body-small{
       @apply text-xs font-medium;
     }
+
+    /* React Date Picker Customization */
+    .react-datepicker{
+      @apply shadow-2xl rounded-md border bg-container0 border-outline font-sans p-5;
+    }
+
+    .react-datepicker .react-datepicker__aria-live{
+      @apply hidden;
+    }
+
+    .react-datepicker .react-datepicker__month-container .react-datepicker__month{
+      @apply flex flex-col;
+    }
+
+    .react-datepicker .react-datepicker__month-container .react-datepicker__month .react-datepicker__month-wrapper{
+      @apply flex gap-6 pt-4;
+    }
+
+    .react-datepicker .react-datepicker__month-container .react-datepicker__month .react-datepicker__month-wrapper .react-datepicker__month-text{
+      @apply flex w-4/12 justify-center text-sm text-body py-1 px-3;
+    }
+
+    .react-datepicker .react-datepicker__month-container .react-datepicker__month .react-datepicker__month-wrapper .react-datepicker__month-text--selected{
+      @apply bg-primary text-body rounded-full;
+    }
+    
   }
