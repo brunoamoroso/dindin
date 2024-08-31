@@ -184,7 +184,7 @@ export default function Transaction() {
 
   return (
     <div className="bg-surface h-dvh">
-      <AppBar title="Adicionar Transação"/>
+      <AppBar title="Adicionar Transação" pageBack="dashboard"/>
       <InlineTabs defaultValue={contextTransactionData.type} className="pt-8" onValueChange={handleTypeTransaction}>
         <InlineTabsList >
           <InlineTabsTrigger value="gain">Ganho</InlineTabsTrigger>
