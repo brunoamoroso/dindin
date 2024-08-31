@@ -1,29 +1,33 @@
 import { MouseEvent, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import DatePicker from 'react-datepicker';
 import { IconButton } from "@/components/ui/icon-button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function TransactionDate() {
-  const navigate = useNavigate();
-
+export default function DashboardDate() {
   const handleOutsideClose = (e: MouseEvent<HTMLDivElement>) => {
     if (e.target !== e.currentTarget) return;
-    navigate("/dashboard");
+    setShowDatePicker(false);
   };
 
   const handleMonthClick = (date: Date | null) => {
-    setDate(date)
-    navigate("/dashboard");
+    if(date === null){date = new Date()}
+    setSelectedDate(date)
+    setShowDatePicker(false);
   };
 
-  const [date, setDate] = useState<Date | null>(new Date());
+  const startDate = new Date();
+  startDate.setDate(1);
+
+  const [selectedDate, setSelectedDate] = useState<Date>(startDate);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   return (
     <>
-      <div className="fixed bg-neutral-950/95 h-dvh w-full flex container flex items-center justify-center" onClick={handleOutsideClose}>
+    {showDatePicker && (
+      <div className="fixed bg-neutral-950/95 h-dvh w-full flex container flex items-center justify-center z-50" onClick={handleOutsideClose}>
         <DatePicker
-          selected={date} 
+          selected={selectedDate} 
           dateFormat="MM/yyyy" 
           showMonthYearPicker 
           showFullMonthYearPicker
@@ -55,9 +59,11 @@ export default function TransactionDate() {
           }}
           />
       </div>
+    )}
       <div className="overflow-hidden">
-        <Outlet />
+        <Outlet context={{selectedDate, setShowDatePicker}}/>
       </div>
     </>
   );
 }
+

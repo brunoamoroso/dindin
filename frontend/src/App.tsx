@@ -37,14 +37,9 @@ function AppRoutes(){
             </Route>
 
             <Route element={<AuthenticatedRoutesContext />}>
-                {previousLocation && (
-                  <Route element={<DashboardDate />}>
-                    <Route path='/dashboard' element={<Dashboard />}/>
-                  </Route>
-                )}
-                {!previousLocation && (
+                <Route element={<DashboardDate />}>
                   <Route path='/dashboard' element={<Dashboard />}/>
-                )}
+                </Route>
 
                 <Route element={<TransactionsContextProvider />}>
                   {previousLocation && (

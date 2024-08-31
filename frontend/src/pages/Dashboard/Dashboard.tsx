@@ -5,28 +5,30 @@ import api from '@/api/api';
 import { currencyFormat } from "@/utils/currency-format";
 import BottomNav from "@/components/BottomNav";
 import LastTransactions from "./LastTransactions";
-import { useEffect, useState } from "react";
 import ExpenseByCatChart from "./ExpenseByCatChart";
 import * as Types from '@/types/TransactionTypes';
-import { Link, useLocation } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@radix-ui/react-separator";
+import { useDashboardDate } from "@/hooks/useDashboardDate";
+
 
 export default function Dashboard() {
-    const location = useLocation();
+    const {selectedDate, setShowDatePicker} = useDashboardDate();
+    const monthLong = selectedDate.toLocaleDateString('pt-BR', {month: 'long'});
+
     const {data, isLoading, isError} = useQuery<Types.DataAllTransactionsType>({
-        queryKey: ["dashboard-data"],
-        queryFn: () => api.getAllTransactionsByMonth("2024-08-01T03:00:00.000Z")
+        queryKey: ["dashboard-data", selectedDate],
+        queryFn: () => api.getAllTransactionsByMonth(selectedDate.toISOString())
     });
+    
   return (
     <div className="bg-surface flex flex-col text-body">
         <div className="container flex flex-col gap-6 pb-32">
             <div className="flex justify-center py-6">
-               <Link to="/dashboard/date" state={{previousLocation: location}}>
-                <Button variant={"ghost"}>
-                    <ChevronDown /> Julho
+                <Button variant={"ghost"} onClick={() => setShowDatePicker(true)}>
+                    <ChevronDown /> {monthLong.charAt(0).toUpperCase() + monthLong.slice(1)}
                 </Button>
-               </Link> 
+
             </div>
             <div className="flex gap-6">
                 <div className="flex flex-col flex-1 bg-container2 p-6 rounded-lg">
@@ -54,7 +56,7 @@ export default function Dashboard() {
             </div>
 
             {(!isLoading && data !== undefined) && (
-                <LastTransactions data={data.allTransactionsByMonth} selectedDate={"2024-08-01T03:00:00.000Z"}/>
+                <LastTransactions data={data.allTransactionsByMonth} selectedDate={selectedDate.toISOString()}/>
             )}
 
             {isLoading && (
