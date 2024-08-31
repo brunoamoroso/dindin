@@ -1,10 +1,11 @@
 import { MouseEvent, useState } from "react";
 import { Outlet } from "react-router-dom";
-import DatePicker from 'react-datepicker';
+import DatePicker, {registerLocale} from 'react-datepicker';
 import { IconButton } from "@/components/ui/icon-button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import {ptBR} from 'date-fns/locale';
 
-export default function DashboardDate() {
+export default function MonthPicker() {
   const handleOutsideClose = (e: MouseEvent<HTMLDivElement>) => {
     if (e.target !== e.currentTarget) return;
     setShowDatePicker(false);
@@ -18,6 +19,7 @@ export default function DashboardDate() {
 
   const startDate = new Date();
   startDate.setDate(1);
+  registerLocale("ptBR", ptBR);
 
   const [selectedDate, setSelectedDate] = useState<Date>(startDate);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -27,6 +29,7 @@ export default function DashboardDate() {
     {showDatePicker && (
       <div className="fixed bg-neutral-950/95 h-dvh w-full flex container flex items-center justify-center z-50" onClick={handleOutsideClose}>
         <DatePicker
+          locale={"ptBR"}
           selected={selectedDate} 
           dateFormat="MM/yyyy" 
           showMonthYearPicker 
@@ -53,7 +56,7 @@ export default function DashboardDate() {
           renderMonthContent={(_month, _shortMonth, longMonth) => {
             return(
               <div className="flex">
-                {longMonth}
+                {longMonth.charAt(0).toLocaleUpperCase() + longMonth.slice(1)}
               </div>
             )
           }}

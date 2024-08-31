@@ -14,7 +14,7 @@ import TransactionAccount from './pages/Transactions/TransactionAccount'
 import Recurrency from './pages/Transactions/Recurrency'
 import TransactionDate from './pages/Transactions/TransactionDate'
 import SignIn from './pages/Profile/SignIn'
-import DashboardDate from './pages/Dashboard/DashboardDate';
+import MonthPicker from './pages/MonthPicker';
 
 //context
 import { TransactionsContextProvider } from './context/TransactionsContext'
@@ -37,7 +37,7 @@ function AppRoutes(){
             </Route>
 
             <Route element={<AuthenticatedRoutesContext />}>
-                <Route element={<DashboardDate />}>
+                <Route element={<MonthPicker />}>
                   <Route path='/dashboard' element={<Dashboard />}/>
                 </Route>
 

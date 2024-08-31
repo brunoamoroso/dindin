@@ -3,6 +3,6 @@ import { useOutletContext } from "react-router-dom";
 
 type ContextType = {selectedDate: Date, setShowDatePicker: React.Dispatch<SetStateAction<boolean>>};
 
-export function useDashboardDate() {
+export function useMonthPicker() {
   return useOutletContext<ContextType>();
 }

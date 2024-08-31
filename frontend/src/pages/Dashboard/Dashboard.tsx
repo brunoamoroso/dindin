@@ -9,11 +9,11 @@ import ExpenseByCatChart from "./ExpenseByCatChart";
 import * as Types from '@/types/TransactionTypes';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@radix-ui/react-separator";
-import { useDashboardDate } from "@/hooks/useDashboardDate";
+import { useMonthPicker } from "@/hooks/useMonthPicker";
 
 
 export default function Dashboard() {
-    const {selectedDate, setShowDatePicker} = useDashboardDate();
+    const {selectedDate, setShowDatePicker} = useMonthPicker();
     const monthLong = selectedDate.toLocaleDateString('pt-BR', {month: 'long'});
 
     const {data, isLoading, isError} = useQuery<Types.DataAllTransactionsType>({
