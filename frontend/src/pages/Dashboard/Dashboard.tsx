@@ -22,7 +22,7 @@ export default function Dashboard() {
     });
     
   return (
-    <div className="bg-surface flex flex-col text-body">
+    <div className="min-h-dvh bg-surface flex flex-col text-body">
         <div className="container flex flex-col gap-6 pb-32">
             <div className="flex justify-center py-6">
                 <Button variant={"ghost"} onClick={() => setShowDatePicker(true)}>
@@ -30,32 +30,40 @@ export default function Dashboard() {
                 </Button>
 
             </div>
-            <div className="flex gap-6">
-                <div className="flex flex-col flex-1 bg-container2 p-6 rounded-lg">
-                    <span className="label-small text-title">Você ganhou</span>
-                    {isLoading && (
-                        <Skeleton className="w-full h-4 rounded-xl"/>
-                    )}
-                    {!isLoading && data && (
-                        <span className="title-medium text-positive">
-                            {"R$" + currencyFormat(data.sumAllAmountGained)}
-                        </span>
-                    )}
+            {isError && (
+                <>
+                    <h1 className="text-title headline-small">Tivemos um problema ao carregar os dados</h1>
+                    <span className="text-body body-large">Pedimos desculpa pela inconveniência, mas não conseguimos carregar os seus dados.</span>
+                </>
+            )}
+            {!isError && (
+                <div className="flex gap-6">
+                    <div className="flex flex-col flex-1 bg-container2 p-6 rounded-lg">
+                        <span className="label-small text-title">Você ganhou</span>
+                        {isLoading && (
+                            <Skeleton className="w-full h-4 rounded-xl"/>
+                        )}
+                        {!isLoading && data && (
+                            <span className="title-medium text-positive">
+                                {"R$" + currencyFormat(data.sumAllAmountGained)}
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex flex-col flex-1 bg-container2 p-6 rounded-lg">
+                        <span className="label-small text-title">Você gastou</span>
+                        {isLoading && (
+                            <Skeleton className="w-full h-4 rounded-xl"/>
+                        )}
+                        {!isLoading && data && (
+                            <span className="title-medium text-negative">
+                                {"R$" + currencyFormat(data.sumAllAmountExpend)}
+                            </span>
+                        )}
+                    </div>
                 </div>
-                <div className="flex flex-col flex-1 bg-container2 p-6 rounded-lg">
-                    <span className="label-small text-title">Você gastou</span>
-                    {isLoading && (
-                        <Skeleton className="w-full h-4 rounded-xl"/>
-                    )}
-                    {!isLoading && data && (
-                        <span className="title-medium text-negative">
-                            {"R$" + currencyFormat(data.sumAllAmountExpend)}
-                        </span>
-                    )}
-                </div>
-            </div>
+            )}
 
-            {(!isLoading && data !== undefined) && (
+            {(!isLoading && data && !isError) && (
                 <LastTransactions data={data.allTransactionsByMonth} selectedDate={selectedDate.toISOString()}/>
             )}
 
@@ -81,7 +89,7 @@ export default function Dashboard() {
                 </div>
             )}
 
-            {(!isLoading && data) && (
+            {(!isLoading && data && !isError) && (
                 <ExpenseByCatChart data={data.allTransactionsByMonth}/>
             )}
             {isLoading && (

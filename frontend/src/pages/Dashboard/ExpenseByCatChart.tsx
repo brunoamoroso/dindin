@@ -21,7 +21,7 @@ export default function ExpenseByCatChart({data} : {data: Types.AllTransactionTy
     const borderColors = (data: {[desc: string]: Types.AllTransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizBorderColor);
 
     useEffect(() => {
-        if(dataSorted !== undefined){
+        if(dataSorted !== undefined && Object.keys(dataSorted).length > 0){
             if(chartRef.current){
                 chartRef.current.destroy();
             }
@@ -116,12 +116,15 @@ export default function ExpenseByCatChart({data} : {data: Types.AllTransactionTy
     return(
         <div className="bg-container2 rounded-lg py-4">
             <h1 className="title-small text-title px-6">Gasto por Categoria</h1>
-            {data !== undefined && (
+            {data.length === 0 && (
+                <span className="flex px-6 py-4 text-subtle body-large">Sem transções neste mês.</span>
+            )}
+            {(data && data.length > 0) && (
                 <div className='flex justify-center'>
                     <canvas id="chart"></canvas>
                 </div>
             )}
-            {data !== undefined && (
+            {(data && data.length > 0) && (
                 <div>
                     {categoriesList(dataSorted)}
                 </div>

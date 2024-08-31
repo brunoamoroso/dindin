@@ -29,6 +29,10 @@ export default function LastTransactions({data, selectedDate}: {data: Types.AllT
                         </div>
                     ))
                 }
+
+                {data.length === 0 && (
+                    <span className="flex p-4 text-subtle body-large">Sem transções neste mês.</span>
+                )}
             </div>
             <Separator />
             <div className="pt-2 px-2">
