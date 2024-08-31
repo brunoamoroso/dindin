@@ -1,19 +1,24 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import './App.css'
-import Home from './pages/Home'
-import CreateProfile from './pages/Profile/CreateProfile'
 import { Toaster } from './components/ui/toaster'
-import Dashboard from './pages/Dashboard'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+//pages
+import Dashboard from './pages/Dashboard/Dashboard'
 import Transaction from './pages/Transactions/Transaction'
 import Categories from './pages/Transactions/Categories'
 import SubCategories from './pages/Transactions/SubCategories'
-import { TransactionsContextProvider } from './context/TransactionsContext'
+import Home from './pages/Home'
+import CreateProfile from './pages/Profile/CreateProfile'
 import TransactionAccount from './pages/Transactions/TransactionAccount'
 import Recurrency from './pages/Transactions/Recurrency'
 import TransactionDate from './pages/Transactions/TransactionDate'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AuthContextProvider } from './context/AuthContext'
 import SignIn from './pages/Profile/SignIn'
+import MonthPicker from './pages/MonthPicker';
+
+//context
+import { TransactionsContextProvider } from './context/TransactionsContext'
+import { AuthContextProvider } from './context/AuthContext'
 import AuthenticatedRoutesContext from './context/AuthenticatedRoutesContext'
 import UnauthRoutesContext from './context/UnauthRoutesContext'
 
@@ -32,7 +37,10 @@ function AppRoutes(){
             </Route>
 
             <Route element={<AuthenticatedRoutesContext />}>
-                <Route path='/dashboard' element={<Dashboard />}/>
+                <Route element={<MonthPicker />}>
+                  <Route path='/dashboard' element={<Dashboard />}/>
+                </Route>
+
                 <Route element={<TransactionsContextProvider />}>
                   {previousLocation && (
                     <Route element={<TransactionDate />}> 

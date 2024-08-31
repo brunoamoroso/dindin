@@ -33,10 +33,9 @@ export type $AccountλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f7384
   "created_by": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
   "amount": $.PropertyDesc<_std.$int32, $.Cardinality.One, false, false, false, true>;
   "bank": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
-  "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "cards": $.LinkDesc<$Card, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<account[is Expense]": $.LinkDesc<$Expense, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<account[is Gain]": $.LinkDesc<$Gain, $.Cardinality.Many, {}, false, false,  false, false>;
+  "desc": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
+  "<account[is Transaction]": $.LinkDesc<$Transaction, $.Cardinality.Many, {}, false, false,  false, false>;
   "<account": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Account = $.ObjectType<"default::Account", $AccountλShape, null, [
@@ -48,8 +47,8 @@ const Account: $.$expr_PathNode<$.TypeSet<$Account, $.Cardinality.Many>, null> =
 
 export type $CardλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "card_exp_date": $.PropertyDesc<_cal.$local_date, $.Cardinality.AtMostOne, false, false, false, false>;
-  "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "type": $.PropertyDesc<$CardType, $.Cardinality.One, false, false, false, false>;
+  "desc": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "<cards[is Account]": $.LinkDesc<$Account, $.Cardinality.Many, {}, false, false,  false, false>;
   "<cards": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
@@ -66,8 +65,7 @@ export type $CategoryλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f738
   "is_public": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "type": $.PropertyDesc<$CategoryType, $.Cardinality.One, false, false, false, false>;
   "created_by": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
-  "<category[is Expense]": $.LinkDesc<$Expense, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<category[is Gain]": $.LinkDesc<$Gain, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<category[is Transaction]": $.LinkDesc<$Transaction, $.Cardinality.Many, {}, false, false,  false, false>;
   "<category": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Category = $.ObjectType<"default::Category", $CategoryλShape, null, [
@@ -77,42 +75,26 @@ const $Category = $.makeType<$Category>(_.spec, "a001d7e2-34ce-11ef-b326-55f3032
 
 const Category: $.$expr_PathNode<$.TypeSet<$Category, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Category, $.Cardinality.Many), null);
 
-export type $ExpenseλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
+export type $TransactionλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "account": $.LinkDesc<$Account, $.Cardinality.One, {}, false, false,  false, false>;
   "category": $.LinkDesc<$Category, $.Cardinality.One, {}, false, false,  false, false>;
   "created_by": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
+  "subCategory": $.LinkDesc<$subCategory, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
   "amount": $.PropertyDesc<_std.$int32, $.Cardinality.One, false, false, false, false>;
-  "date_paid": $.PropertyDesc<_cal.$local_date, $.Cardinality.One, false, false, false, false>;
-  "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
+  "date": $.PropertyDesc<_cal.$local_date, $.Cardinality.One, false, false, false, false>;
+  "desc": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "installments": $.PropertyDesc<_std.$int16, $.Cardinality.AtMostOne, false, false, false, false>;
   "payment_condition": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "payment_method": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "recurrency": $.PropertyDesc<$Recurrency, $.Cardinality.One, false, false, false, true>;
-  "subCategory": $.LinkDesc<$subCategory, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
+  "type": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
 }>;
-type $Expense = $.ObjectType<"default::Expense", $ExpenseλShape, null, [
+type $Transaction = $.ObjectType<"default::Transaction", $TransactionλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
 ]>;
-const $Expense = $.makeType<$Expense>(_.spec, "a00c6a4a-34ce-11ef-9eff-8b017bdae13c", _.syntax.literal);
+const $Transaction = $.makeType<$Transaction>(_.spec, "2f22bb84-5fbe-11ef-a67c-a938ba8a41d2", _.syntax.literal);
 
-const Expense: $.$expr_PathNode<$.TypeSet<$Expense, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Expense, $.Cardinality.Many), null);
-
-export type $GainλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
-  "account": $.LinkDesc<$Account, $.Cardinality.One, {}, false, false,  false, false>;
-  "category": $.LinkDesc<$Category, $.Cardinality.One, {}, false, false,  false, false>;
-  "created_by": $.LinkDesc<$User, $.Cardinality.One, {}, false, false,  false, false>;
-  "amount": $.PropertyDesc<_std.$int32, $.Cardinality.One, false, false, false, false>;
-  "date_earned": $.PropertyDesc<_cal.$local_date, $.Cardinality.One, false, false, false, false>;
-  "description": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
-  "recurrency": $.PropertyDesc<$Recurrency, $.Cardinality.One, false, false, false, true>;
-  "subCategory": $.LinkDesc<$subCategory, $.Cardinality.AtMostOne, {}, false, false,  false, false>;
-}>;
-type $Gain = $.ObjectType<"default::Gain", $GainλShape, null, [
-  ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
-]>;
-const $Gain = $.makeType<$Gain>(_.spec, "a02d0098-34ce-11ef-9860-e3a49db5e779", _.syntax.literal);
-
-const Gain: $.$expr_PathNode<$.TypeSet<$Gain, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Gain, $.Cardinality.Many), null);
+const Transaction: $.$expr_PathNode<$.TypeSet<$Transaction, $.Cardinality.Many>, null> = _.syntax.$PathNode($.$toSet($Transaction, $.Cardinality.Many), null);
 
 export type $UserλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588λShape & {
   "email": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
@@ -124,8 +106,7 @@ export type $UserλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c2
   "<created_by[is Account]": $.LinkDesc<$Account, $.Cardinality.Many, {}, false, false,  false, false>;
   "<created_by[is subCategory]": $.LinkDesc<$subCategory, $.Cardinality.Many, {}, false, false,  false, false>;
   "<created_by[is Category]": $.LinkDesc<$Category, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<created_by[is Expense]": $.LinkDesc<$Expense, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<created_by[is Gain]": $.LinkDesc<$Gain, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<created_by[is Transaction]": $.LinkDesc<$Transaction, $.Cardinality.Many, {}, false, false,  false, false>;
   "<created_by": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $User = $.ObjectType<"default::User", $UserλShape, null, [
@@ -142,8 +123,7 @@ export type $subCategoryλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f
   "desc": $.PropertyDesc<_std.$str, $.Cardinality.One, false, false, false, false>;
   "is_public": $.PropertyDesc<_std.$bool, $.Cardinality.One, false, false, false, true>;
   "<subCategories[is Category]": $.LinkDesc<$Category, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<subCategory[is Expense]": $.LinkDesc<$Expense, $.Cardinality.Many, {}, false, false,  false, false>;
-  "<subCategory[is Gain]": $.LinkDesc<$Gain, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<subCategory[is Transaction]": $.LinkDesc<$Transaction, $.Cardinality.Many, {}, false, false,  false, false>;
   "<subCategories": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<subCategory": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
@@ -156,7 +136,7 @@ const subCategory: $.$expr_PathNode<$.TypeSet<$subCategory, $.Cardinality.Many>,
 
 
 
-export { CardType, CategoryType, Recurrency, $Account, Account, $Card, Card, $Category, Category, $Expense, Expense, $Gain, Gain, $User, User, $subCategory, subCategory };
+export { CardType, CategoryType, Recurrency, $Account, Account, $Card, Card, $Category, Category, $Transaction, Transaction, $User, User, $subCategory, subCategory };
 
 type __defaultExports = {
   "CardType": typeof CardType;
@@ -165,8 +145,7 @@ type __defaultExports = {
   "Account": typeof Account;
   "Card": typeof Card;
   "Category": typeof Category;
-  "Expense": typeof Expense;
-  "Gain": typeof Gain;
+  "Transaction": typeof Transaction;
   "User": typeof User;
   "subCategory": typeof subCategory
 };
@@ -177,8 +156,7 @@ const __defaultExports: __defaultExports = {
   "Account": Account,
   "Card": Card,
   "Category": Category,
-  "Expense": Expense,
-  "Gain": Gain,
+  "Transaction": Transaction,
   "User": User,
   "subCategory": subCategory
 };

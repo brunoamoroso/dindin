@@ -52,33 +52,8 @@ export const getSubCategories = async (req: Request, res:Response) => {
         });
         
         const subCategories = await querySubcategories.run(clientDB);
-
-        res.status(200).json(subCategories);
+        res.status(200).json(subCategories[0].subCategories);
         return;
-
-
-        // const query = await clientDB.query(`
-        //     select Category {
-        //         desc,
-        //         subCategories: {
-        //             id,
-        //             desc
-        //         }
-        //     } filter .desc = <str>$category`,
-        //     {
-        //         category: category
-        //     }).catch((err) => {
-        //         res.status(422);
-        //         throw new Error(err);
-        //     });
-            
-        // const subCategories = query[0]!.subCategories;
-        
-        // if(subCategories.length === 0){
-        //     return res.status(204).send("Essa categoria não possuí nenhuma sub categoria ainda")
-        // }
-
-        // return res.status(200).send(subCategories);
     }catch(err: unknown){
         console.log(err);
         return res.status(422).json({message: "Não conseguimos encontrar nenhuma categoria nesse momento."});
