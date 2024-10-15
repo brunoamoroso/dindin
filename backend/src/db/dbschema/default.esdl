@@ -53,7 +53,7 @@ module default {
         required type: str{
             constraint one_of("gain",  "expense");
         };
-        required desc: str;
+        desc: str;
         required amount: int32;
         required category: Category;
         subCategory: subCategory;
@@ -64,7 +64,6 @@ module default {
         };
         required created_by: User;
         payment_method: str;
-        payment_condition: str;
         installments: int16;
 
     }
