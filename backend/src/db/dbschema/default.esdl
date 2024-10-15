@@ -53,6 +53,7 @@ module default {
         required type: str{
             constraint one_of("gain",  "expense");
         };
+        desc: str;
         required amount: int32;
         required category: Category;
         subCategory: subCategory;
