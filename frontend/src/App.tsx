@@ -21,6 +21,7 @@ import { TransactionsContextProvider } from './context/TransactionsContext'
 import { AuthContextProvider } from './context/AuthContext'
 import AuthenticatedRoutesContext from './context/AuthenticatedRoutesContext'
 import UnauthRoutesContext from './context/UnauthRoutesContext'
+import ListAllTransactions from './pages/Dashboard/ListAllTransactions'
 
 function AppRoutes(){
   const location = useLocation();
@@ -39,7 +40,9 @@ function AppRoutes(){
             <Route element={<AuthenticatedRoutesContext />}>
                 <Route element={<MonthPicker />}>
                   <Route path='/dashboard' element={<Dashboard />}/>
+                  <Route path='/transaction/list' element={<ListAllTransactions />}/>
                 </Route>
+
 
                 <Route element={<TransactionsContextProvider />}>
                   {previousLocation && (

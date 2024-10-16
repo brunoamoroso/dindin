@@ -64,7 +64,7 @@ export default function Dashboard() {
             )}
 
             {(!isLoading && data && !isError) && (
-                <LastTransactions data={data.allTransactionsByMonth} selectedDate={selectedDate.toISOString()}/>
+                <LastTransactions data={data.allTransactionsByMonth} />
             )}
 
             {isLoading && (
