@@ -1,4 +1,5 @@
 export interface AllTransactionType {
+    id?: string;
     type: string;
     desc: string;
     amount: number;

@@ -178,6 +178,7 @@ export const getAllTransactionsByMonth = async (
         );
 
         return {
+          id: true,
           type: true,
           desc: true,
           amount: true,
