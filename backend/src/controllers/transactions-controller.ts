@@ -232,3 +232,18 @@ export const getAllTransactionsByMonth = async (
     throw new Error(err as string);
   }
 };
+
+export const deleteTransaction = async(req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try{
+    const queryDeleteTransaction = await e.delete(e.Transaction, (t) => ({
+      filter_single: {id: id}
+    })).run(clientDB);
+
+    return res.status(200).json({message: "Transação deletada"});
+  }catch(err){
+    console.error(err);
+    res.status(422).json({message: "Ocorreu um problema ao deletar sua transação"});
+  }
+}

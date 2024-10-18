@@ -1,7 +1,7 @@
-import { SetStateAction } from "react";
+import { SetStateAction, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
-type ContextType = {selectedDate: Date, setShowDatePicker: React.Dispatch<SetStateAction<boolean>>};
+type ContextType = {selectedDate: Date, setSelectedDate: React.Dispatch<SetStateAction<Date>>, setShowDatePicker: React.Dispatch<SetStateAction<boolean>>};
 
 export function useMonthPicker() {
   return useOutletContext<ContextType>();
