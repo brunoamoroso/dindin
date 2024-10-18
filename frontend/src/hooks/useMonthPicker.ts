@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from "react";
+import { SetStateAction } from "react";
 import { useOutletContext } from "react-router-dom";
 
 type ContextType = {selectedDate: Date, setSelectedDate: React.Dispatch<SetStateAction<Date>>, setShowDatePicker: React.Dispatch<SetStateAction<boolean>>};

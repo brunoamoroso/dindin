@@ -28,40 +28,43 @@ function AppRoutes(){
   const previousLocation = location.state?.previousLocation;
   return (
     <>
-        <Routes location={previousLocation || location}>
-          <Route element={<AuthContextProvider />}>
+      <Routes location={previousLocation || location}>
+        <Route element={<AuthContextProvider />}>
+          <Route element={<UnauthRoutesContext />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/profile/create" element={<CreateProfile />} />
+            <Route path="profile/signin" element={<SignIn />} />
+          </Route>
 
-            <Route element={<UnauthRoutesContext />}>
-              <Route path='/' element={<Home />}/>
-              <Route path='/profile/create' element={<CreateProfile />}/>
-              <Route path='profile/signin' element={<SignIn />} />
+          <Route element={<AuthenticatedRoutesContext />}>
+            <Route element={<MonthPicker />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route
+                path="/transaction/list"
+                element={<ListAllTransactions />}
+              />
             </Route>
 
-            <Route element={<AuthenticatedRoutesContext />}>
-                <Route element={<MonthPicker />}>
-                  <Route path='/dashboard' element={<Dashboard />}/>
-                  <Route path='/transaction/list' element={<ListAllTransactions />}/>
-                </Route>
-
-
-                <Route element={<TransactionsContextProvider />}>
-                  {previousLocation && (
-                    <Route element={<TransactionDate />}> 
-                      <Route path='/transaction' element={<Transaction />}/>
-                    </Route>
-                  )}
-                  {!previousLocation && (
-                    <Route path='/transaction' element={<Transaction />}/>
-                  )}
-                  <Route path='/categories/:type' element={<Categories />} />
-                  <Route path='/categories/sub/:category' element={<SubCategories />} />
-                  <Route path='/transaction-accounts/list' element={<TransactionAccount />} />
-                  <Route path='/recurrency' element={<Recurrency />} />
-                </Route>
+            <Route element={<TransactionsContextProvider />}>
+              
+              <Route element={<TransactionDate />}>
+                <Route path="/transaction" element={<Transaction mode="create"/>} />
               </Route>
-          </Route>
-      </Routes>
 
+              <Route path="/categories/:type" element={<Categories />} />
+              <Route
+                path="/categories/sub/:category"
+                element={<SubCategories />}
+              />
+              <Route
+                path="/transaction-accounts/list"
+                element={<TransactionAccount />}
+              />
+              <Route path="/recurrency" element={<Recurrency />} />
+            </Route>
+          </Route>
+        </Route>
+      </Routes>
     </>
   );
 }

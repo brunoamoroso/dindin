@@ -1,7 +1,7 @@
 import AppBar from "@/components/AppBar"
 import { InlineTabs, InlineTabsContent, InlineTabsList, InlineTabsTrigger } from "@/components/ui/inline-tabs"
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
-import { ChangeEvent, FormEvent, MouseEvent, useEffect } from "react";
+import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from "react";
 import { currencyFormat } from "@/utils/currency-format";
 import GainTransaction from "./GainTransaction";
 import ExpenseTransaction from "./ExpenseTransaction";
@@ -9,13 +9,22 @@ import { useToast } from "@/components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import api from '../../api/api';
 import { TransactionDataType } from "@/context/TransactionsContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CircleCheck } from "lucide-react";
+import TransactionDate from "./TransactionDate";
+import { useDatePicker } from "@/hooks/useDatePicker";
 
-export default function Transaction() {
+export default function Transaction({mode} : {mode: "create" | "edit"}) {
   const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
+
+  if(mode === "edit"){
+    const {id} = useParams();
+    console.log(id);
+  }
+
   const navigate = useNavigate();
   const {toast} = useToast();
+  const {showDatePicker} = useDatePicker();
 
   useEffect(() => {
     const amountPlaceholder = document.getElementById("amount_placeholder");
@@ -184,19 +193,41 @@ export default function Transaction() {
 
   return (
     <div className="bg-surface h-dvh">
-      <AppBar title="Adicionar Transação" pageBack="dashboard"/>
-      <InlineTabs defaultValue={contextTransactionData.type} className="pt-8" onValueChange={handleTypeTransaction}>
-        <InlineTabsList >
+      <AppBar title="Adicionar Transação" pageBack="dashboard" />
+      <InlineTabs
+        defaultValue={contextTransactionData.type}
+        className="pt-8"
+        onValueChange={handleTypeTransaction}
+      >
+        <InlineTabsList>
           <InlineTabsTrigger value="gain">Ganho</InlineTabsTrigger>
-          <InlineTabsTrigger value="expense" className="data-[state=active]:text-negative data-[state=active]:border-negative">Despesa</InlineTabsTrigger>
+          <InlineTabsTrigger
+            value="expense"
+            className="data-[state=active]:text-negative data-[state=active]:border-negative"
+          >
+            Despesa
+          </InlineTabsTrigger>
         </InlineTabsList>
         <InlineTabsContent value="gain">
-          <GainTransaction handleAmountChange={handleAmountChange} handleInputChange={handleInputChange} handleAmountPlaceholder={handleAmountPlaceholder} handleDateToday={handleDate} handleSubmit={handleSubmit}/>
+          <GainTransaction
+            handleAmountChange={handleAmountChange}
+            handleInputChange={handleInputChange}
+            handleAmountPlaceholder={handleAmountPlaceholder}
+            handleDateToday={handleDate}
+            handleSubmit={handleSubmit}
+          />
         </InlineTabsContent>
         <InlineTabsContent value="expense">
-        <ExpenseTransaction handleAmountChange={handleAmountChange} handleInputChange={handleInputChange} handleAmountPlaceholder={handleAmountPlaceholder} handleDateToday={handleDate} handleSubmit={handleSubmit} />
+          <ExpenseTransaction
+            handleAmountChange={handleAmountChange}
+            handleInputChange={handleInputChange}
+            handleAmountPlaceholder={handleAmountPlaceholder}
+            handleDateToday={handleDate}
+            handleSubmit={handleSubmit}
+          />
         </InlineTabsContent>
       </InlineTabs>
+      {showDatePicker && (<TransactionDate />)}
     </div>
-  )
+  );
 }

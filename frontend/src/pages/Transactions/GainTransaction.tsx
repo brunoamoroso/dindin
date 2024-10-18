@@ -3,10 +3,11 @@ import { Input } from "@/components/ui/input";
 import { InputChips } from "@/components/ui/input-chips";
 import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
+import { useDatePicker } from "@/hooks/useDatePicker";
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 import { Landmark, RefreshCw, Tag } from "lucide-react";
-import { ChangeEvent, FormEvent, MouseEvent } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { ChangeEvent, FormEvent, MouseEvent, SetStateAction } from "react";
+import { Link } from "react-router-dom";
 
 interface GainTransactionType{
     handleAmountChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -18,7 +19,8 @@ interface GainTransactionType{
 
 export default function GainTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit}: GainTransactionType) {
   const {contextTransactionData}  = useTransactionsContext();
-  const location = useLocation(); 
+  const {setShowDatePicker} = useDatePicker();
+
   return (
     <>
       <div className="container">
@@ -81,7 +83,8 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
                 <MenuListItem>
                   <Landmark />
                   {!contextTransactionData.account && "Escolha uma conta"}
-                  {contextTransactionData.account && contextTransactionData.account.desc}
+                  {contextTransactionData.account &&
+                    contextTransactionData.account.desc}
                 </MenuListItem>
               </Link>
             </div>
@@ -90,29 +93,40 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
               <div className="flex gap-2">
                 <InputChips
                   value={"today"}
-                  variant={contextTransactionData.date.chip === "today" ? "pressed" : "default"}
+                  variant={
+                    contextTransactionData.date.chip === "today"
+                      ? "pressed"
+                      : "default"
+                  }
                   onClick={handleDateToday}
-                  pressed={contextTransactionData.date.chip === "today" ? true : false}
+                  pressed={
+                    contextTransactionData.date.chip === "today" ? true : false
+                  }
                 >
                   Hoje
                 </InputChips>
-                <Link
-                  to={"/transaction/date"}
-                  state={{ previousLocation: location }}
+                <InputChips
+                  value={"searchDate"}
+                  variant={
+                    contextTransactionData.date.chip === "otherDate"
+                      ? "pressed"
+                      : "default"
+                  }
+                  pressed={
+                    contextTransactionData.date.chip === "otherDate"
+                      ? true
+                      : false
+                  }
+                  onClick={() => {
+                    setShowDatePicker(true);
+                  }}
                 >
-                  <InputChips
-                    value={"searchDate"}
-                    variant={
-                      contextTransactionData.date.chip === "otherDate" ? "pressed" : "default"
-                    }
-                    pressed={contextTransactionData.date.chip === "otherDate" ? true : false}
-                  >
-                    {contextTransactionData.date.chip === "otherDate" &&
-                      contextTransactionData.date.value !== undefined &&
-                      contextTransactionData.date.value.toLocaleDateString()}
-                    {contextTransactionData.date.chip !== "otherDate" && "Outra Data"}
-                  </InputChips>
-                </Link>
+                  {contextTransactionData.date.chip === "otherDate" &&
+                    contextTransactionData.date.value !== undefined &&
+                    contextTransactionData.date.value.toLocaleDateString()}
+                  {contextTransactionData.date.chip !== "otherDate" &&
+                    "Outra Data"}
+                </InputChips>
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -130,6 +144,7 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
           </Button>
         </form>
       </div>
+
     </>
   );
 }
