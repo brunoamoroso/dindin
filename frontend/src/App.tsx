@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import { Toaster } from './components/ui/toaster'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -24,11 +24,9 @@ import UnauthRoutesContext from './context/UnauthRoutesContext'
 import ListAllTransactions from './pages/Dashboard/ListAllTransactions'
 
 function AppRoutes(){
-  const location = useLocation();
-  const previousLocation = location.state?.previousLocation;
   return (
     <>
-      <Routes location={previousLocation || location}>
+      <Routes>
         <Route element={<AuthContextProvider />}>
           <Route element={<UnauthRoutesContext />}>
             <Route path="/" element={<Home />} />
