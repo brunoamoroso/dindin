@@ -16,18 +16,15 @@ interface ListAllTransactionsProps {}
 
 export default function ListAllTransactions({}: ListAllTransactionsProps) {
   const { selectedDate, setSelectedDate, setShowDatePicker } = useMonthPicker();
+  
   const {dateParams} = useParams();
   useEffect(() => {
-    console.log(dateParams);
     if(dateParams !== undefined){
       setSelectedDate(new Date(dateParams));
     }
   }, [dateParams])
 
-  console.log(selectedDate);
   const monthLong = selectedDate.toLocaleDateString("pt-BR", { month: "long" });
-
-
 
   const handleDecreaseMonth = () => {
     const date = new Date(selectedDate);
