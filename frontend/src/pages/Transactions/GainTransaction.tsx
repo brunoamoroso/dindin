@@ -5,8 +5,9 @@ import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
 import { useDatePicker } from "@/hooks/useDatePicker";
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
+import { currencyFormat } from "@/utils/currency-format";
 import { Landmark, RefreshCw, Tag } from "lucide-react";
-import { ChangeEvent, FormEvent, MouseEvent, SetStateAction } from "react";
+import { ChangeEvent, FormEvent, MouseEvent } from "react";
 import { Link } from "react-router-dom";
 
 interface GainTransactionType{
@@ -15,9 +16,10 @@ interface GainTransactionType{
     handleAmountPlaceholder: (e: MouseEvent<HTMLDivElement>) => void;
     handleDateToday: (e: MouseEvent<HTMLButtonElement>) => void;
     handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
+    mode: string;
 }
 
-export default function GainTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit}: GainTransactionType) {
+export default function GainTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit, mode}: GainTransactionType) {
   const {contextTransactionData}  = useTransactionsContext();
   const {setShowDatePicker} = useDatePicker();
 
@@ -33,7 +35,9 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
               className="headline-small text-positive"
               onClick={handleAmountPlaceholder}
             >
-              0,00
+              {contextTransactionData.amount
+                ? currencyFormat(contextTransactionData.amount)
+                : "0,00"}
             </span>
             <Input
               variant={"ghost"}
@@ -44,6 +48,7 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
               className="hidden text-positive"
               placeholder="0,00"
               onChange={handleAmountChange}
+              value={currencyFormat(contextTransactionData.amount)}
             />
           </div>
         </div>
@@ -140,11 +145,10 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
             </div>
           </div>
           <Button type="submit" size={"lg"}>
-            Adicionar Transação
+            {mode === "create" ? "Adicionar Transação" : "Editar Transação"}
           </Button>
         </form>
       </div>
-
     </>
   );
 }

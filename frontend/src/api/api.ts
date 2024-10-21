@@ -91,6 +91,14 @@ class Api{
     public deleteTransaction<T>(id: string): Promise<T>{
         return this.delete<T>(`/transactions/delete/${id}`);
     }
+
+    public getOneTransaction<T>(id: string): Promise<T>{
+        return this.get<T>(`/transactions/${id}`);
+    }
+
+    // public editTransaction<T>(id: string):Promise<T>{
+    //     return this.
+    // }
 }
 
 const instance = new Api();

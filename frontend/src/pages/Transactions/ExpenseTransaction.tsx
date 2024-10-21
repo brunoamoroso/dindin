@@ -4,9 +4,10 @@ import { InputChips } from "@/components/ui/input-chips";
 import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
+import { currencyFormat } from "@/utils/currency-format";
 import { Landmark, RefreshCw, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface ExpenseTransactionType{
     handleAmountChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -14,42 +15,21 @@ interface ExpenseTransactionType{
     handleAmountPlaceholder: (e: MouseEvent<HTMLDivElement>) => void;
     handleDateToday: (e: MouseEvent<HTMLButtonElement>) => void;
     handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
+    mode: string;
 }
 
-export default function ExpenseTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit}: ExpenseTransactionType) {
+export default function ExpenseTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit, mode}: ExpenseTransactionType) {
   const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
-  const location = useLocation(); 
+  console.log(contextTransactionData);
 
   const handlePaymentChips = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const target = e.target as HTMLButtonElement;
 
-    if((contextTransactionData.paymentMethod === target.value) || (contextTransactionData.paymentCondition === target.value)){
-      setContextTransactionData((prevTransaction) => ({
-        ...prevTransaction,
-        [target.id]: "none"
-      }));
-      return;
-    }
-
     setContextTransactionData((prevTransaction) => ({
       ...prevTransaction,
       [target.id]: target.value
     }))
-
-    if(target.value === "debit"){
-      setContextTransactionData((prevTransaction) => ({
-        ...prevTransaction,
-        paymentCondition: "single"
-      }))
-    }
-
-    if(contextTransactionData.paymentMethod === "credit" && target.value === "single"){
-      setContextTransactionData((prevTransaction) => ({
-        ...prevTransaction,
-        installments: ""
-      }))
-    }
   }
 
   const handleInstallmentsChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -76,7 +56,9 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
               className="headline-small text-negative"
               onClick={handleAmountPlaceholder}
             >
-              0,00
+              {contextTransactionData.amount
+                ? currencyFormat(contextTransactionData.amount)
+                : "0,00"}
             </span>
             <Input
               variant={"ghost"}
@@ -87,6 +69,7 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
               className="hidden text-negative"
               placeholder="0,00"
               onChange={handleAmountChange}
+              value={currencyFormat(contextTransactionData.amount)}
             />
           </div>
         </div>
@@ -126,104 +109,100 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
                 <MenuListItem>
                   <Landmark />
                   {!contextTransactionData.account && "Escolha uma conta"}
-                  {contextTransactionData.account && contextTransactionData.account.desc}
+                  {contextTransactionData.account &&
+                    contextTransactionData.account.desc}
                 </MenuListItem>
               </Link>
             </div>
             <div className="py-3 flex flex-col gap-1.5">
-              <div className="flex flex-col gap-1">
-                <span className="label-large text-title">Forma de Pagamento</span>
-                <span className="body-small text-subtle">Pagamentos de boleto, no pix ou em dinheiro também devem ser considerados como débito</span>
-              </div>
-              <div className="flex gap-2">
-                <InputChips
-                    id="paymentMethod"
-                    value={"debit"}
-                    variant={
-                      contextTransactionData.paymentMethod === "debit" ? "pressed" : "default"
-                    }
-                    onClick={handlePaymentChips}
-                    pressed={contextTransactionData.paymentMethod === "debit" ? true : false}
-                  >
-                    Débito
-                </InputChips>
-                <InputChips
-                  id="paymentMethod"
-                  value={"credit"}
-                  variant={contextTransactionData.paymentMethod === "credit" ? "pressed" : "default"}
-                  onClick={handlePaymentChips}
-                  pressed={contextTransactionData.paymentMethod === "credit" ? true : false}
-                >
-                  Crédito
-                </InputChips>
-              </div>
-            </div>
-            <div className="py-3 flex flex-col gap-1.5">
-              <span className="label-large text-title">Condição de Pagamento</span>
+              <span className="label-large text-title">
+                Condição de Pagamento
+              </span>
               <div className="flex gap-2">
                 <InputChips
                   id="paymentCondition"
                   value={"single"}
-                  variant={(contextTransactionData.paymentCondition === "single" || contextTransactionData.paymentMethod ===  "debit") ? "pressed" : "default"}
+                  variant={
+                    contextTransactionData.paymentCondition === "single"
+                      ? "pressed"
+                      : "default"
+                  }
                   onClick={handlePaymentChips}
-                  pressed={(contextTransactionData.paymentCondition === "single" || contextTransactionData.paymentMethod === "debit" ) ? true : false}
+                  pressed={
+                    contextTransactionData.paymentCondition === "single"
+                      ? true
+                      : false
+                  }
                 >
                   À vista
                 </InputChips>
                 <InputChips
-                    id="paymentCondition"
-                    value={"multi"}
-                    variant={
-                      (contextTransactionData.paymentCondition === "multi" && contextTransactionData.paymentMethod !== "debit") ? "pressed" : "default"
-                    }
-                    onClick={handlePaymentChips}
-                    pressed={(contextTransactionData.paymentCondition === "multi" && contextTransactionData.paymentMethod !== "debit") ? true : false}
-                    disabled={contextTransactionData.paymentMethod === "debit"}
-                  >
-                    Parcelado
+                  id="paymentCondition"
+                  value={"multi"}
+                  variant={
+                    contextTransactionData.paymentCondition === "multi"
+                      ? "pressed"
+                      : "default"
+                  }
+                  onClick={handlePaymentChips}
+                  pressed={
+                    contextTransactionData.paymentCondition === "multi"
+                      ? true
+                      : false
+                  }
+                >
+                  Parcelado
                 </InputChips>
               </div>
             </div>
 
-            <TextField 
+            <TextField
               id="installments"
-              label="Número de Parcelas" 
-              placeholder="Número de Parcelas" 
-              onChange={handleInstallmentsChange} 
-              pattern="[0-9]*" 
+              label="Número de Parcelas"
+              placeholder="Número de Parcelas"
+              onChange={handleInstallmentsChange}
+              pattern="[0-9]*"
               inputMode="numeric"
-              disabled={contextTransactionData.paymentMethod === "debit" || contextTransactionData.paymentCondition === "single"}
+              disabled={contextTransactionData.paymentCondition === "single"}
               value={contextTransactionData.installments}
             />
-            
+
             <div className="py-3 flex flex-col gap-1.5">
               <span className="label-large text-title">Quando pagou</span>
               <div className="flex gap-2">
                 <InputChips
                   value={"today"}
-                  variant={contextTransactionData.date.chip === "today" ? "pressed" : "default"}
+                  variant={
+                    contextTransactionData.date.chip === "today"
+                      ? "pressed"
+                      : "default"
+                  }
                   onClick={handleDateToday}
-                  pressed={contextTransactionData.date.chip === "today" ? true : false}
+                  pressed={
+                    contextTransactionData.date.chip === "today" ? true : false
+                  }
                 >
                   Hoje
                 </InputChips>
-                <Link
-                  to={"/transaction/date"}
-                  state={{ previousLocation: location }}
+                <InputChips
+                  value={"searchDate"}
+                  variant={
+                    contextTransactionData.date.chip === "otherDate"
+                      ? "pressed"
+                      : "default"
+                  }
+                  pressed={
+                    contextTransactionData.date.chip === "otherDate"
+                      ? true
+                      : false
+                  }
                 >
-                  <InputChips
-                    value={"searchDate"}
-                    variant={
-                      contextTransactionData.date.chip === "otherDate" ? "pressed" : "default"
-                    }
-                    pressed={contextTransactionData.date.chip === "otherDate" ? true : false}
-                  >
-                    {contextTransactionData.date.chip === "otherDate" &&
-                      contextTransactionData.date.value !== undefined &&
-                      contextTransactionData.date.value.toLocaleDateString()}
-                    {contextTransactionData.date.chip !== "otherDate" && "Outra Data"}
-                  </InputChips>
-                </Link>
+                  {contextTransactionData.date.chip === "otherDate" &&
+                    contextTransactionData.date.value !== undefined &&
+                    contextTransactionData.date.value.toLocaleDateString()}
+                  {contextTransactionData.date.chip !== "otherDate" &&
+                    "Outra Data"}
+                </InputChips>
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -237,7 +216,7 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
             </div>
           </div>
           <Button type="submit" size={"lg"}>
-            Adicionar Transação
+            {mode === "create" ? "Adicionar Transação" : "Editar Transação"}
           </Button>
         </form>
       </div>

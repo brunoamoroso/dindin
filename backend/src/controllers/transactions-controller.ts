@@ -247,3 +247,39 @@ export const deleteTransaction = async(req: Request, res: Response) => {
     res.status(422).json({message: "Ocorreu um problema ao deletar sua transação"});
   }
 }
+
+export const getOneTransaction = async(req: Request, res: Response) => {
+  const {id} = req.params;
+  try{
+    const queryGetOneTransaction = await e.select(e.Transaction, () => {
+      return{
+        id: true,
+        type: true,
+        desc: true,
+        amount: true,
+        account:{
+          id: true,
+          desc: true,
+        },
+        category: {
+          id: true,
+          desc: true,
+        },
+        subCategory: {
+          id: true,
+          desc:  true,
+        },
+        recurrency: true,
+        date: true,
+        installments: true,
+        payment_condition: true,
+        filter_single: {id: id}
+      }
+    }).run(clientDB);
+
+    res.status(200).json(queryGetOneTransaction);
+  }catch(err){
+    console.error(err);
+    res.status(404).json({message: "Can't find the transaction"});
+  }
+}

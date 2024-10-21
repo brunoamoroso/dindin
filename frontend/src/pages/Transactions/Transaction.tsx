@@ -6,33 +6,56 @@ import { currencyFormat } from "@/utils/currency-format";
 import GainTransaction from "./GainTransaction";
 import ExpenseTransaction from "./ExpenseTransaction";
 import { useToast } from "@/components/ui/use-toast";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import api from '../../api/api';
 import { TransactionDataType } from "@/context/TransactionsContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { CircleCheck } from "lucide-react";
 import TransactionDate from "./TransactionDate";
 import { useDatePicker } from "@/hooks/useDatePicker";
+import * as Types from '@/types/TransactionTypes';
+import { getRecurrencyDesc } from "@/utils/get-currency-desc";
 
 export default function Transaction({mode} : {mode: "create" | "edit"}) {
   const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
-
-  if(mode === "edit"){
-    const {id} = useParams();
-    console.log(id);
-  }
-
   const navigate = useNavigate();
   const {toast} = useToast();
+  const {id} = useParams();
+
+  const {data, isLoading, isError} = useQuery<Types.TransactionType>({
+    queryKey: ["transaction-edit", id],
+    queryFn: () => api.getOneTransaction(id!),
+    enabled: mode === "edit" && !!id,    
+  });
+
+
   const {showDatePicker} = useDatePicker();
 
   useEffect(() => {
-    const amountPlaceholder = document.getElementById("amount_placeholder");
-
-    if((contextTransactionData.amount !== 0) && (amountPlaceholder !== null)){
-      amountPlaceholder.innerHTML = currencyFormat(contextTransactionData.amount);
+    if (data) {
+      setContextTransactionData((prev) => ({
+        ...prev,
+        id: data.id,
+        type: data.type,
+        amount: data.amount,
+        desc: data.desc,
+        category: data.category,
+        subCategory: data.subCategory,
+        account: data.account,
+        recurrency: {
+          id: data.recurrency,
+          desc: getRecurrencyDesc(data.recurrency)
+        },
+        date: {
+          chip: "otherDate",
+          value: new Date(data.date),
+        },
+        paymentCondition: data.payment_condition,
+        installments: (data.installments !== null && data.installments !== undefined) ? data.installments : "",
+      }));
+      
     }
-  }, [contextTransactionData]);
+  }, [data, setContextTransactionData]);
 
   const handleDate = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -107,7 +130,7 @@ export default function Transaction({mode} : {mode: "create" | "edit"}) {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const {type, amount, category, account, date, paymentMethod, paymentCondition, installments} = contextTransactionData;
+    const {type, amount, category, account, date, paymentCondition, installments} = contextTransactionData;
 
     if(amount === 0){
       toast({
@@ -143,15 +166,6 @@ export default function Transaction({mode} : {mode: "create" | "edit"}) {
         title: "Selecione quando foi a transação",
         variant: "destructive",
         duration: 2000
-      });
-      return;
-    }
-
-    if((type === "expense") && (paymentMethod === "none")){
-      toast({
-        title: "Selecione a Forma de Pagamento da transação",
-        variant: "destructive",
-        duration: 2000,
       });
       return;
     }
@@ -193,9 +207,14 @@ export default function Transaction({mode} : {mode: "create" | "edit"}) {
 
   return (
     <div className="bg-surface h-dvh">
-      <AppBar title="Adicionar Transação" pageBack="dashboard" />
+      {mode === "create" ? (
+        <AppBar title="Adicionar Transação" pageBack="dashboard" />
+      ) : (
+        <AppBar title="Editar Transação" pageBack="transaction/list" />
+      )}
       <InlineTabs
-        defaultValue={contextTransactionData.type}
+        defaultValue="gain"
+        value={contextTransactionData.type}
         className="pt-8"
         onValueChange={handleTypeTransaction}
       >
@@ -215,6 +234,7 @@ export default function Transaction({mode} : {mode: "create" | "edit"}) {
             handleAmountPlaceholder={handleAmountPlaceholder}
             handleDateToday={handleDate}
             handleSubmit={handleSubmit}
+            mode={mode}
           />
         </InlineTabsContent>
         <InlineTabsContent value="expense">
@@ -224,10 +244,11 @@ export default function Transaction({mode} : {mode: "create" | "edit"}) {
             handleAmountPlaceholder={handleAmountPlaceholder}
             handleDateToday={handleDate}
             handleSubmit={handleSubmit}
+            mode={mode}
           />
         </InlineTabsContent>
       </InlineTabs>
-      {showDatePicker && (<TransactionDate />)}
+      {showDatePicker && <TransactionDate />}
     </div>
   );
 }

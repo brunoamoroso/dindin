@@ -44,9 +44,15 @@ function AppRoutes(){
             </Route>
 
             <Route element={<TransactionsContextProvider />}>
-              
               <Route element={<TransactionDate />}>
-                <Route path="/transaction" element={<Transaction mode="create"/>} />
+                <Route
+                  path="/transaction/edit/:id"
+                  element={<Transaction mode="edit" />}
+                />
+                <Route
+                  path="/transaction"
+                  element={<Transaction mode="create" />}
+                />
               </Route>
 
               <Route path="/categories/:type" element={<Categories />} />
