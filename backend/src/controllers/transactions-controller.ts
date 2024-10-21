@@ -237,7 +237,7 @@ export const deleteTransaction = async(req: Request, res: Response) => {
   const { id } = req.params;
 
   try{
-    const queryDeleteTransaction = await e.delete(e.Transaction, (t) => ({
+    await e.delete(e.Transaction, (t) => ({
       filter_single: {id: id}
     })).run(clientDB);
 
@@ -281,5 +281,39 @@ export const getOneTransaction = async(req: Request, res: Response) => {
   }catch(err){
     console.error(err);
     res.status(404).json({message: "Can't find the transaction"});
+  }
+}
+
+export const updateTransaction = async(req: Request, res: Response) => {
+  const {id, type, amount, desc, category, subCategory, account, recurrency, date, paymentCondition, installments} = req.body;
+    const hasSubCategory = subCategory
+    ? e.cast(e.subCategory, e.uuid(subCategory.id))
+    : null;
+    const localDate = toLocalDate(date.value);
+  try{
+    if(paymentCondition === "single"){
+      const queryUpdateTransaction = e.update(e.Transaction, () => ({
+          filter_single: {id: id},
+          set: {
+            type: type,
+            amount: e.int32(amount),
+            desc: e.str(desc),
+            category: e.cast(e.Category, e.uuid(category.id)),
+            subCategory: hasSubCategory,
+            account: e.cast(e.Account, e.uuid(account.id)),
+            recurrency: e.cast(e.Recurrency, recurrency.id),
+            date: e.cal.local_date(localDate),
+            created_by: e.cast(e.User, e.uuid(req.user)),
+            payment_condition: e.str(paymentCondition),
+          }
+      }));
+  
+      await queryUpdateTransaction.run(clientDB);
+    }
+
+    return res.status(200).json({message: "Transaction updated", date: date.value});
+  }catch(err){
+    console.error(err);
+    return res.status(422).json({message: "Can't update transaction"});
   }
 }

@@ -38,6 +38,10 @@ function AppRoutes(){
             <Route element={<MonthPicker />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route
+                path="/transaction/list/:dateParams"
+                element={<ListAllTransactions />}
+              />
+              <Route
                 path="/transaction/list"
                 element={<ListAllTransactions />}
               />

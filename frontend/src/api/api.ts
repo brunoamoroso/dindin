@@ -96,9 +96,9 @@ class Api{
         return this.get<T>(`/transactions/${id}`);
     }
 
-    // public editTransaction<T>(id: string):Promise<T>{
-    //     return this.
-    // }
+    public updateTransaction<T>(id: string, body: unknown):Promise<T>{
+        return this.put<T>(`/transactions/update/${id}`, body);
+    }
 }
 
 const instance = new Api();

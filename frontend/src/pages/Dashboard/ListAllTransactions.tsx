@@ -9,12 +9,25 @@ import getCategoryIcon from "@/utils/get-category-icon";
 import { currencyFormat } from "@/utils/currency-format";
 import { Separator } from "@/components/ui/separator";
 import ActionsTransaction from "@/components/ActionsTransaction";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 interface ListAllTransactionsProps {}
 
 export default function ListAllTransactions({}: ListAllTransactionsProps) {
   const { selectedDate, setSelectedDate, setShowDatePicker } = useMonthPicker();
+  const {dateParams} = useParams();
+  useEffect(() => {
+    console.log(dateParams);
+    if(dateParams !== undefined){
+      setSelectedDate(new Date(dateParams));
+    }
+  }, [dateParams])
+
+  console.log(selectedDate);
   const monthLong = selectedDate.toLocaleDateString("pt-BR", { month: "long" });
+
+
 
   const handleDecreaseMonth = () => {
     const date = new Date(selectedDate);

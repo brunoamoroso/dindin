@@ -10,7 +10,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import api from '../../api/api';
 import { TransactionDataType } from "@/context/TransactionsContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { CircleCheck } from "lucide-react";
+import { CircleCheck, CircleX } from "lucide-react";
 import TransactionDate from "./TransactionDate";
 import { useDatePicker } from "@/hooks/useDatePicker";
 import * as Types from '@/types/TransactionTypes';
@@ -124,9 +124,13 @@ export default function Transaction({mode} : {mode: "create" | "edit"}) {
   }
 
 
-  const mutation = useMutation({
+  const mutationAdd = useMutation({
     mutationFn: (data: TransactionDataType) =>  {return api.addTransaction(data)}
   });
+
+  const mutationUpdate = useMutation({
+    mutationFn: (data: TransactionDataType) => {return api.updateTransaction(id!, contextTransactionData)}
+  })
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -188,21 +192,54 @@ export default function Transaction({mode} : {mode: "create" | "edit"}) {
       return;
     }
 
-    mutation.mutate(contextTransactionData, {
-      onSuccess: () => {
-        toast({
-          title: (
+    if(mode === "create"){
+      mutationAdd.mutate(contextTransactionData, {
+        onSuccess: () => {
+          toast({
+            title: (
+                <div className="flex gap-3 items-center">
+                  <CircleCheck />
+                  Transação registrada!
+                </div>
+            ),
+            duration: 2500,
+            variant: "positive"
+          })
+          navigate("/dashboard");
+        }
+      });
+      return;
+    }
+
+    if(mode === "edit"){
+      mutationUpdate.mutate(contextTransactionData, {
+        onSuccess: (data) => {
+          toast({
+            title: (
               <div className="flex gap-3 items-center">
                 <CircleCheck />
-                Transação registrada com sucesso!
+                Transação atualizada!
               </div>
-          ),
-          duration: 2500,
-          variant: "positive"
-        })
-        navigate("/dashboard");
-      }
-    });
+            ),
+            duration: 2500,
+            variant: "positive"
+          });
+          navigate(`/transaction/list/${data.date}`)
+        },
+        onError: () => {
+          toast({
+            title: (
+              <div className="flex gap-3 items-center">
+                <CircleX />
+                Não conseguimos editar a transação
+              </div>
+            ),
+            duration: 2500,
+            variant: "destructive",
+          });
+        }
+      })
+    }
   }
 
   return (
