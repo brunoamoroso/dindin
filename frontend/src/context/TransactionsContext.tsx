@@ -22,6 +22,7 @@ interface RecurrencyType{
 }
 
 export interface TransactionDataType{
+  id?: string;
   type: "gain" | "expense";
   amount: number | 0;
   desc: string;
@@ -33,8 +34,7 @@ export interface TransactionDataType{
     chip: "none" | "today" | "otherDate",
     value: Date | undefined
   };
-  paymentMethod: "none" | "credit" | "debit",
-  paymentCondition: "none" | "single" | "multi"
+  paymentCondition: string;
   installments: string;
 
 }
@@ -60,7 +60,6 @@ export const TransactionsContextProvider = () => {
       chip: "none",
       value: undefined
     },
-    paymentMethod: "none",
     paymentCondition: "none",
     installments: "0",
   });

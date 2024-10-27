@@ -87,6 +87,18 @@ class Api{
     public getAllTransactionsByMonth<T>(date: string): Promise<T>{
         return this.get<T>(`/transactions/all-month/${date}`);
     }
+
+    public deleteTransaction<T>(id: string): Promise<T>{
+        return this.delete<T>(`/transactions/delete/${id}`);
+    }
+
+    public getOneTransaction<T>(id: string): Promise<T>{
+        return this.get<T>(`/transactions/${id}`);
+    }
+
+    public updateTransaction<T>(id: string, body: unknown):Promise<T>{
+        return this.put<T>(`/transactions/update/${id}`, body);
+    }
 }
 
 const instance = new Api();

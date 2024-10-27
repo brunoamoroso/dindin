@@ -135,10 +135,10 @@ export default function CreateProfile() {
   }
 
   return (
-    <div className="h-dvh flex flex-col bg-surface">
+    <div className="min-h-dvh flex flex-col bg-surface">
       <AppBar title="Configurar Conta" />
       <div className="container flex flex-1 py-10">
-          <form className="flex flex-col flex-1 justify-between" onSubmit={handleSubmit}>
+          <form className="flex flex-col gap-10 flex-1 justify-between" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center gap-2" onClick={triggerInputFile}>
                 <Input id="photoFile" type="file" className="hidden" onChange={changeInputFile} />

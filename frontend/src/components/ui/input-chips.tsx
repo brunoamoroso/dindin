@@ -20,7 +20,7 @@ interface InputChipProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, 
 
 const InputChips = ({className, variant, pressed = false, children, ...props}: InputChipProps) => {
     return (
-        <button className={cn(inputChipsVariants({variant}), className)} {...props}>
+        <button type="button" className={cn(inputChipsVariants({variant}), className)} {...props}>
             {children}
             {pressed && (<X size={20}/>)}
         </button>

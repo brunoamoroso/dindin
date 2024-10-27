@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import clientDB from "../db/conn";
 import e from "../db/dbschema/edgeql-js";
 import toLocalDate from "../utils/to-local-date";
+import splitInstallments from "../utils/split-installments";
 
 export const addTransaction = async (req: Request, res: Response) => {
   const {
@@ -69,6 +70,7 @@ export const addTransaction = async (req: Request, res: Response) => {
       }
 
       if (paymentCondition === "multi") {
+        const amountSplit = splitInstallments({amount, installments}) // in cents
         bulkTransactions = Array.from({ length: installments }, (_, i) => {
           // create and array of objects of the transactions
           if (i > 0) {
@@ -85,13 +87,15 @@ export const addTransaction = async (req: Request, res: Response) => {
           return {
             type: type,
             desc: desc,
-            amount: amount,
+            amount: amountSplit[i],
             category: category.id,
             subCategory: subCategory.id,
             account: account.id,
             recurrency: recurrency.id,
             date: localDate,
             created_by: req.user,
+            install_number: i + 1,
+            installments: installments,
             payment_condition: paymentCondition,
           };
         });
@@ -114,6 +118,8 @@ export const addTransaction = async (req: Request, res: Response) => {
                 date: e.cal.local_date,
                 created_by: e.uuid,
                 payment_condition: e.str,
+                installments: e.int16,
+                install_number: e.int16
             })),
           },
           (params) => {
@@ -131,6 +137,8 @@ export const addTransaction = async (req: Request, res: Response) => {
                   date: item.date,
                   created_by: e.cast(e.User, item.created_by),
                   payment_condition: item.payment_condition,
+                  install_number: item.install_number,
+                  installments: installments
                 });
               }
             );
@@ -178,6 +186,7 @@ export const getAllTransactionsByMonth = async (
         );
 
         return {
+          id: true,
           type: true,
           desc: true,
           amount: true,
@@ -231,3 +240,110 @@ export const getAllTransactionsByMonth = async (
     throw new Error(err as string);
   }
 };
+
+export const deleteTransaction = async(req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try{
+    await e.delete(e.Transaction, (t) => ({
+      filter_single: {id: id}
+    })).run(clientDB);
+
+    return res.status(200).json({message: "Transação deletada"});
+  }catch(err){
+    console.error(err);
+    res.status(422).json({message: "Ocorreu um problema ao deletar sua transação"});
+  }
+}
+
+export const getOneTransaction = async(req: Request, res: Response) => {
+  const {id} = req.params;
+  try{
+    const queryGetOneTransaction = await e.select(e.Transaction, () => {
+      return{
+        id: true,
+        type: true,
+        desc: true,
+        amount: true,
+        account:{
+          id: true,
+          desc: true,
+        },
+        category: {
+          id: true,
+          desc: true,
+        },
+        subCategory: {
+          id: true,
+          desc:  true,
+        },
+        recurrency: true,
+        date: true,
+        installments: true,
+        payment_condition: true,
+        filter_single: {id: id}
+      }
+    }).run(clientDB);
+
+    res.status(200).json(queryGetOneTransaction);
+  }catch(err){
+    console.error(err);
+    res.status(404).json({message: "Can't find the transaction"});
+  }
+}
+
+export const updateTransaction = async(req: Request, res: Response) => {
+  const {id, type, amount, desc, category, subCategory, account, recurrency, date, paymentCondition, installments} = req.body;
+    const hasSubCategory = subCategory
+    ? e.cast(e.subCategory, e.uuid(subCategory.id))
+    : null;
+    const localDate = toLocalDate(date.value);
+
+    let queryUpdateTransaction;
+  try{
+    if (type === "gain") {
+      queryUpdateTransaction = e.update(e.Transaction, () => ({
+        filter_single: { id: id },
+        set: {
+          type: type,
+          amount: e.int32(amount),
+          desc: e.str(desc),
+          category: e.cast(e.Category, e.uuid(category.id)),
+          subCategory: hasSubCategory,
+          account: e.cast(e.Account, e.uuid(account.id)),
+          recurrency: e.cast(e.Recurrency, recurrency.id),
+          date: e.cal.local_date(localDate),
+          created_by: e.cast(e.User, e.uuid(req.user)),
+        },
+      }));
+    }
+
+    if(type === "expense"){
+      if(paymentCondition === "single"){
+        queryUpdateTransaction = e.update(e.Transaction, () => ({
+            filter_single: {id: id},
+            set: {
+              type: type,
+              amount: e.int32(amount),
+              desc: e.str(desc),
+              category: e.cast(e.Category, e.uuid(category.id)),
+              subCategory: hasSubCategory,
+              account: e.cast(e.Account, e.uuid(account.id)),
+              recurrency: e.cast(e.Recurrency, recurrency.id),
+              date: e.cal.local_date(localDate),
+              created_by: e.cast(e.User, e.uuid(req.user)),
+              payment_condition: e.str(paymentCondition),
+            }
+        }));
+  
+      }
+    }
+
+      await queryUpdateTransaction!.run(clientDB);
+
+    return res.status(200).json({message: "Transaction updated", date: date.value});
+  }catch(err){
+    console.error(err);
+    return res.status(422).json({message: "Can't update transaction"});
+  }
+}

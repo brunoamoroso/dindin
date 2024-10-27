@@ -63,7 +63,8 @@ module default {
             default := Recurrency.`never`;
         };
         required created_by: User;
-        payment_method: str;
+        payment_condition: str;
+        install_number: int16;
         installments: int16;
 
     }

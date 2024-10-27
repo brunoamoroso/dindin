@@ -5,7 +5,7 @@ import getCategoryIcon from "@/utils/get-category-icon";
 import { Link } from "react-router-dom";
 import * as Types from '@/types/TransactionTypes';
 
-export default function LastTransactions({data, selectedDate}: {data: Types.AllTransactionType[], selectedDate: string}){
+export default function LastTransactions({data}: {data: Types.AllTransactionType[]}){
     return(
         <div className="flex flex-col bg-container2 rounded-lg py-4">
             <h1 className="title-small text-title px-6 pb-1">
@@ -36,7 +36,7 @@ export default function LastTransactions({data, selectedDate}: {data: Types.AllT
             </div>
             <Separator />
             <div className="pt-2 px-2">
-                <Link to={`/transactions/list/${selectedDate}`}>
+                <Link to={`/transaction/list`}>
                     <Button variant={"ghost"}>Ver todas as transações</Button>
                 </Link>
             </div>

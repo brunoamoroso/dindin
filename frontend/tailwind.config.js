@@ -77,8 +77,10 @@ module.exports = {
           foreground: "oklch(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "oklch(var(--destructive))",
+          foreground: "oklch(var(--destructive-foreground))",
+          border: "oklch(var(--destructive-border))",
+          hover: "oklch(var(--destructive-hover))"
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",

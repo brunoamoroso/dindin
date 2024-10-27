@@ -64,7 +64,7 @@ export default function MonthPicker() {
       </div>
     )}
       <div className="overflow-hidden">
-        <Outlet context={{selectedDate, setShowDatePicker}}/>
+        <Outlet context={{selectedDate, setSelectedDate, setShowDatePicker}}/>
       </div>
     </>
   );
