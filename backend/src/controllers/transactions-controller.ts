@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import clientDB from "../db/conn";
 import e from "../db/dbschema/edgeql-js";
 import toLocalDate from "../utils/to-local-date";
+import splitInstallments from "../utils/split-installments";
 
 export const addTransaction = async (req: Request, res: Response) => {
   const {
@@ -69,6 +70,7 @@ export const addTransaction = async (req: Request, res: Response) => {
       }
 
       if (paymentCondition === "multi") {
+        const amountSplit = splitInstallments({amount, installments}) // in cents
         bulkTransactions = Array.from({ length: installments }, (_, i) => {
           // create and array of objects of the transactions
           if (i > 0) {
@@ -85,13 +87,15 @@ export const addTransaction = async (req: Request, res: Response) => {
           return {
             type: type,
             desc: desc,
-            amount: amount,
+            amount: amountSplit[i],
             category: category.id,
             subCategory: subCategory.id,
             account: account.id,
             recurrency: recurrency.id,
             date: localDate,
             created_by: req.user,
+            install_number: i + 1,
+            installments: installments,
             payment_condition: paymentCondition,
           };
         });
@@ -114,6 +118,8 @@ export const addTransaction = async (req: Request, res: Response) => {
                 date: e.cal.local_date,
                 created_by: e.uuid,
                 payment_condition: e.str,
+                installments: e.int16,
+                install_number: e.int16
             })),
           },
           (params) => {
@@ -131,6 +137,8 @@ export const addTransaction = async (req: Request, res: Response) => {
                   date: item.date,
                   created_by: e.cast(e.User, item.created_by),
                   payment_condition: item.payment_condition,
+                  install_number: item.install_number,
+                  installments: installments
                 });
               }
             );
@@ -290,26 +298,48 @@ export const updateTransaction = async(req: Request, res: Response) => {
     ? e.cast(e.subCategory, e.uuid(subCategory.id))
     : null;
     const localDate = toLocalDate(date.value);
+
+    let queryUpdateTransaction;
   try{
-    if(paymentCondition === "single"){
-      const queryUpdateTransaction = e.update(e.Transaction, () => ({
-          filter_single: {id: id},
-          set: {
-            type: type,
-            amount: e.int32(amount),
-            desc: e.str(desc),
-            category: e.cast(e.Category, e.uuid(category.id)),
-            subCategory: hasSubCategory,
-            account: e.cast(e.Account, e.uuid(account.id)),
-            recurrency: e.cast(e.Recurrency, recurrency.id),
-            date: e.cal.local_date(localDate),
-            created_by: e.cast(e.User, e.uuid(req.user)),
-            payment_condition: e.str(paymentCondition),
-          }
+    if (type === "gain") {
+      queryUpdateTransaction = e.update(e.Transaction, () => ({
+        filter_single: { id: id },
+        set: {
+          type: type,
+          amount: e.int32(amount),
+          desc: e.str(desc),
+          category: e.cast(e.Category, e.uuid(category.id)),
+          subCategory: hasSubCategory,
+          account: e.cast(e.Account, e.uuid(account.id)),
+          recurrency: e.cast(e.Recurrency, recurrency.id),
+          date: e.cal.local_date(localDate),
+          created_by: e.cast(e.User, e.uuid(req.user)),
+        },
       }));
-  
-      await queryUpdateTransaction.run(clientDB);
     }
+
+    if(type === "expense"){
+      if(paymentCondition === "single"){
+        queryUpdateTransaction = e.update(e.Transaction, () => ({
+            filter_single: {id: id},
+            set: {
+              type: type,
+              amount: e.int32(amount),
+              desc: e.str(desc),
+              category: e.cast(e.Category, e.uuid(category.id)),
+              subCategory: hasSubCategory,
+              account: e.cast(e.Account, e.uuid(account.id)),
+              recurrency: e.cast(e.Recurrency, recurrency.id),
+              date: e.cal.local_date(localDate),
+              created_by: e.cast(e.User, e.uuid(req.user)),
+              payment_condition: e.str(paymentCondition),
+            }
+        }));
+  
+      }
+    }
+
+      await queryUpdateTransaction!.run(clientDB);
 
     return res.status(200).json({message: "Transaction updated", date: date.value});
   }catch(err){

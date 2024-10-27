@@ -5,6 +5,7 @@ import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 import { currencyFormat } from "@/utils/currency-format";
+import splitInstallmentsDisplay from "@/utils/get-split-installments";
 import { Landmark, RefreshCw, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent } from "react";
 import { Link } from "react-router-dom";
@@ -20,10 +21,25 @@ interface ExpenseTransactionType{
 
 export default function ExpenseTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit, mode}: ExpenseTransactionType) {
   const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
+  console.log(contextTransactionData);
 
   const handlePaymentChips = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const target = e.target as HTMLButtonElement;
+
+    if(target.value === "single" && contextTransactionData.installments !== "0"){
+      const installDisplay = document.getElementById("installment-helper");
+
+      if(installDisplay !== null){
+        installDisplay.innerText = "";
+      }
+
+      setContextTransactionData((prevTransaction) => ({
+        ...prevTransaction,
+        installments: "0"
+      }));
+      
+    }
 
     setContextTransactionData((prevTransaction) => ({
       ...prevTransaction,
@@ -41,6 +57,18 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
     e.target.value = sanitized.toString();
 
     handleInputChange(e);
+  }
+
+  const handleInstallDisplay = () => {
+    const installments = parseInt(contextTransactionData.installments);
+    const installDisplay = document.getElementById("installment-helper");
+
+    if (installDisplay !== null) {
+      installDisplay.innerText = splitInstallmentsDisplay(
+        contextTransactionData.amount,
+        installments
+      );
+    }
   }
 
   return (
@@ -155,16 +183,26 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
               </div>
             </div>
 
-            <TextField
-              id="installments"
-              label="Número de Parcelas"
-              placeholder="Número de Parcelas"
-              onChange={handleInstallmentsChange}
-              pattern="[0-9]*"
-              inputMode="numeric"
-              disabled={contextTransactionData.paymentCondition === "single"}
-              value={contextTransactionData.installments}
-            />
+            <div className="flex flex-col gap-1.5">
+              <TextField
+                id="installments"
+                label="Número de Parcelas"
+                placeholder="Número de Parcelas"
+                onChange={handleInstallmentsChange}
+                onKeyUp={handleInstallDisplay}
+                pattern="[0-9]*"
+                inputMode="numeric"
+                disabled={
+                  contextTransactionData.paymentCondition === "single" ||
+                  contextTransactionData.paymentCondition === "none"
+                }
+                value={contextTransactionData.installments}
+              />
+              <span
+                id="installment-helper"
+                className="body-small text-subtle"
+              ></span>
+            </div>
 
             <div className="py-3 flex flex-col gap-1.5">
               <span className="label-large text-title">Quando pagou</span>

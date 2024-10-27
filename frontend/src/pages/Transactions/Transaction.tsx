@@ -1,7 +1,7 @@
 import AppBar from "@/components/AppBar"
 import { InlineTabs, InlineTabsContent, InlineTabsList, InlineTabsTrigger } from "@/components/ui/inline-tabs"
 import { useTransactionsContext } from "@/hooks/useTransactionsContext";
-import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, MouseEvent, useEffect } from "react";
 import { currencyFormat } from "@/utils/currency-format";
 import GainTransaction from "./GainTransaction";
 import ExpenseTransaction from "./ExpenseTransaction";
@@ -14,7 +14,7 @@ import { CircleCheck, CircleX } from "lucide-react";
 import TransactionDate from "./TransactionDate";
 import { useDatePicker } from "@/hooks/useDatePicker";
 import * as Types from '@/types/TransactionTypes';
-import { getRecurrencyDesc } from "@/utils/get-currency-desc";
+import { getRecurrencyDesc } from "@/utils/get-recurrency-desc";
 
 export default function Transaction({mode} : {mode: "create" | "edit"}) {
   const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
