@@ -8,7 +8,7 @@ import {
 import { IconButton } from "./ui/icon-button";
 import { CircleCheck, EllipsisVertical, SquarePen, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import {
   Dialog,
@@ -29,6 +29,7 @@ interface ActionsTransactionProps {
   desc: string;
   date: string;
   amount: number;
+  installments: number;
 }
 
 export default function ActionsTransaction({
@@ -36,6 +37,7 @@ export default function ActionsTransaction({
   desc,
   date,
   amount,
+  installments
 }: ActionsTransactionProps) {
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
   const [isDialogOpen, setDialogIsOpen] = useState(false);

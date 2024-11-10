@@ -37,7 +37,6 @@ interface MenuListItemProps{
   separator?: boolean;
 }
 
-
 const MenuListItem = ({dataId, size = "md", children, trailingIcon = true, onClick, value, separator = false}: MenuListItemProps) => {
   return (
     <div onClick={onClick} data-id={dataId} data-value={value}>

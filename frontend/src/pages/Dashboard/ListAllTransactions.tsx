@@ -12,12 +12,11 @@ import ActionsTransaction from "@/components/ActionsTransaction";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 
-interface ListAllTransactionsProps {}
-
-export default function ListAllTransactions({}: ListAllTransactionsProps) {
+export default function ListAllTransactions() {
   const { selectedDate, setSelectedDate, setShowDatePicker } = useMonthPicker();
   
   const {dateParams} = useParams();
+
   useEffect(() => {
     if(dateParams !== undefined){
       setSelectedDate(new Date(dateParams));
@@ -86,7 +85,7 @@ export default function ListAllTransactions({}: ListAllTransactionsProps) {
                   <div className="flex flex-col">
                     <span className="label-large text-title">{d.desc}</span>
                     <span className="body-medium text-subtle">
-                      {new Date(d.date).toLocaleDateString()}
+                      {new Date(d.date).toLocaleDateString() + " - " + d.install_number + " / " + d.installments}
                     </span>
                   </div>
                 </div>
@@ -107,6 +106,7 @@ export default function ListAllTransactions({}: ListAllTransactionsProps) {
                   desc={d.desc}
                   date={d.date}
                   amount={d.amount}
+                  installments={d.installments}
                 />
               </div>
             );
@@ -140,6 +140,7 @@ export default function ListAllTransactions({}: ListAllTransactionsProps) {
                     desc={d.desc}
                     date={d.date}
                     amount={d.amount}
+                    installments={d.installments}
                   />
                 </div>
                 <Separator />

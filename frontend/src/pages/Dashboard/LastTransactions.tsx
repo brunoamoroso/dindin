@@ -5,7 +5,7 @@ import getCategoryIcon from "@/utils/get-category-icon";
 import { Link } from "react-router-dom";
 import * as Types from '@/types/TransactionTypes';
 
-export default function LastTransactions({data}: {data: Types.AllTransactionType[]}){
+export default function LastTransactions({data}: {data: Types.TransactionType[]}){
     return(
         <div className="flex flex-col bg-container2 rounded-lg py-4">
             <h1 className="title-small text-title px-6 pb-1">
@@ -19,7 +19,7 @@ export default function LastTransactions({data}: {data: Types.AllTransactionType
                                 <div>{getCategoryIcon(d.category.desc).icon}</div>
                                 <div className="flex flex-col">
                                     <span className="label-large text-title">{d.desc}</span>
-                                    <span className="body-medium text-subtle">{new Date(d.date).toLocaleDateString()}</span>
+                                    <span className="body-medium text-subtle">{new Date(d.date).toLocaleDateString() + " - " + d.install_number + " / "+ d.installments}</span>
                                 </div>
                             </div>
                             <div className="flex flex-col items-end">
