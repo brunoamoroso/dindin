@@ -46,6 +46,18 @@ export default function SubCategories() {
     navigate("/transaction");
   }
 
+  const handleClickNoSub = () => {
+    setContextTransactionData((prev) => ({
+      ...prev,
+      subCategory: {
+        id: "",
+        desc: ""
+      }
+    }));
+
+    navigate('/transaction');
+  }
+
   return (
     <div className="bg-surface flex flex-col h-dvh">
       <AppBar title={`SubCategorias de ${category}`}/>
@@ -97,7 +109,7 @@ export default function SubCategories() {
               )}
           </div>
           <div className="flex flex-col gap-6">
-              <Button variant={"ghost"} onClick={() => {navigate('/transaction')}}>Não escolher subcategoria</Button>
+              <Button variant={"ghost"} onClick={handleClickNoSub}>Não escolher subcategoria</Button>
           </div>
           </>
         )}

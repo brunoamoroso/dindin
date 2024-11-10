@@ -17,7 +17,8 @@ export interface TransactionType {
     }
     date: string;
     recurrency: string;
-    installments: string;
+    installments: number;
+    install_number: number;
     payment_condition: "none" | "single" | "multi";
 }
 

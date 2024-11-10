@@ -21,7 +21,6 @@ interface ExpenseTransactionType{
 
 export default function ExpenseTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit, mode}: ExpenseTransactionType) {
   const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
-  console.log(contextTransactionData);
 
   const handlePaymentChips = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

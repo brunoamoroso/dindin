@@ -99,6 +99,10 @@ class Api{
     public updateTransaction<T>(id: string, body: unknown):Promise<T>{
         return this.put<T>(`/transactions/update/${id}`, body);
     }
+
+    public getSearchCategories<T>(type: string, searchQuery: string):Promise<T>{
+        return this.get<T>(`/categories/search?type=${type}&query=${searchQuery}`);
+    }
 }
 
 const instance = new Api();

@@ -199,6 +199,8 @@ export const getAllTransactionsByMonth = async (
           subCategory: {
             desc: true,
           },
+          installments: true,
+          install_number: true,
           date: true,
           filter: e.op(filterByUser, "and", filterByDate),
           order_by: {
