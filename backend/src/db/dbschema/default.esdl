@@ -66,6 +66,6 @@ module default {
         payment_condition: str;
         install_number: int16;
         installments: int16;
-
+        group_installment_id: uuid;
     }
 }

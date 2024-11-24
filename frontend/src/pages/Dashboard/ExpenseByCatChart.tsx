@@ -6,19 +6,19 @@ import ChartDataLabels, { Context } from 'chartjs-plugin-datalabels';
 import { useEffect, useMemo, useRef } from 'react';
 import * as Types from '@/types/TransactionTypes';
 
-export default function ExpenseByCatChart({data} : {data: Types.AllTransactionType[]}){
+export default function ExpenseByCatChart({data} : {data: Types.TransactionType[]}){
     const chartRef = useRef<Chart<keyof ChartTypeRegistry> | null>(null);
     const dataExtractExpenses = useMemo(() => data.filter((o) => o.type === "expense"), [data]);
-    const dataSorted = useMemo(() => Object.groupBy(dataExtractExpenses, ({category}) => category.desc) as {[desc: string]: Types.AllTransactionType[]}, [dataExtractExpenses]);
+    const dataSorted = useMemo(() => Object.groupBy(dataExtractExpenses, ({category}) => category.desc) as {[desc: string]: Types.TransactionType[]}, [dataExtractExpenses]);
     const totalAllAmount = useMemo(() => data.reduce((acc, cV) => acc + cV.amount, 0), [data]);
     
-    const labelsData = (data: {[desc: string]: Types.AllTransactionType[]} ) => Object.keys(data);
+    const labelsData = (data: {[desc: string]: Types.TransactionType[]} ) => Object.keys(data);
     
-    const valuesData = (data: {[desc: string]: Types.AllTransactionType[]} ) => Object.values(data).map((i) => i.reduce((acc, cV) => acc + cV.amount, 0));
+    const valuesData = (data: {[desc: string]: Types.TransactionType[]} ) => Object.values(data).map((i) => i.reduce((acc, cV) => acc + cV.amount, 0));
     
-    const bgColors = (data: {[desc: string]: Types.AllTransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizColor);
+    const bgColors = (data: {[desc: string]: Types.TransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizColor);
     
-    const borderColors = (data: {[desc: string]: Types.AllTransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizBorderColor);
+    const borderColors = (data: {[desc: string]: Types.TransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizBorderColor);
 
     useEffect(() => {
         if(dataSorted !== undefined && Object.keys(dataSorted).length > 0){
@@ -76,7 +76,7 @@ export default function ExpenseByCatChart({data} : {data: Types.AllTransactionTy
             }
         }, [dataSorted, totalAllAmount]); 
 
-    const categoriesList = (dataSorted : {[desc: string]: Types.AllTransactionType[]}) => {
+    const categoriesList = (dataSorted : {[desc: string]: Types.TransactionType[]}) => {
         const el = [];
         let i = 1;
         for (const desc in dataSorted){

@@ -92,27 +92,27 @@ export default function getCategoryIcon(category: string): {dataVizColor: string
         //gain icons
         salário: {
             dataVizColor: "#ca2a39",
-            dataVizBorderColor: "#ca2a39-border",
+            dataVizBorderColor: "#ca2a39",
             icon: <Banknote />
         },
         investimentos: {
             dataVizColor: "#ca2a39",
-            dataVizBorderColor: "#ca2a39-border",
+            dataVizBorderColor: "#ca2a39",
             icon: <PiggyBank />
         },
         cashback: {
             dataVizColor: "#ca2a39",
-            dataVizBorderColor: "#ca2a39-border",
+            dataVizBorderColor: "#ca2a39",
             icon: <HandCoins />
         },
         "receitas variáveis": {
             dataVizColor: "#ca2a39",
-            dataVizBorderColor: "#ca2a39-border",
+            dataVizBorderColor: "#ca2a39",
                 icon: <BadgePercent />
             },
         transferências: {
             dataVizColor: "#ca2a39",
-            dataVizBorderColor: "#ca2a39-border",
+            dataVizBorderColor: "#ca2a39",
             icon: <ArrowRightLeft />
         }
     }
