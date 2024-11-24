@@ -103,6 +103,10 @@ class Api{
     public getSearchCategories<T>(type: string, searchQuery: string):Promise<T>{
         return this.get<T>(`/categories/search?type=${type}&query=${searchQuery}`);
     }
+
+    public deleteOneTransactionInstallment<T>(id: string): Promise<T>{
+        return this.delete<T>(`/transactions/delete/one-installment/${id}`);
+    }
 }
 
 const instance = new Api();
