@@ -107,6 +107,10 @@ class Api{
     public deleteOneTransactionInstallment<T>(id: string): Promise<T>{
         return this.delete<T>(`/transactions/delete/one-installment/${id}`);
     }
+
+    public deleteAllTransactionInstallment<T>(id: string): Promise<T>{
+        return this.delete<T>(`/transactions/delete/all-installment/${id}`);
+    }
 }
 
 const instance = new Api();

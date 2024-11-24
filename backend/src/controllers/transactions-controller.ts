@@ -446,3 +446,26 @@ export const deleteOneTransactionInstallment = async (
       .json({ message: "Error trying to delete transaction" });
   }
 };
+
+export const deleteAllTransactionInstallment = async (req: Request, res: Response) => {
+  const {id} = req.params;
+  try{
+    const groupInstallmentId = await e.select(e.Transaction, (t) => ({
+      group_installment_id: true,
+      filter_single: e.op(t.id, "=", e.uuid(id))
+    })).run(clientDB);
+
+    if(groupInstallmentId === null || groupInstallmentId.group_installment_id === null){
+      throw new Error("Couldn't find group installment");
+    }
+
+    await e.delete(e.Transaction, (t) => ({
+      filter: e.op(t.group_installment_id, "=", e.uuid(groupInstallmentId.group_installment_id!))
+    })).run(clientDB);
+
+    return res.status(200).json({message: 'All transaction installments deleted'});
+
+  }catch(err){
+    console.error(err);
+  }
+}

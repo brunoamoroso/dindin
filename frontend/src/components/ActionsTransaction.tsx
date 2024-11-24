@@ -86,6 +86,10 @@ export default function ActionsTransaction({
   const handleDeleteThisInstallment = (id: string) => {
     mutationOneInstallmentTransaction.mutate(id, {
       onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["listalltransactions-data"],
+        });
+
         toast({
           title: (
             <div className="flex gap-3 items-center">
@@ -102,7 +106,32 @@ export default function ActionsTransaction({
     })
   }
 
-  const handleDeleteAllInstallments = () => {}
+  const mutationAllInstallmentTransaction = useMutation({
+    mutationFn: (id: string) => { return api.deleteAllTransactionInstallment(id)}
+  })
+
+  const handleDeleteAllInstallments = (id: string) => {
+    mutationAllInstallmentTransaction.mutate(id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["listalltransactions-data"],
+        });
+
+        toast({
+          title: (
+            <div className="flex gap-3 items-center">
+              <CircleCheck /> 
+              Transação excluída
+            </div>
+          ),
+          duration: 2500,
+          variant: "positive",
+        });
+        setDrawerInstallmentDeleteOpen(false);
+        setDrawerIsOpen(false);
+      }
+    })
+  }
 
   return (
     <Drawer open={isDrawerOpen} onOpenChange={setDrawerIsOpen}>
@@ -211,7 +240,7 @@ export default function ActionsTransaction({
                         className="w-full"
                         variant={"outline"}
                         size={"lg"}
-                        onClick={handleDeleteAllInstallments}
+                        onClick={() => handleDeleteAllInstallments(id)}
                       >
                         Todas as parcelas
                       </Button>
