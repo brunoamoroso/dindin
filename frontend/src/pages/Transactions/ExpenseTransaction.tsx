@@ -10,53 +10,68 @@ import { Landmark, RefreshCw, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent } from "react";
 import { Link } from "react-router-dom";
 
-interface ExpenseTransactionType{
-    handleAmountChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    handleAmountPlaceholder: (e: MouseEvent<HTMLDivElement>) => void;
-    handleDateToday: (e: MouseEvent<HTMLButtonElement>) => void;
-    handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
-    mode: string;
+/**
+ * condition is used to understand if I'm going to update one specific transaction or all transaction of a group installment. If single is one, if multi is the whole group.
+ */
+interface ExpenseTransactionType {
+  handleAmountChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleAmountPlaceholder: (e: MouseEvent<HTMLDivElement>) => void;
+  handleDateToday: (e: MouseEvent<HTMLButtonElement>) => void;
+  handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  mode: string;
+  transactionScope: string;
 }
 
-export default function ExpenseTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit, mode}: ExpenseTransactionType) {
-  const {contextTransactionData, setContextTransactionData}  = useTransactionsContext();
+export default function ExpenseTransaction({
+  handleAmountChange,
+  handleInputChange,
+  handleAmountPlaceholder,
+  handleDateToday,
+  handleSubmit,
+  mode,
+  transactionScope,
+}: ExpenseTransactionType) {
+  const { contextTransactionData, setContextTransactionData } =
+    useTransactionsContext();
 
   const handlePaymentChips = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const target = e.target as HTMLButtonElement;
 
-    if(target.value === "single" && contextTransactionData.installments !== "0"){
+    if (
+      target.value === "single" &&
+      contextTransactionData.installments !== "0"
+    ) {
       const installDisplay = document.getElementById("installment-helper");
 
-      if(installDisplay !== null){
+      if (installDisplay !== null) {
         installDisplay.innerText = "";
       }
 
       setContextTransactionData((prevTransaction) => ({
         ...prevTransaction,
-        installments: "0"
+        installments: "0",
       }));
-      
     }
 
     setContextTransactionData((prevTransaction) => ({
       ...prevTransaction,
-      [target.id]: target.value
-    }))
-  }
+      [target.id]: target.value,
+    }));
+  };
 
   const handleInstallmentsChange = (e: ChangeEvent<HTMLInputElement>) => {
-    let sanitized = parseInt(e.target.value.replace(/[^0-9]+/g, ''));
+    let sanitized = parseInt(e.target.value.replace(/[^0-9]+/g, ""));
 
-    if(isNaN(sanitized)){
+    if (isNaN(sanitized)) {
       sanitized = 0;
     }
 
     e.target.value = sanitized.toString();
 
     handleInputChange(e);
-  }
+  };
 
   const handleInstallDisplay = () => {
     const installments = parseInt(contextTransactionData.installments);
@@ -68,7 +83,7 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
         installments
       );
     }
-  }
+  };
 
   return (
     <>
@@ -140,68 +155,75 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
                 </MenuListItem>
               </Link>
             </div>
-            <div className="py-3 flex flex-col gap-1.5">
-              <span className="label-large text-title">
-                Condição de Pagamento
-              </span>
-              <div className="flex gap-2">
-                <InputChips
-                  id="paymentCondition"
-                  value={"single"}
-                  variant={
-                    contextTransactionData.paymentCondition === "single"
-                      ? "pressed"
-                      : "default"
-                  }
-                  onClick={handlePaymentChips}
-                  pressed={
-                    contextTransactionData.paymentCondition === "single"
-                      ? true
-                      : false
-                  }
-                >
-                  À vista
-                </InputChips>
-                <InputChips
-                  id="paymentCondition"
-                  value={"multi"}
-                  variant={
-                    contextTransactionData.paymentCondition === "multi"
-                      ? "pressed"
-                      : "default"
-                  }
-                  onClick={handlePaymentChips}
-                  pressed={
-                    contextTransactionData.paymentCondition === "multi"
-                      ? true
-                      : false
-                  }
-                >
-                  Parcelado
-                </InputChips>
-              </div>
-            </div>
 
-            <div className="flex flex-col gap-1.5">
-              <TextField
-                id="installments"
-                label="Número de Parcelas"
-                placeholder="Número de Parcelas"
-                onChange={handleInstallmentsChange}
-                onKeyUp={handleInstallDisplay}
-                pattern="[0-9]*"
-                inputMode="numeric"
-                disabled={
-                  contextTransactionData.paymentCondition === "single" ||
-                  contextTransactionData.paymentCondition === "none"
-                }
-                value={contextTransactionData.installments}
-              />
-              <span
-                id="installment-helper"
-                className="body-small text-subtle"
-              ></span>
-            </div>
+            {((transactionScope === "all-installments" && mode === "edit") ||
+              mode === "create") && (
+              <div className="py-3 flex flex-col gap-1.5">
+                <span className="label-large text-title">
+                  Condição de Pagamento
+                </span>
+                <div className="flex gap-2">
+                  <InputChips
+                    id="paymentCondition"
+                    value={"single"}
+                    variant={
+                      contextTransactionData.paymentCondition === "single"
+                        ? "pressed"
+                        : "default"
+                    }
+                    onClick={handlePaymentChips}
+                    pressed={
+                      contextTransactionData.paymentCondition === "single"
+                        ? true
+                        : false
+                    }
+                  >
+                    À vista
+                  </InputChips>
+                  <InputChips
+                    id="paymentCondition"
+                    value={"multi"}
+                    variant={
+                      contextTransactionData.paymentCondition === "multi"
+                        ? "pressed"
+                        : "default"
+                    }
+                    onClick={handlePaymentChips}
+                    pressed={
+                      contextTransactionData.paymentCondition === "multi"
+                        ? true
+                        : false
+                    }
+                  >
+                    Parcelado
+                  </InputChips>
+                </div>
+              </div>
+            )}
+
+            {((transactionScope === "all-installments" && mode === "edit") ||
+              mode === "create") && (
+              <div className="flex flex-col gap-1.5">
+                <TextField
+                  id="installments"
+                  label="Número de Parcelas"
+                  placeholder="Número de Parcelas"
+                  onChange={handleInstallmentsChange}
+                  onKeyUp={handleInstallDisplay}
+                  pattern="[0-9]*"
+                  inputMode="numeric"
+                  disabled={
+                    contextTransactionData.paymentCondition === "single" ||
+                    contextTransactionData.paymentCondition === "none"
+                  }
+                  value={contextTransactionData.installments}
+                />
+                <span
+                  id="installment-helper"
+                  className="body-small text-subtle"
+                ></span>
+              </div>
+            )}
 
             <div className="py-3 flex flex-col gap-1.5">
               <span className="label-large text-title">Quando pagou</span>
@@ -242,7 +264,9 @@ export default function ExpenseTransaction({handleAmountChange, handleInputChang
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
-              <span className="label-large text-title">Repetir esse ganho</span>
+              <span className="label-large text-title">
+                Repetir essa despesa
+              </span>
               <Link to="/recurrency">
                 <MenuListItem>
                   <RefreshCw />

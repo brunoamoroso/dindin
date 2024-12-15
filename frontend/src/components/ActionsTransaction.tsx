@@ -93,7 +93,7 @@ export default function ActionsTransaction({
         toast({
           title: (
             <div className="flex gap-3 items-center">
-              <CircleCheck /> 
+              <CircleCheck />
               Transação excluída
             </div>
           ),
@@ -102,13 +102,15 @@ export default function ActionsTransaction({
         });
         setDrawerInstallmentDeleteOpen(false);
         setDrawerIsOpen(false);
-      }
-    })
-  }
+      },
+    });
+  };
 
   const mutationAllInstallmentTransaction = useMutation({
-    mutationFn: (id: string) => { return api.deleteAllTransactionInstallment(id)}
-  })
+    mutationFn: (id: string) => {
+      return api.deleteAllTransactionInstallment(id);
+    },
+  });
 
   const handleDeleteAllInstallments = (id: string) => {
     mutationAllInstallmentTransaction.mutate(id, {
@@ -120,7 +122,7 @@ export default function ActionsTransaction({
         toast({
           title: (
             <div className="flex gap-3 items-center">
-              <CircleCheck /> 
+              <CircleCheck />
               Transação excluída
             </div>
           ),
@@ -129,9 +131,9 @@ export default function ActionsTransaction({
         });
         setDrawerInstallmentDeleteOpen(false);
         setDrawerIsOpen(false);
-      }
-    })
-  }
+      },
+    });
+  };
 
   return (
     <Drawer open={isDrawerOpen} onOpenChange={setDrawerIsOpen}>
@@ -199,7 +201,7 @@ export default function ActionsTransaction({
                   </DialogContent>
                 </Dialog>
 
-                <Link className="w-full" to={`/transaction/edit/${id}`}>
+                <Link className="w-full" to={`/transaction/edit/single/${id}`}>
                   <Button className="w-full" variant={"outline"} size={"lg"}>
                     <SquarePen /> Editar
                   </Button>
