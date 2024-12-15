@@ -2,17 +2,17 @@ import AppBar from "@/components/AppBar";
 import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
 import { ChangeEvent, MouseEvent, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import api from "@/api/api";
-import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { TransactionsContextType } from "@/context/TransactionsContext";
 
 export default function Categories() {
   const { type } = useParams();
   const navigate = useNavigate();
-  const { setContextTransactionData } = useTransactionsContext();
+  const { setContextTransactionData }: TransactionsContextType = useOutletContext();
   const [searchQuery, setSearchQuery] = useState("");
 
   if (type === undefined) {

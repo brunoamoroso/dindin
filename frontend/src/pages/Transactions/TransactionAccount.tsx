@@ -1,17 +1,17 @@
 import AppBar from "@/components/AppBar";
 import api from '@/api/api';
 import MenuListItem from "@/components/ui/menu-list-item";
-import { useTransactionsContext } from "@/hooks/useTransactionsContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TransactionsContextType } from "@/context/TransactionsContext";
 
 export default function TransactionAccount() {
-  const {setContextTransactionData} = useTransactionsContext();
+  const {setContextTransactionData}: TransactionsContextType = useOutletContext();
   const navigate = useNavigate();
 
-  const {data, isError, isLoading} = useQuery<{id: string, description: string}[]>({
+  const {data, isError, isLoading} = useQuery<{id: string, desc: string}[]>({
     queryKey: ['accountsList'],
     queryFn: () => api.getAccounts()
   });

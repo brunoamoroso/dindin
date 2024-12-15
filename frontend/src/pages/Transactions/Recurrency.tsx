@@ -1,11 +1,11 @@
 import AppBar from "@/components/AppBar";
 import MenuListItem from "@/components/ui/menu-list-item";
-import { useTransactionsContext } from "@/hooks/useTransactionsContext";
+import { TransactionsContextType } from "@/context/TransactionsContext";
 import { MouseEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
 export default function Recurrency() {
-    const {setContextTransactionData} = useTransactionsContext();
+    const {setContextTransactionData}: TransactionsContextType = useOutletContext();
     const navigate = useNavigate();
     // this comes from a scalar type in the database
     const options = [

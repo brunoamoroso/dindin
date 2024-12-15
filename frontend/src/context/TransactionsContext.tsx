@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
 interface CategoryType{
@@ -40,12 +40,10 @@ export interface TransactionDataType{
 }
 
 
-interface TransactionsContextType{
+export interface TransactionsContextType{
     contextTransactionData: TransactionDataType;
     setContextTransactionData: React.Dispatch<React.SetStateAction<TransactionDataType>>;
 }
-
-export const TransactionsContext = createContext<TransactionsContextType | null>(null);
 
 export const TransactionsContextProvider = () => {
   const [contextTransactionData, setContextTransactionData] = useState<TransactionDataType>({
@@ -65,10 +63,8 @@ export const TransactionsContextProvider = () => {
   });
 
   return (
-    <TransactionsContext.Provider
-      value={{contextTransactionData, setContextTransactionData}}
-    >
-      <Outlet />
-    </TransactionsContext.Provider>
+    <div>
+      <Outlet context={{contextTransactionData, setContextTransactionData}} />
+    </div>
   );
 };

@@ -5,7 +5,6 @@ import {
   InlineTabsList,
   InlineTabsTrigger,
 } from "@/components/ui/inline-tabs";
-import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 import { ChangeEvent, FormEvent, MouseEvent, useEffect } from "react";
 import { currencyFormat } from "@/utils/currency-format";
 import GainTransaction from "./GainTransaction";
@@ -13,17 +12,14 @@ import ExpenseTransaction from "./ExpenseTransaction";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "../../api/api";
-import { TransactionDataType } from "@/context/TransactionsContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { TransactionDataType, TransactionsContextType } from "@/context/TransactionsContext";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { CircleCheck, CircleX } from "lucide-react";
-import TransactionDate from "./TransactionDate";
-import { useDatePicker } from "@/hooks/useDatePicker";
 import * as Types from "@/types/TransactionTypes";
 import { getRecurrencyDesc } from "@/utils/get-recurrency-desc";
 
 export default function Transaction({ mode }: { mode: "create" | "edit" }) {
-  const { contextTransactionData, setContextTransactionData } =
-    useTransactionsContext();
+  const { contextTransactionData, setContextTransactionData }: TransactionsContextType = useOutletContext();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { id, transactionScope } = useParams();
@@ -37,8 +33,6 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     queryFn: () => api.getOneTransaction(id!),
     enabled: mode === "edit" && !!id,
   });
-
-  const { showDatePicker } = useDatePicker();
 
   useEffect(() => {
     if (data) {
@@ -309,7 +303,6 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
           />
         </InlineTabsContent>
       </InlineTabs>
-      {showDatePicker && <TransactionDate />}
     </div>
   );
 }

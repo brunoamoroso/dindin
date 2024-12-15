@@ -1,14 +1,16 @@
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { InputChips } from "@/components/ui/input-chips";
 import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
-import { useTransactionsContext } from "@/hooks/useTransactionsContext";
+import { TransactionsContextType } from "@/context/TransactionsContext";
 import { currencyFormat } from "@/utils/currency-format";
 import splitInstallmentsDisplay from "@/utils/get-split-installments";
 import { Landmark, RefreshCw, Tag } from "lucide-react";
-import { ChangeEvent, FormEvent, MouseEvent } from "react";
-import { Link } from "react-router-dom";
+import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
+import { Link, useOutletContext } from "react-router-dom";
 
 /**
  * condition is used to understand if I'm going to update one specific transaction or all transaction of a group installment. If single is one, if multi is the whole group.
@@ -32,8 +34,8 @@ export default function ExpenseTransaction({
   mode,
   transactionScope,
 }: ExpenseTransactionType) {
-  const { contextTransactionData, setContextTransactionData } =
-    useTransactionsContext();
+  const { contextTransactionData, setContextTransactionData }: TransactionsContextType = useOutletContext();
+  const [isDialogpOpen, setIsDialogOpen] = useState(false);
 
   const handlePaymentChips = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -83,6 +85,17 @@ export default function ExpenseTransaction({
         installments
       );
     }
+  };
+
+  const handleDayClick = (day: Date) => {
+    setContextTransactionData((prevTransaction) => ({
+      ...prevTransaction,
+      date: {
+        chip: "otherDate",
+        value: day,
+      },
+    }));
+    setIsDialogOpen(false);
   };
 
   return (
@@ -242,25 +255,42 @@ export default function ExpenseTransaction({
                 >
                   Hoje
                 </InputChips>
-                <InputChips
-                  value={"searchDate"}
-                  variant={
-                    contextTransactionData.date.chip === "otherDate"
-                      ? "pressed"
-                      : "default"
-                  }
-                  pressed={
-                    contextTransactionData.date.chip === "otherDate"
-                      ? true
-                      : false
-                  }
-                >
-                  {contextTransactionData.date.chip === "otherDate" &&
-                    contextTransactionData.date.value !== undefined &&
-                    contextTransactionData.date.value.toLocaleDateString()}
-                  {contextTransactionData.date.chip !== "otherDate" &&
-                    "Outra Data"}
-                </InputChips>
+                <Dialog open={isDialogpOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild onClick={() => setIsDialogOpen(true)}>
+                    <InputChips
+                      value={"searchDate"}
+                      variant={
+                        contextTransactionData.date.chip === "otherDate"
+                          ? "pressed"
+                          : "default"
+                      }
+                      pressed={
+                        contextTransactionData.date.chip === "otherDate"
+                          ? true
+                          : false
+                      }
+                    >
+                      {contextTransactionData.date.chip === "otherDate" &&
+                        contextTransactionData.date.value !== undefined &&
+                        contextTransactionData.date.value.toLocaleDateString()}
+                      {contextTransactionData.date.chip !== "otherDate" &&
+                        "Outra Data"}
+                    </InputChips>
+                  </DialogTrigger>
+                  <DialogContent
+                    className="w-auto bg-transparent border-none"
+                    showCloseButton={false}
+                  >
+                    <DialogTitle className="hidden">Calendário</DialogTitle>
+                    <DialogDescription className="hidden">
+                      Escolha a data em que aconteceu a transação
+                    </DialogDescription>
+                    <Calendar
+                      selected={contextTransactionData.date.value}
+                      onDayClick={handleDayClick}
+                    />
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
             <div className="flex flex-col gap-1.5">

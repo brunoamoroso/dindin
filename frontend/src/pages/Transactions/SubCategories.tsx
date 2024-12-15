@@ -1,17 +1,17 @@
 import AppBar from "@/components/AppBar";
 import MenuListItem from "@/components/ui/menu-list-item";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import api from '@/api/api';
-import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { TransactionsContextType } from "@/context/TransactionsContext";
 
 export default function SubCategories() {
   const navigate = useNavigate();
   const {category} = useParams();
-  const {setContextTransactionData} = useTransactionsContext();
+  const {setContextTransactionData}: TransactionsContextType = useOutletContext();
 
   if(category === undefined){
     throw new Error("category undefined");

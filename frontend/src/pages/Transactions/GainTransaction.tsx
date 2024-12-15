@@ -1,27 +1,55 @@
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { InputChips } from "@/components/ui/input-chips";
 import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
-import { useDatePicker } from "@/hooks/useDatePicker";
-import { useTransactionsContext } from "@/hooks/useTransactionsContext";
+import { TransactionsContextType } from "@/context/TransactionsContext";
 import { currencyFormat } from "@/utils/currency-format";
 import { Landmark, RefreshCw, Tag } from "lucide-react";
-import { ChangeEvent, FormEvent, MouseEvent } from "react";
-import { Link } from "react-router-dom";
+import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
+import { Link, useOutletContext } from "react-router-dom";
 
-interface GainTransactionType{
-    handleAmountChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    handleAmountPlaceholder: (e: MouseEvent<HTMLDivElement>) => void;
-    handleDateToday: (e: MouseEvent<HTMLButtonElement>) => void;
-    handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
-    mode: string;
+interface GainTransactionType {
+  handleAmountChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleAmountPlaceholder: (e: MouseEvent<HTMLDivElement>) => void;
+  handleDateToday: (e: MouseEvent<HTMLButtonElement>) => void;
+  handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  mode: string;
 }
 
-export default function GainTransaction({handleAmountChange, handleInputChange, handleAmountPlaceholder, handleDateToday, handleSubmit, mode}: GainTransactionType) {
-  const {contextTransactionData}  = useTransactionsContext();
-  const {setShowDatePicker} = useDatePicker();
+export default function GainTransaction({
+  handleAmountChange,
+  handleInputChange,
+  handleAmountPlaceholder,
+  handleDateToday,
+  handleSubmit,
+  mode,
+}: GainTransactionType) {
+  const {
+    contextTransactionData,
+    setContextTransactionData,
+  }: TransactionsContextType = useOutletContext();
+  const [isDialogpOpen, setIsDialogOpen] = useState(false);
+
+  const handleDayClick = (day: Date) => {
+    setContextTransactionData((prevTransaction) => ({
+      ...prevTransaction,
+      date: {
+        chip: "otherDate",
+        value: day,
+      },
+    }));
+    setIsDialogOpen(false);
+  };
 
   return (
     <>
@@ -110,28 +138,42 @@ export default function GainTransaction({handleAmountChange, handleInputChange, 
                 >
                   Hoje
                 </InputChips>
-                <InputChips
-                  value={"searchDate"}
-                  variant={
-                    contextTransactionData.date.chip === "otherDate"
-                      ? "pressed"
-                      : "default"
-                  }
-                  pressed={
-                    contextTransactionData.date.chip === "otherDate"
-                      ? true
-                      : false
-                  }
-                  onClick={() => {
-                    setShowDatePicker(true);
-                  }}
-                >
-                  {contextTransactionData.date.chip === "otherDate" &&
-                    contextTransactionData.date.value !== undefined &&
-                    contextTransactionData.date.value.toLocaleDateString()}
-                  {contextTransactionData.date.chip !== "otherDate" &&
-                    "Outra Data"}
-                </InputChips>
+                <Dialog open={isDialogpOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild onClick={() => setIsDialogOpen(true)}>
+                    <InputChips
+                      value={"searchDate"}
+                      variant={
+                        contextTransactionData.date.chip === "otherDate"
+                          ? "pressed"
+                          : "default"
+                      }
+                      pressed={
+                        contextTransactionData.date.chip === "otherDate"
+                          ? true
+                          : false
+                      }
+                    >
+                      {contextTransactionData.date.chip === "otherDate" &&
+                        contextTransactionData.date.value !== undefined &&
+                        contextTransactionData.date.value.toLocaleDateString()}
+                      {contextTransactionData.date.chip !== "otherDate" &&
+                        "Outra Data"}
+                    </InputChips>
+                  </DialogTrigger>
+                  <DialogContent
+                    className="w-auto bg-transparent border-none"
+                    showCloseButton={false}
+                  >
+                    <DialogTitle className="hidden">Calendário</DialogTitle>
+                    <DialogDescription className="hidden">
+                      Escolha a data em que aconteceu a transação
+                    </DialogDescription>
+                    <Calendar
+                      selected={contextTransactionData.date.value}
+                      onDayClick={handleDayClick}
+                    />
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
             <div className="flex flex-col gap-1.5">

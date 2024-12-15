@@ -18,9 +18,10 @@ export const addTransaction = async (req: Request, res: Response) => {
   } = req.body;
   let localDate = toLocalDate(date.value);
   const installments = parseInt(req.body.installments);
-  const hasSubCategory = subCategory
-    ? e.cast(e.subCategory, e.uuid(subCategory.id))
-    : null;
+  const hasSubCategory =
+    subCategory && subCategory.id
+      ? e.cast(e.subCategory, e.uuid(subCategory.id))
+      : null;
 
   try {
     if (type === "gain") {
@@ -447,25 +448,40 @@ export const deleteOneTransactionInstallment = async (
   }
 };
 
-export const deleteAllTransactionInstallment = async (req: Request, res: Response) => {
-  const {id} = req.params;
-  try{
-    const groupInstallmentId = await e.select(e.Transaction, (t) => ({
-      group_installment_id: true,
-      filter_single: e.op(t.id, "=", e.uuid(id))
-    })).run(clientDB);
+export const deleteAllTransactionInstallment = async (
+  req: Request,
+  res: Response
+) => {
+  const { id } = req.params;
+  try {
+    const groupInstallmentId = await e
+      .select(e.Transaction, (t) => ({
+        group_installment_id: true,
+        filter_single: e.op(t.id, "=", e.uuid(id)),
+      }))
+      .run(clientDB);
 
-    if(groupInstallmentId === null || groupInstallmentId.group_installment_id === null){
+    if (
+      groupInstallmentId === null ||
+      groupInstallmentId.group_installment_id === null
+    ) {
       throw new Error("Couldn't find group installment");
     }
 
-    await e.delete(e.Transaction, (t) => ({
-      filter: e.op(t.group_installment_id, "=", e.uuid(groupInstallmentId.group_installment_id!))
-    })).run(clientDB);
+    await e
+      .delete(e.Transaction, (t) => ({
+        filter: e.op(
+          t.group_installment_id,
+          "=",
+          e.uuid(groupInstallmentId.group_installment_id!)
+        ),
+      }))
+      .run(clientDB);
 
-    return res.status(200).json({message: 'All transaction installments deleted'});
-
-  }catch(err){
+    return res
+      .status(200)
+      .json({ message: "All transaction installments deleted" });
+  } catch (err) {
     console.error(err);
   }
-}
+};
