@@ -1,28 +1,28 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import './App.css'
-import { Toaster } from './components/ui/toaster'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css";
+import { Toaster } from "./components/ui/toaster";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 //pages
-import Dashboard from './pages/Dashboard/Dashboard'
-import Transaction from './pages/Transactions/Transaction'
-import Categories from './pages/Transactions/Categories'
-import SubCategories from './pages/Transactions/SubCategories'
-import Home from './pages/Home'
-import CreateProfile from './pages/Profile/CreateProfile'
-import TransactionAccount from './pages/Transactions/TransactionAccount'
-import Recurrency from './pages/Transactions/Recurrency'
-import SignIn from './pages/Profile/SignIn'
-import MonthPicker from './pages/MonthPicker';
+import Dashboard from "./pages/Dashboard/Dashboard";
+import Transaction from "./pages/Transactions/Transaction";
+import Categories from "./pages/Transactions/Categories";
+import SubCategories from "./pages/Transactions/SubCategories";
+import Home from "./pages/Home";
+import CreateProfile from "./pages/Profile/CreateProfile";
+import TransactionAccount from "./pages/Transactions/TransactionAccount";
+import Recurrency from "./pages/Transactions/Recurrency";
+import SignIn from "./pages/Profile/SignIn";
+import MonthPicker from "./pages/MonthPicker";
 
 //context
-import { TransactionsContextProvider } from './context/TransactionsContext'
-import { AuthContextProvider } from './context/AuthContext'
-import AuthenticatedRoutesContext from './context/AuthenticatedRoutesContext'
-import UnauthRoutesContext from './context/UnauthRoutesContext'
-import ListAllTransactions from './pages/Dashboard/ListAllTransactions'
+import { TransactionsContextProvider } from "./context/TransactionsContext";
+import { AuthContextProvider } from "./context/AuthContext";
+import AuthenticatedRoutesContext from "./context/AuthenticatedRoutesContext";
+import UnauthRoutesContext from "./context/UnauthRoutesContext";
+import ListAllTransactions from "./pages/Dashboard/ListAllTransactions";
 
-function AppRoutes(){
+function AppRoutes() {
   return (
     <>
       <Routes>
@@ -48,8 +48,8 @@ function AppRoutes(){
 
             <Route element={<TransactionsContextProvider />}>
               <Route
-                  path="/transaction/edit/:transactionScope/:id"
-                  element={<Transaction mode="edit" />}
+                path="/transaction/edit/:paramTransactionScope/:paramId"
+                element={<Transaction mode="edit" />}
               />
               <Route
                 path="/transaction"
@@ -80,12 +80,12 @@ function App() {
     <>
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
-          <AppRoutes /> 
+          <AppRoutes />
           <Toaster />
         </QueryClientProvider>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

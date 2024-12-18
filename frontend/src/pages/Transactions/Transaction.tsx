@@ -12,26 +12,43 @@ import ExpenseTransaction from "./ExpenseTransaction";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "../../api/api";
-import { TransactionDataType, TransactionsContextType } from "@/context/TransactionsContext";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import {
+  TransactionDataType,
+  TransactionsContextType,
+} from "@/context/TransactionsContext";
+import {
+  useNavigate,
+  useLocation,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
 import { CircleCheck, CircleX } from "lucide-react";
 import * as Types from "@/types/TransactionTypes";
 import { getRecurrencyDesc } from "@/utils/get-recurrency-desc";
 
 export default function Transaction({ mode }: { mode: "create" | "edit" }) {
-  const { contextTransactionData, setContextTransactionData }: TransactionsContextType = useOutletContext();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { id, transactionScope } = useParams();
+  const location = useLocation();
 
-  if (mode === "edit" && transactionScope === undefined) {
-    throw new Error("Transaction Scope is required when editing a transaction");
+  const {
+    contextTransactionData,
+    setContextTransactionData,
+  }: TransactionsContextType = useOutletContext();
+  const { toast } = useToast();
+  const { paramId, paramTransactionScope } = useParams();
+  let id;
+  let transactionScope;
+
+  mode = location.state?.mode ?? mode;
+  if(mode === "edit"){
+    id = paramId ?? location.state.id;
+    transactionScope = paramTransactionScope ?? location.state.transactionScope;
   }
 
   const { data } = useQuery<Types.TransactionType>({
-    queryKey: ["transaction-edit", id],
-    queryFn: () => api.getOneTransaction(id!),
-    enabled: mode === "edit" && !!id,
+    queryKey: ["transaction-edit", paramId],
+    queryFn: () => api.getOneTransaction(paramId!),
+    enabled: mode === "edit" && !!paramId,
   });
 
   useEffect(() => {
@@ -61,6 +78,8 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       }));
     }
   }, [data, setContextTransactionData]);
+
+  console.log(contextTransactionData);
 
   const handleDate = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -228,6 +247,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     }
 
     if (mode === "edit") {
+      console.log(contextTransactionData);
       mutationUpdate.mutate(contextTransactionData, {
         onSuccess: (data) => {
           const transactionData = data as Types.TransactionType;
@@ -260,7 +280,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
   };
 
   return (
-    <div className="bg-surface h-dvh">
+    <div className="bg-surface h-dvh flex flex-col">
       {mode === "create" ? (
         <AppBar title="Adicionar Transação" pageBack="dashboard" />
       ) : (
@@ -269,14 +289,26 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       <InlineTabs
         defaultValue="gain"
         value={contextTransactionData.type}
-        className="pt-8"
+        className="pt-8 flex flex-1 flex-col"
         onValueChange={handleTypeTransaction}
       >
         <InlineTabsList>
-          <InlineTabsTrigger value="gain">Ganho</InlineTabsTrigger>
+          <InlineTabsTrigger
+            value="gain"
+            className={`${
+              contextTransactionData.type === "expense" &&
+              contextTransactionData.paymentCondition === "multi"
+                ? "hidden"
+                : ""
+            }`}
+          >
+            Ganho
+          </InlineTabsTrigger>
           <InlineTabsTrigger
             value="expense"
-            className="data-[state=active]:text-negative data-[state=active]:border-negative"
+            className={
+              "data-[state=active]:text-negative data-[state=active]:border-negative"
+            }
           >
             Despesa
           </InlineTabsTrigger>
@@ -291,7 +323,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
             mode={mode}
           />
         </InlineTabsContent>
-        <InlineTabsContent value="expense">
+        <InlineTabsContent value="expense" className="flex flex-col flex-1">
           <ExpenseTransaction
             handleAmountChange={handleAmountChange}
             handleInputChange={handleInputChange}
@@ -299,7 +331,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
             handleDateToday={handleDate}
             handleSubmit={handleSubmit}
             mode={mode}
-            transactionScope={transactionScope ?? ""}
+            transactionScope={transactionScope}
           />
         </InlineTabsContent>
       </InlineTabs>

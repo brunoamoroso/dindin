@@ -52,7 +52,7 @@ export default function GainTransaction({
   };
 
   return (
-    <>
+    <div className="flex flex-col flex-1">
       <div className="container">
         <div className="py-8 ">
           <span className="label-medium text-subtle">Valor Recebido</span>
@@ -93,7 +93,10 @@ export default function GainTransaction({
             />
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Categoria</span>
-              <Link to="/categories/gain">
+              <Link
+                to="/categories/gain"
+                state={{ mode: mode, id: contextTransactionData.id }}
+              >
                 <MenuListItem>
                   <Tag />
                   {!contextTransactionData.category && "Escolha uma categoria"}
@@ -112,7 +115,10 @@ export default function GainTransaction({
             </div>
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Conta</span>
-              <Link to="/transaction-accounts/list">
+              <Link
+                to="/transaction-accounts/list"
+                state={{ mode: mode, id: contextTransactionData.id }}
+              >
                 <MenuListItem>
                   <Landmark />
                   {!contextTransactionData.account && "Escolha uma conta"}
@@ -191,6 +197,6 @@ export default function GainTransaction({
           </Button>
         </form>
       </div>
-    </>
+    </div>
   );
 }

@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { InputChips } from "@/components/ui/input-chips";
 import MenuListItem from "@/components/ui/menu-list-item";
@@ -13,7 +19,7 @@ import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 
 /**
- * condition is used to understand if I'm going to update one specific transaction or all transaction of a group installment. If single is one, if multi is the whole group.
+ * transactionScope is used to understand if I'm going to update one specific transaction or all transaction of a group installment. If single is one, if multi is the whole group.
  */
 interface ExpenseTransactionType {
   handleAmountChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -34,7 +40,10 @@ export default function ExpenseTransaction({
   mode,
   transactionScope,
 }: ExpenseTransactionType) {
-  const { contextTransactionData, setContextTransactionData }: TransactionsContextType = useOutletContext();
+  const {
+    contextTransactionData,
+    setContextTransactionData,
+  }: TransactionsContextType = useOutletContext();
   const [isDialogpOpen, setIsDialogOpen] = useState(false);
 
   const handlePaymentChips = (e: MouseEvent<HTMLButtonElement>) => {
@@ -99,7 +108,7 @@ export default function ExpenseTransaction({
   };
 
   return (
-    <>
+    <div className="flex flex-col flex-1">
       <div className="container">
         <div className="py-8 ">
           <span className="label-medium text-subtle">Valor Gasto</span>
@@ -128,8 +137,11 @@ export default function ExpenseTransaction({
           </div>
         </div>
       </div>
-      <div className="container rounded-t-lg bg-container2 py-10">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-16">
+      <div className="container rounded-t-lg bg-container2 py-10 flex flex-col flex-1">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col flex-1 gap-16 justify-between"
+        >
           <div className="flex flex-col gap-6">
             <TextField
               id="desc"
@@ -138,28 +150,35 @@ export default function ExpenseTransaction({
               placeholder="Escreva uma descrição"
               onChange={handleInputChange}
             />
-            <div className="flex flex-col gap-1.5">
-              <span className="label-large text-title">Categoria</span>
-              <Link to="/categories/expense">
-                <MenuListItem>
-                  <Tag />
-                  {!contextTransactionData.category && "Escolha uma categoria"}
-                  {contextTransactionData.category && (
-                    <div className="flex flex-col">
-                      {contextTransactionData.category.desc}
-                      {contextTransactionData.subCategory && (
-                        <span className="body-small text-subtle">
-                          {contextTransactionData.subCategory.desc}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </MenuListItem>
-              </Link>
-            </div>
+
+            {(((transactionScope !== "one-installment") &&
+              mode === "edit") ||
+              mode === "create") && (
+              <div className="flex flex-col gap-1.5">
+                <span className="label-large text-title">Categoria</span>
+                <Link to="/categories/expense" state={{mode: mode, id: contextTransactionData.id, transactionScope: transactionScope}}>
+                  <MenuListItem>
+                    <Tag />
+                    {!contextTransactionData.category &&
+                      "Escolha uma categoria"}
+                    {contextTransactionData.category && (
+                      <div className="flex flex-col">
+                        {contextTransactionData.category.desc}
+                        {contextTransactionData.subCategory && (
+                          <span className="body-small text-subtle">
+                            {contextTransactionData.subCategory.desc}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </MenuListItem>
+                </Link>
+              </div>
+            )}
+
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Conta</span>
-              <Link to="/transaction-accounts/list">
+              <Link to="/transaction-accounts/list" state={{mode: mode, id: contextTransactionData.id, transactionScope: transactionScope}}>
                 <MenuListItem>
                   <Landmark />
                   {!contextTransactionData.account && "Escolha uma conta"}
@@ -310,6 +329,6 @@ export default function ExpenseTransaction({
           </Button>
         </form>
       </div>
-    </>
+    </div>
   );
 }

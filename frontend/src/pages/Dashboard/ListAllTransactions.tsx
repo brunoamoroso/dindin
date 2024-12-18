@@ -14,14 +14,14 @@ import { useEffect } from "react";
 
 export default function ListAllTransactions() {
   const { selectedDate, setSelectedDate, setShowDatePicker } = useMonthPicker();
-  
-  const {dateParams} = useParams();
+
+  const { dateParams } = useParams();
 
   useEffect(() => {
-    if(dateParams !== undefined){
+    if (dateParams !== undefined) {
       setSelectedDate(new Date(dateParams));
     }
-  }, [dateParams])
+  }, [dateParams, setSelectedDate]);
 
   const monthLong = selectedDate.toLocaleDateString("pt-BR", { month: "long" });
 
@@ -37,14 +37,14 @@ export default function ListAllTransactions() {
     setSelectedDate(date);
   };
 
-  const { data, isLoading, isError } = useQuery<Types.DataAllTransactionsType>({
+  const { data } = useQuery<Types.DataAllTransactionsType>({
     queryKey: ["listalltransactions-data", selectedDate],
     queryFn: () => api.getAllTransactionsByMonth(selectedDate.toISOString()),
   });
 
   return (
     <div className="min-h-dvh bg-surface flex flex-col text-body gap-6">
-      <AppBar title="Todas as Transações" />
+      <AppBar title="Todas as Transações" pageBack="dashboard" />
 
       <div className="flex gap-6 items-center justify-center">
         <IconButton
@@ -85,7 +85,11 @@ export default function ListAllTransactions() {
                   <div className="flex flex-col">
                     <span className="label-large text-title">{d.desc}</span>
                     <span className="body-medium text-subtle">
-                      {new Date(d.date).toLocaleDateString() + " - " + d.install_number + " / " + d.installments}
+                      {new Date(d.date).toLocaleDateString() +
+                        " - " +
+                        d.install_number +
+                        " / " +
+                        d.installments}
                     </span>
                   </div>
                 </div>

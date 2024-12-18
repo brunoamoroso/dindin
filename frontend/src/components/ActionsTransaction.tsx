@@ -45,6 +45,8 @@ export default function ActionsTransaction({
   const [isDialogOpen, setDialogIsOpen] = useState(false);
   const [isDrawerInstallmentDeleteOpen, setDrawerInstallmentDeleteOpen] =
     useState(false);
+  const [isDrawerInstallmentEditOpen, setDrawerInstallmentEditOpen] =
+    useState(false);
   const queryClient = useQueryClient();
 
   const mutationOneTransaction = useMutation({
@@ -251,6 +253,59 @@ export default function ActionsTransaction({
                         variant={"ghost"}
                         size={"lg"}
                         onClick={() => setDrawerInstallmentDeleteOpen(false)}
+                      >
+                        Fechar
+                      </Button>
+                    </div>
+                  </DrawerContent>
+                </Drawer>
+
+                <Drawer
+                  open={isDrawerInstallmentEditOpen}
+                  onOpenChange={setDrawerInstallmentEditOpen}
+                >
+                  <DrawerTrigger asChild>
+                    <Button className="w-full" variant={"outline"} size={"lg"}>
+                      <SquarePen /> Editar
+                    </Button>
+                  </DrawerTrigger>
+                  <DrawerContent>
+                    <div className="container flex flex-col gap-6 py-10 w-full items-center">
+                      <DrawerHeader>
+                        <DrawerTitle>O que você quer editar?</DrawerTitle>
+                        <DrawerDescription>
+                          Escolha o que deseja editar
+                        </DrawerDescription>
+                      </DrawerHeader>
+                      <Link
+                        className="w-full"
+                        to={`/transaction/edit/one-installment/${id}`}
+                      >
+                        <Button
+                          className="w-full"
+                          variant={"outline"}
+                          size={"lg"}
+                        >
+                          Essa parcela
+                        </Button>
+                      </Link>
+                      <Link
+                        className="w-full"
+                        to={`/transaction/edit/all/${id}`}
+                      >
+                        <Button
+                          className="w-full"
+                          variant={"outline"}
+                          size={"lg"}
+                        >
+                          Todas as parcelas
+                        </Button>
+                      </Link>
+                      <Button
+                        className="w-full text-body"
+                        variant={"ghost"}
+                        size={"lg"}
+                        onClick={() => setDrawerInstallmentEditOpen(false)}
                       >
                         Fechar
                       </Button>

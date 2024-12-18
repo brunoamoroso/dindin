@@ -325,8 +325,9 @@ export const updateTransaction = async (req: Request, res: Response) => {
     date,
     paymentCondition,
     installments,
+    transactionScope,
   } = req.body;
-  const hasSubCategory = subCategory
+  const hasSubCategory = subCategory?.id
     ? e.cast(e.subCategory, e.uuid(subCategory.id))
     : null;
   const localDate = toLocalDate(date.value);
@@ -351,7 +352,7 @@ export const updateTransaction = async (req: Request, res: Response) => {
     }
 
     if (type === "expense") {
-      if (paymentCondition === "single") {
+      if (transactionScope === "single") {
         queryUpdateTransaction = e.update(e.Transaction, () => ({
           filter_single: { id: id },
           set: {
@@ -364,20 +365,22 @@ export const updateTransaction = async (req: Request, res: Response) => {
             recurrency: e.cast(e.Recurrency, recurrency.id),
             date: e.cal.local_date(localDate),
             created_by: e.cast(e.User, e.uuid(req.user)),
-            payment_condition: e.str(paymentCondition),
           },
         }));
       }
     }
 
-    await queryUpdateTransaction!.run(clientDB);
+    if(queryUpdateTransaction === undefined) {
+      throw new Error("queryUpdateTransaction is undefined");
+    }
+
+    await queryUpdateTransaction.run(clientDB);
 
     return res
       .status(200)
       .json({ message: "Transaction updated", date: date.value });
   } catch (err) {
-    console.error(err);
-    return res.status(422).json({ message: "Can't update transaction" });
+    return res.status(422).json({ message: err });
   }
 };
 
@@ -424,7 +427,6 @@ export const deleteOneTransactionInstallment = async (
     const remainingInstallments = groupInstallments.filter(
       (install) => install.id !== id
     );
-    console.log(remainingInstallments);
 
     for (let i = 0; i < remainingInstallments.length; i++) {
       const updateInstallment = remainingInstallments[i];
