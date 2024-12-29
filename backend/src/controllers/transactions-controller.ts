@@ -459,9 +459,7 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
 
   const {groupId} = req.params;
 
-  const hasSubCategory = subCategory?.id
-    ? e.cast(e.subCategory, e.uuid(subCategory.id))
-    : null;
+  const hasSubCategory = subCategory?.id ?? null
   let localDate = toLocalDate(date.value);
 
   try{
@@ -471,11 +469,20 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
 
     const amountSplit = splitInstallments({ amount, installments }); // in cents
     
-
     //if installments lower than the current installments, update the installments and delete the remaining
+    const queryCurrentInstallments = await e.select(e.Transaction, (t) => ({
+      installments: true,
+      filter: e.op(t.group_installment_id, "=", e.uuid(groupId)),
+      limit: 1,
+    })).run(clientDB);
+
+    console.log(queryCurrentInstallments);
+
+    if(queryCurrentInstallments === null || queryCurrentInstallments[0].installments === null) {
+      throw new Error("Current Installments returned as null");
+    }
 
     //if installments higher than the current installments, update the installments and create the new installments (upsert)
-
     const bulkTransactions = Array.from({ length: installments }, (_, i) => {
       // create and array of objects of the transactions
       if (i > 0) {
@@ -498,7 +505,7 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
         desc: desc,
         amount: amountSplit[i],
         category: category.id,
-        subCategory: subCategory.id,
+        subCategory: hasSubCategory,
         account: account.id,
         recurrency: recurrency.id,
         date: localDate,
@@ -542,7 +549,7 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
             desc: item.desc,
             amount: item.amount,
             category: e.cast(e.Category, item.category),
-            subCategory: e.cast(e.subCategory, item.subCategory),
+            subCategory: hasSubCategory ? e.cast(e.subCategory, item.subCategory) : null,
             account: e.cast(e.Account, item.account),
             recurrency: e.cast(e.Recurrency, item.recurrency),
             date: item.date,
@@ -558,8 +565,9 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
                 amount: item.amount,
                 desc: item.desc,
                 category: e.cast(e.Category, item.category),
-                subCategory: e.cast(e.subCategory, item.subCategory),
+                subCategory: hasSubCategory ? e.cast(e.subCategory, item.subCategory) : null,
                 account: e.cast(e.Account, item.account),
+                installments: installments,
                 recurrency: e.cast(e.Recurrency, item.recurrency),
                 date: item.date,
               }
@@ -573,6 +581,16 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
       clientDB,
       bulkTransactionsObj
     );
+
+    //after updating time to delete the remaining installments
+    if(installments < queryCurrentInstallments[0].installments) {
+      const remainingInstallments = queryCurrentInstallments[0].installments - installments;
+      const queryDeleteRemainingInstallments = e.delete(e.Transaction, (t) => ({
+        filter: e.op(e.op(t.group_installment_id, "=", e.uuid(groupId)), "and", e.op(t.install_number, ">", remainingInstallments)),
+      }));
+
+      await queryDeleteRemainingInstallments.run(clientDB);
+    }
 
     return res.status(200).json(updateAllInstallments);
   }catch(err) {
