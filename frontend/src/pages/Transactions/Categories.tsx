@@ -218,8 +218,8 @@ export default function Categories() {
                                 value={item.desc}
                                 onClick={() =>
                                   handleClickSub({
-                                    idCat: item.category[i].id,
-                                    descCat: item.category[i].desc,
+                                    idCat: item.category?.[i]?.id || "",
+                                    descCat: item.category?.[i]?.desc || "",
                                     idSub: item.id,
                                     descSub: item.desc,
                                   })

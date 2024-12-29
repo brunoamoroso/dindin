@@ -291,7 +291,7 @@ export default function ActionsTransaction({
                       </Link>
                       <Link
                         className="w-full"
-                        to={`/transaction/edit/all/${id}`}
+                        to={`/transaction/edit/all-installments/${id}`}
                       >
                         <Button
                           className="w-full"

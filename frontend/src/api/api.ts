@@ -96,6 +96,10 @@ class Api{
         return this.get<T>(`/transactions/${id}`);
     }
 
+    public getAllInstallmentsTransaction<T>(id: string): Promise<T>{
+        return this.get<T>(`/transactions/all-installments/${id}`);
+    }
+
     public updateTransaction<T>(id: string, body: unknown):Promise<T>{
         return this.put<T>(`/transactions/update/${id}`, body);
     }

@@ -37,7 +37,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
   const { toast } = useToast();
   const { paramId, paramTransactionScope } = useParams();
   let id;
-  let transactionScope;
+  let transactionScope = "";
 
   mode = location.state?.mode ?? mode;
   if(mode === "edit"){
@@ -47,7 +47,10 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
 
   const { data } = useQuery<Types.TransactionType>({
     queryKey: ["transaction-edit", paramId],
-    queryFn: () => api.getOneTransaction(paramId!),
+    queryFn: () =>
+      transactionScope !== "all-installments"
+        ? api.getOneTransaction(paramId!)
+        : api.getAllInstallmentsTransaction(paramId!),
     enabled: mode === "edit" && !!paramId,
   });
 
@@ -78,8 +81,6 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       }));
     }
   }, [data, setContextTransactionData]);
-
-  console.log(contextTransactionData);
 
   const handleDate = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

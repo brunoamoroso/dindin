@@ -312,6 +312,72 @@ export const getOneTransaction = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllInstallmentsTransaction = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const groupInstallmentId = await e.select(e.Transaction, (t) => ({
+      group_installment_id: true,
+      filter_single: e.op(t.id, "=", e.uuid(id)),
+    })).run(clientDB);
+
+    if(groupInstallmentId === null || groupInstallmentId.group_installment_id === null) {
+      throw new Error("Couldn't find group installment");
+    }
+
+    const groupId = groupInstallmentId.group_installment_id;
+
+    const queryAllInstallmentsTransaction = await e
+      .select(e.Transaction, (t) => {
+        return {
+          type: true,
+          desc: true,
+          amount: true,
+          account: {
+            id: true,
+            desc: true,
+          },
+          category: {
+            id: true,
+            desc: true,
+          },
+          subCategory: {
+            id: true,
+            desc: true,
+          },
+          recurrency: true,
+          date: true,
+          installments: true,
+          install_number: true,
+          payment_condition: true,
+          group_installment_id: true,
+          filter: e.op(t.group_installment_id, "=", e.uuid(groupId)),
+        };
+      })
+      .run(clientDB);
+
+      const dataAllInstallmentsSorted = {
+        type: queryAllInstallmentsTransaction[0].type,  
+        desc: queryAllInstallmentsTransaction[0].desc,
+        amount: queryAllInstallmentsTransaction.reduce((totalAmount, transaction) => totalAmount + transaction.amount, 0),
+        account: queryAllInstallmentsTransaction[0].account,
+        category: queryAllInstallmentsTransaction[0].category,
+        subCategory: queryAllInstallmentsTransaction[0].subCategory,
+        recurrency: queryAllInstallmentsTransaction[0].recurrency,
+        date: queryAllInstallmentsTransaction[0].date,
+        installments: queryAllInstallmentsTransaction[0].installments,  
+        payment_condition: queryAllInstallmentsTransaction[0].payment_condition,
+        group_installment_id: queryAllInstallmentsTransaction[0].group_installment_id,
+      }
+    
+    console.log(dataAllInstallmentsSorted);
+
+    res.status(200).json(dataAllInstallmentsSorted);
+  } catch (err) {
+    console.error(err);
+    res.status(404).json({ message: "Can't find the transaction" });
+  }
+};
+
 export const updateTransaction = async (req: Request, res: Response) => {
   const {
     id,
@@ -323,9 +389,6 @@ export const updateTransaction = async (req: Request, res: Response) => {
     account,
     recurrency,
     date,
-    paymentCondition,
-    installments,
-    transactionScope,
   } = req.body;
   const hasSubCategory = subCategory?.id
     ? e.cast(e.subCategory, e.uuid(subCategory.id))
@@ -352,22 +415,20 @@ export const updateTransaction = async (req: Request, res: Response) => {
     }
 
     if (type === "expense") {
-      if (transactionScope === "single") {
-        queryUpdateTransaction = e.update(e.Transaction, () => ({
-          filter_single: { id: id },
-          set: {
-            type: type,
-            amount: e.int32(amount),
-            desc: e.str(desc),
-            category: e.cast(e.Category, e.uuid(category.id)),
-            subCategory: hasSubCategory,
-            account: e.cast(e.Account, e.uuid(account.id)),
-            recurrency: e.cast(e.Recurrency, recurrency.id),
-            date: e.cal.local_date(localDate),
-            created_by: e.cast(e.User, e.uuid(req.user)),
-          },
-        }));
-      }
+      queryUpdateTransaction = e.update(e.Transaction, () => ({
+        filter_single: { id: id },
+        set: {
+          type: type,
+          amount: e.int32(amount),
+          desc: e.str(desc),
+          category: e.cast(e.Category, e.uuid(category.id)),
+          subCategory: hasSubCategory,
+          account: e.cast(e.Account, e.uuid(account.id)),
+          recurrency: e.cast(e.Recurrency, recurrency.id),
+          date: e.cal.local_date(localDate),
+          created_by: e.cast(e.User, e.uuid(req.user)),
+        },
+      }));
     }
 
     if(queryUpdateTransaction === undefined) {
@@ -384,7 +445,143 @@ export const updateTransaction = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteOneTransactionInstallment = async (
+export const updateAllInstallmentsTransaction = async (req: Request, res: Response) => {
+  const {
+    amount,
+    desc,
+    category,
+    subCategory,
+    account,
+    recurrency,
+    date,
+  } = req.body;
+  const installments = parseInt(req.body.installments);
+
+  const {groupId} = req.params;
+
+  const hasSubCategory = subCategory?.id
+    ? e.cast(e.subCategory, e.uuid(subCategory.id))
+    : null;
+  let localDate = toLocalDate(date.value);
+
+  try{
+    if(groupId === undefined) {
+      throw new Error("Group Id is undefined");
+    }
+
+    const amountSplit = splitInstallments({ amount, installments }); // in cents
+    
+
+    //if installments lower than the current installments, update the installments and delete the remaining
+
+    //if installments higher than the current installments, update the installments and create the new installments (upsert)
+
+    const bulkTransactions = Array.from({ length: installments }, (_, i) => {
+      // create and array of objects of the transactions
+      if (i > 0) {
+        const dateIncrease = new Date(date.value);
+        if (dateIncrease.getDate() === 31) {
+          // +1 because 0 returns the last day from the previous month
+          dateIncrease.setFullYear(
+            dateIncrease.getFullYear(),
+            dateIncrease.getMonth() + (i + 1),
+            0
+          );
+        } else {
+          dateIncrease.setMonth(dateIncrease.getMonth() + i);
+        }
+        localDate = toLocalDate(dateIncrease.toISOString());
+      }
+
+      return {
+        type: "expense",
+        desc: desc,
+        amount: amountSplit[i],
+        category: category.id,
+        subCategory: subCategory.id,
+        account: account.id,
+        recurrency: recurrency.id,
+        date: localDate,
+        created_by: req.user,
+        install_number: i + 1,
+        payment_condition: "multi",
+        installments: installments,
+        group_installment_id: groupId,
+      };
+    });
+
+    const bulkTransactionsObj = {
+      bulkTransactions
+    };
+
+
+    const queryUpdateAllInstallments = e.params(
+      {
+        bulkTransactions: e.array(
+          e.tuple({
+            type: e.str,
+            desc: e.str,
+            amount: e.int32,
+            category: e.uuid,
+            subCategory: e.uuid,
+            account: e.uuid,
+            recurrency: e.str,
+            date: e.cal.local_date,
+            created_by: e.uuid,
+            payment_condition: e.str,
+            installments: e.int16,
+            install_number: e.int16,
+            group_installment_id: e.uuid,
+          })
+        ),
+      },
+      (params) => {
+        return e.for(e.array_unpack(params.bulkTransactions), (item) => {
+          return e.insert(e.Transaction, {
+            type: item.type,
+            desc: item.desc,
+            amount: item.amount,
+            category: e.cast(e.Category, item.category),
+            subCategory: e.cast(e.subCategory, item.subCategory),
+            account: e.cast(e.Account, item.account),
+            recurrency: e.cast(e.Recurrency, item.recurrency),
+            date: item.date,
+            created_by: e.cast(e.User, item.created_by),
+            payment_condition: item.payment_condition,
+            install_number: item.install_number,
+            installments: installments,
+            group_installment_id: item.group_installment_id,
+          }).unlessConflict((conflict) => ({
+            on: e.tuple([conflict.group_installment_id, conflict.install_number]),
+            else: e.update(e.Transaction, () => ({
+              set: {
+                amount: item.amount,
+                desc: item.desc,
+                category: e.cast(e.Category, item.category),
+                subCategory: e.cast(e.subCategory, item.subCategory),
+                account: e.cast(e.Account, item.account),
+                recurrency: e.cast(e.Recurrency, item.recurrency),
+                date: item.date,
+              }
+            }))
+          }))
+        });
+      }
+    );
+
+    const updateAllInstallments = await queryUpdateAllInstallments.run(
+      clientDB,
+      bulkTransactionsObj
+    );
+
+    return res.status(200).json(updateAllInstallments);
+  }catch(err) {
+    console.error(err);
+    return res.status(422).json({ message: "Couldn't update transaction" });
+  }
+};
+
+export const deleteOneInstallmentTransaction = async (
   req: Request,
   res: Response
 ) => {
@@ -450,7 +647,7 @@ export const deleteOneTransactionInstallment = async (
   }
 };
 
-export const deleteAllTransactionInstallment = async (
+export const deleteAllInstallmentsTransaction = async (
   req: Request,
   res: Response
 ) => {
