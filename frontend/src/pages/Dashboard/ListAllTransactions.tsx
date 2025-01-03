@@ -73,85 +73,43 @@ export default function ListAllTransactions() {
         {data?.allTransactionsByMonth.length === 0 && (
           <span className="body-large">Não houveram transações neste mês.</span>
         )}
-        {data?.allTransactionsByMonth.map((d, i, arr) => {
-          if (arr.length - 1 === i) {
-            return (
-              <div
-                key={i}
-                className="flex px-4 py-3.5 gap-4 justify-between items-center"
-              >
-                <div className="flex flex-1 gap-4 items-center">
-                  <div>{getCategoryIcon(d.category.desc).icon}</div>
-                  <div className="flex flex-col">
-                    <span className="label-large text-title">{d.desc}</span>
-                    <span className="body-medium text-subtle">
-                      {new Date(d.date).toLocaleDateString() +
-                        " - " +
-                        d.install_number +
-                        " / " +
-                        d.installments}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end">
-                  <span
-                    className={`label-medium ${
-                      d.type === "gain" ? "text-positive" : "text-negative"
-                    }`}
-                  >
-                    {"R$" + currencyFormat(d.amount)}
-                  </span>
-                  <span className="body-small text-subtle">
-                    {d.account.desc}
+        {data?.allTransactionsByMonth.map((d, i, arr) => (
+          <div key={i} className="flex flex-col">
+            <div
+              key={i}
+              className="flex px-4 py-3.5 gap-4 justify-between items-center"
+            >
+              <div className="flex flex-1 gap-4 items-center">
+                <div>{getCategoryIcon(d.category.desc).icon}</div>
+                <div className="flex flex-col">
+                  <span className="label-large text-title">{d.desc}</span>
+                  <span className="body-medium text-subtle">
+                    {new Date(d.date + "T00:00:00").toLocaleDateString()}
+                    {d.install_number && " - " + d.install_number + " / " + d.installments}
                   </span>
                 </div>
-                <ActionsTransaction
-                  id={d.id!}
-                  desc={d.desc}
-                  date={d.date}
-                  amount={d.amount}
-                  installments={d.installments}
-                />
               </div>
-            );
-          } else {
-            return (
-              <div key={i} className="flex flex-col px-4 py-3.5 gap-4">
-                <div className="flex gap-4 items-center">
-                  <div className="flex flex-1 gap-4 items-center">
-                    <div>{getCategoryIcon(d.category.desc).icon}</div>
-                    <div className="flex flex-col flex-1">
-                      <span className="label-large text-title">{d.desc}</span>
-                      <span className="body-medium text-subtle">
-                        {new Date(d.date).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span
-                      className={`label-medium ${
-                        d.type === "gain" ? "text-positive" : "text-negative"
-                      }`}
-                    >
-                      {"R$" + currencyFormat(d.amount)}
-                    </span>
-                    <span className="body-small text-subtle">
-                      {d.account.desc}
-                    </span>
-                  </div>
-                  <ActionsTransaction
-                    id={d.id!}
-                    desc={d.desc}
-                    date={d.date}
-                    amount={d.amount}
-                    installments={d.installments}
-                  />
-                </div>
-                <Separator />
+              <div className="flex flex-col items-end">
+                <span
+                  className={`label-medium ${
+                    d.type === "gain" ? "text-positive" : "text-negative"
+                  }`}
+                >
+                  {"R$" + currencyFormat(d.amount)}
+                </span>
+                <span className="body-small text-subtle">{d.account.desc}</span>
               </div>
-            );
-          }
-        })}
+              <ActionsTransaction
+                id={d.id!}
+                desc={d.desc}
+                date={d.date}
+                amount={d.amount}
+                installments={d.installments}
+              />
+            </div>
+            {i !== arr.length - 1 && <Separator />}
+          </div>
+        ))}
       </div>
     </div>
   );

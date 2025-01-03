@@ -45,6 +45,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     transactionScope = paramTransactionScope ?? location.state.transactionScope;
   }
 
+
   const { data } = useQuery<Types.TransactionType>({
     queryKey: ["transaction-edit", paramId],
     queryFn: () =>
@@ -56,6 +57,8 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
 
   useEffect(() => {
     if (data) {
+      console.log(data);
+      console.log(new Date(data.date));
       setContextTransactionData((prev) => ({
         ...prev,
         id: data.id,
@@ -71,7 +74,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
         },
         date: {
           chip: "otherDate",
-          value: new Date(data.date),
+          value: new Date(data.date+"T00:00:00"),
         },
         paymentCondition: data.payment_condition,
         installments:
@@ -253,10 +256,9 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       return;
     }
 
-    if (mode === "edit") {
+    if ((mode === "edit") && (transactionScope !== "all-installments")){
       mutationUpdate.mutate(contextTransactionData, {
-        onSuccess: (data) => {
-          const transactionData = data as Types.TransactionType;
+        onSuccess: () => {
           toast({
             title: (
               <div className="flex gap-3 items-center">
@@ -267,7 +269,37 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
             duration: 2500,
             variant: "positive",
           });
-          navigate(`/transaction/list/${transactionData.date}`);
+          navigate(`/transaction/list/${contextTransactionData.date.value}`);
+        },
+        onError: () => {
+          toast({
+            title: (
+              <div className="flex gap-3 items-center">
+                <CircleX />
+                Não conseguimos editar a transação
+              </div>
+            ),
+            duration: 2500,
+            variant: "destructive",
+          });
+        },
+      });
+    }
+
+    if ((mode === "edit") && (transactionScope === "all-installments")){
+      mutationUpdateAllInstallments.mutate(contextTransactionData, {
+        onSuccess: () => {
+          toast({
+            title: (
+              <div className="flex gap-3 items-center">
+                <CircleCheck />
+                Transação atualizada!
+              </div>
+            ),
+            duration: 2500,
+            variant: "positive",
+          });
+          navigate(`/transaction/list/${contextTransactionData.date.value}`);
         },
         onError: () => {
           toast({
@@ -338,6 +370,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
             handleSubmit={handleSubmit}
             mode={mode}
             transactionScope={transactionScope}
+            id={id}
           />
         </InlineTabsContent>
       </InlineTabs>

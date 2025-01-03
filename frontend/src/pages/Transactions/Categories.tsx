@@ -24,7 +24,6 @@ export default function Categories() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { id, mode, transactionScope } = location.state || {};
-  console.log(mode);
 
   if (type === undefined) {
     throw new Error("type undefined");

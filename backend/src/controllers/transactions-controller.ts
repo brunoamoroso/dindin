@@ -351,25 +351,25 @@ export const getAllInstallmentsTransaction = async (req: Request, res: Response)
           payment_condition: true,
           group_installment_id: true,
           filter: e.op(t.group_installment_id, "=", e.uuid(groupId)),
+          order_by: t.date,
         };
       })
       .run(clientDB);
+      
 
-      const dataAllInstallmentsSorted = {
-        type: queryAllInstallmentsTransaction[0].type,  
-        desc: queryAllInstallmentsTransaction[0].desc,
-        amount: queryAllInstallmentsTransaction.reduce((totalAmount, transaction) => totalAmount + transaction.amount, 0),
-        account: queryAllInstallmentsTransaction[0].account,
-        category: queryAllInstallmentsTransaction[0].category,
-        subCategory: queryAllInstallmentsTransaction[0].subCategory,
-        recurrency: queryAllInstallmentsTransaction[0].recurrency,
-        date: queryAllInstallmentsTransaction[0].date,
-        installments: queryAllInstallmentsTransaction[0].installments,  
-        payment_condition: queryAllInstallmentsTransaction[0].payment_condition,
-        group_installment_id: queryAllInstallmentsTransaction[0].group_installment_id,
-      }
-    
-    console.log(dataAllInstallmentsSorted);
+    const dataAllInstallmentsSorted = {
+      type: queryAllInstallmentsTransaction[0].type,  
+      desc: queryAllInstallmentsTransaction[0].desc,
+      amount: queryAllInstallmentsTransaction.reduce((totalAmount, transaction) => totalAmount + transaction.amount, 0),
+      account: queryAllInstallmentsTransaction[0].account,
+      category: queryAllInstallmentsTransaction[0].category,
+      subCategory: queryAllInstallmentsTransaction[0].subCategory,
+      recurrency: queryAllInstallmentsTransaction[0].recurrency,
+      date: queryAllInstallmentsTransaction[0].date.toString(),
+      installments: queryAllInstallmentsTransaction[0].installments,  
+      payment_condition: queryAllInstallmentsTransaction[0].payment_condition,
+      group_installment_id: queryAllInstallmentsTransaction[0].group_installment_id,
+    }
 
     res.status(200).json(dataAllInstallmentsSorted);
   } catch (err) {
@@ -554,22 +554,21 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
       )
     `;
 
-    const updateAllInstallments = await clientDB.query(
+    await clientDB.query(
       queryUpdateAllInstallments,
       { bulkTransactions }
     );
 
     //after updating time to delete the remaining installments
     if(installments < queryCurrentData.installments) {
-      const remainingInstallments = queryCurrentData.installments - installments;
       const queryDeleteRemainingInstallments = e.delete(e.Transaction, (t) => ({
-        filter: e.op(e.op(t.group_installment_id, "=", e.uuid(queryCurrentData.group_installment_id!)), "and", e.op(t.install_number, ">=", remainingInstallments)),
+        filter: e.op(e.op(t.group_installment_id, "=", e.uuid(queryCurrentData.group_installment_id!)), "and", e.op(t.install_number, ">", installments)),
       }));
 
       await queryDeleteRemainingInstallments.run(clientDB);
     }
 
-    return res.status(200).json(updateAllInstallments);
+    return res.status(200).json({message: "Transaction updated"});
   }catch(err) {
     console.error(err);
     return res.status(422).json({ message: "Couldn't update transaction" });

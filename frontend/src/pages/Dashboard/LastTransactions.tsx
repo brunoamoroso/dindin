@@ -19,7 +19,9 @@ export default function LastTransactions({data}: {data: Types.TransactionType[]}
                                 <div>{getCategoryIcon(d.category.desc).icon}</div>
                                 <div className="flex flex-col">
                                     <span className="label-large text-title">{d.desc}</span>
-                                    <span className="body-medium text-subtle">{new Date(d.date).toLocaleDateString() + " - " + d.install_number + " / "+ d.installments}</span>
+                                    <span className="body-medium text-subtle">
+                                        {new Date(d.date+"T00:00:00").toLocaleDateString()}
+                                        {d.install_number && " - " + d.install_number + " / "+ d.installments}</span>
                                 </div>
                             </div>
                             <div className="flex flex-col items-end">

@@ -29,8 +29,12 @@ interface ExpenseTransactionType {
   handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
   mode: string;
   transactionScope: string;
+  id?: string;
 }
 
+/**
+ * id is used only when editing transactions
+ */
 export default function ExpenseTransaction({
   handleAmountChange,
   handleInputChange,
@@ -39,6 +43,7 @@ export default function ExpenseTransaction({
   handleSubmit,
   mode,
   transactionScope,
+  id
 }: ExpenseTransactionType) {
   const {
     contextTransactionData,
@@ -156,7 +161,7 @@ export default function ExpenseTransaction({
               mode === "create") && (
               <div className="flex flex-col gap-1.5">
                 <span className="label-large text-title">Categoria</span>
-                <Link to="/categories/expense" state={{mode: mode, id: contextTransactionData.id, transactionScope: transactionScope}}>
+                <Link to="/categories/expense" state={{mode: mode, id: id, transactionScope: transactionScope}}>
                   <MenuListItem>
                     <Tag />
                     {!contextTransactionData.category &&
@@ -178,7 +183,7 @@ export default function ExpenseTransaction({
 
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Conta</span>
-              <Link to="/transaction-accounts/list" state={{mode: mode, id: contextTransactionData.id, transactionScope: transactionScope}}>
+              <Link to="/transaction-accounts/list" state={{mode: mode, id: id, transactionScope: transactionScope}}>
                 <MenuListItem>
                   <Landmark />
                   {!contextTransactionData.account && "Escolha uma conta"}
