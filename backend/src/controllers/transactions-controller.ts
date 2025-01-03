@@ -173,8 +173,9 @@ export const getAllTransactionsByMonth = async (
   res: Response
 ) => {
   const { selectedDate } = req.params;
-  const startDate = toLocalDate(selectedDate);
   const date = new Date(selectedDate);
+  const createStartDate = new Date(date.getFullYear(), date.getMonth(), 1).toISOString();
+  const startDate = toLocalDate(createStartDate);
   const createEndDate = new Date(
     date.getFullYear(),
     date.getMonth() + 1,
@@ -251,7 +252,7 @@ export const getAllTransactionsByMonth = async (
       .status(200)
       .json({ allTransactionsByMonth, sumAllAmountGained, sumAllAmountExpend });
   } catch (err) {
-    throw new Error(err as string);
+    console.error(err);
   }
 };
 
