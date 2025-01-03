@@ -2,18 +2,28 @@ import AppBar from "@/components/AppBar";
 import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
 import { ChangeEvent, MouseEvent, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useLocation,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
 import api from "@/api/api";
-import { useTransactionsContext } from "@/hooks/useTransactionsContext";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { TransactionsContextType } from "@/context/TransactionsContext";
 
 export default function Categories() {
   const { type } = useParams();
   const navigate = useNavigate();
-  const { setContextTransactionData } = useTransactionsContext();
+  const location = useLocation();
+
+  const { setContextTransactionData }: TransactionsContextType =
+    useOutletContext();
   const [searchQuery, setSearchQuery] = useState("");
+
+  const { id, mode, transactionScope } = location.state || {};
 
   if (type === undefined) {
     throw new Error("type undefined");
@@ -55,22 +65,22 @@ export default function Categories() {
   });
 
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    const id = e.currentTarget.dataset.id;
-    const desc = e.currentTarget.dataset.value;
+    const idCat = e.currentTarget.dataset.id;
+    const descCat = e.currentTarget.dataset.value;
 
-    if (id === undefined || desc === undefined) {
+    if (idCat === undefined || descCat === undefined) {
       throw new Error("Category is undefined");
     }
 
-    setContextTransactionData((prevTransaction) => ({
-      ...prevTransaction,
+    setContextTransactionData((prev) => ({
+      ...prev,
       category: {
-        id: id,
-        desc: desc,
+        id: idCat,
+        desc: descCat,
       },
     }));
 
-    navigate(`/categories/sub/${desc}`);
+    navigate(`/categories/sub/${descCat}`, { state: { mode: mode, id: id, transactionScope: transactionScope } });
   };
 
   const handleClickSub = ({
@@ -92,11 +102,11 @@ export default function Categories() {
       },
       subCategory: {
         id: idSub,
-        desc: descSub
-      }
+        desc: descSub,
+      },
     }));
 
-    navigate(`/transaction`);
+    navigate(`/transaction`, { state: { mode: mode, id: id, transactionScope: transactionScope } });
   };
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
@@ -207,8 +217,8 @@ export default function Categories() {
                                 value={item.desc}
                                 onClick={() =>
                                   handleClickSub({
-                                    idCat: item.category[i].id,
-                                    descCat: item.category[i].desc,
+                                    idCat: item.category?.[i]?.id || "",
+                                    descCat: item.category?.[i]?.desc || "",
                                     idSub: item.id,
                                     descSub: item.desc,
                                   })

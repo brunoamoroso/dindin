@@ -67,5 +67,7 @@ module default {
         install_number: int16;
         installments: int16;
         group_installment_id: uuid;
+
+        constraint exclusive on ((.group_installment_id, .install_number))
     }
 }

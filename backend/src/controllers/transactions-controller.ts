@@ -18,9 +18,10 @@ export const addTransaction = async (req: Request, res: Response) => {
   } = req.body;
   let localDate = toLocalDate(date.value);
   const installments = parseInt(req.body.installments);
-  const hasSubCategory = subCategory
-    ? e.cast(e.subCategory, e.uuid(subCategory.id))
-    : null;
+  const hasSubCategory =
+    subCategory && subCategory.id
+      ? e.cast(e.subCategory, e.uuid(subCategory.id))
+      : null;
 
   try {
     if (type === "gain") {
@@ -311,6 +312,72 @@ export const getOneTransaction = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllInstallmentsTransaction = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const groupInstallmentId = await e.select(e.Transaction, (t) => ({
+      group_installment_id: true,
+      filter_single: e.op(t.id, "=", e.uuid(id)),
+    })).run(clientDB);
+
+    if(groupInstallmentId === null || groupInstallmentId.group_installment_id === null) {
+      throw new Error("Couldn't find group installment");
+    }
+
+    const groupId = groupInstallmentId.group_installment_id;
+
+    const queryAllInstallmentsTransaction = await e
+      .select(e.Transaction, (t) => {
+        return {
+          type: true,
+          desc: true,
+          amount: true,
+          account: {
+            id: true,
+            desc: true,
+          },
+          category: {
+            id: true,
+            desc: true,
+          },
+          subCategory: {
+            id: true,
+            desc: true,
+          },
+          recurrency: true,
+          date: true,
+          installments: true,
+          install_number: true,
+          payment_condition: true,
+          group_installment_id: true,
+          filter: e.op(t.group_installment_id, "=", e.uuid(groupId)),
+          order_by: t.date,
+        };
+      })
+      .run(clientDB);
+      
+
+    const dataAllInstallmentsSorted = {
+      type: queryAllInstallmentsTransaction[0].type,  
+      desc: queryAllInstallmentsTransaction[0].desc,
+      amount: queryAllInstallmentsTransaction.reduce((totalAmount, transaction) => totalAmount + transaction.amount, 0),
+      account: queryAllInstallmentsTransaction[0].account,
+      category: queryAllInstallmentsTransaction[0].category,
+      subCategory: queryAllInstallmentsTransaction[0].subCategory,
+      recurrency: queryAllInstallmentsTransaction[0].recurrency,
+      date: queryAllInstallmentsTransaction[0].date.toString(),
+      installments: queryAllInstallmentsTransaction[0].installments,  
+      payment_condition: queryAllInstallmentsTransaction[0].payment_condition,
+      group_installment_id: queryAllInstallmentsTransaction[0].group_installment_id,
+    }
+
+    res.status(200).json(dataAllInstallmentsSorted);
+  } catch (err) {
+    console.error(err);
+    res.status(404).json({ message: "Can't find the transaction" });
+  }
+};
+
 export const updateTransaction = async (req: Request, res: Response) => {
   const {
     id,
@@ -322,10 +389,8 @@ export const updateTransaction = async (req: Request, res: Response) => {
     account,
     recurrency,
     date,
-    paymentCondition,
-    installments,
   } = req.body;
-  const hasSubCategory = subCategory
+  const hasSubCategory = subCategory?.id
     ? e.cast(e.subCategory, e.uuid(subCategory.id))
     : null;
   const localDate = toLocalDate(date.value);
@@ -350,37 +415,167 @@ export const updateTransaction = async (req: Request, res: Response) => {
     }
 
     if (type === "expense") {
-      if (paymentCondition === "single") {
-        queryUpdateTransaction = e.update(e.Transaction, () => ({
-          filter_single: { id: id },
-          set: {
-            type: type,
-            amount: e.int32(amount),
-            desc: e.str(desc),
-            category: e.cast(e.Category, e.uuid(category.id)),
-            subCategory: hasSubCategory,
-            account: e.cast(e.Account, e.uuid(account.id)),
-            recurrency: e.cast(e.Recurrency, recurrency.id),
-            date: e.cal.local_date(localDate),
-            created_by: e.cast(e.User, e.uuid(req.user)),
-            payment_condition: e.str(paymentCondition),
-          },
-        }));
-      }
+      queryUpdateTransaction = e.update(e.Transaction, () => ({
+        filter_single: { id: id },
+        set: {
+          type: type,
+          amount: e.int32(amount),
+          desc: e.str(desc),
+          category: e.cast(e.Category, e.uuid(category.id)),
+          subCategory: hasSubCategory,
+          account: e.cast(e.Account, e.uuid(account.id)),
+          recurrency: e.cast(e.Recurrency, recurrency.id),
+          date: e.cal.local_date(localDate),
+          created_by: e.cast(e.User, e.uuid(req.user)),
+        },
+      }));
     }
 
-    await queryUpdateTransaction!.run(clientDB);
+    if(queryUpdateTransaction === undefined) {
+      throw new Error("queryUpdateTransaction is undefined");
+    }
+
+    await queryUpdateTransaction.run(clientDB);
 
     return res
       .status(200)
       .json({ message: "Transaction updated", date: date.value });
   } catch (err) {
-    console.error(err);
-    return res.status(422).json({ message: "Can't update transaction" });
+    return res.status(422).json({ message: err });
   }
 };
 
-export const deleteOneTransactionInstallment = async (
+export const updateAllInstallmentsTransaction = async (req: Request, res: Response) => {
+  const {
+    amount,
+    desc,
+    category,
+    subCategory,
+    account,
+    recurrency,
+    date,
+  } = req.body;
+  const installments = parseInt(req.body.installments);
+
+  const {id} = req.params;
+  let localDate = toLocalDate(date.value);
+
+  try{
+    if(id === undefined) {
+      throw new Error("Id is undefined");
+    }
+
+    const amountSplit = splitInstallments({ amount, installments }); // in cents
+    
+    //if installments lower than the current installments, update the installments and delete the remaining
+    const queryCurrentData = await e.select(e.Transaction, (t) => ({
+      group_installment_id: true,
+      installments: true,
+      filter_single: e.op(t.id, "=", e.uuid(id)),
+    })).run(clientDB);
+
+    if(queryCurrentData === null || queryCurrentData.installments === null) {
+      throw new Error("Current Installments returned as null");
+    }
+
+    if(queryCurrentData.group_installment_id === null) {
+      throw new Error("Group Installment Id returned as null");
+    }
+
+    //if installments higher than the current installments, update the installments and create the new installments (upsert)
+    const bulkTransactions = Array.from({ length: installments }, (_, i) => {
+      // create and array of objects of the transactions
+      if (i > 0) {
+        const dateIncrease = new Date(date.value);
+        if (dateIncrease.getDate() === 31) {
+          // +1 because 0 returns the last day from the previous month
+          dateIncrease.setFullYear(
+            dateIncrease.getFullYear(),
+            dateIncrease.getMonth() + (i + 1),
+            0
+          );
+        } else {
+          dateIncrease.setMonth(dateIncrease.getMonth() + i);
+        }
+        localDate = toLocalDate(dateIncrease.toISOString());
+      }
+
+      return {
+        type: "expense",
+        desc: desc,
+        amount: amountSplit[i],
+        category: category.id,
+        subCategory: subCategory && subCategory.id ? subCategory.id : null,
+        account: account.id,
+        recurrency: recurrency.id,
+        date: localDate,
+        created_by: req.user,
+        install_number: i + 1,
+        payment_condition: "multi",
+        installments: installments,
+        group_installment_id: queryCurrentData.group_installment_id!,
+      };
+    });
+
+    const queryUpdateAllInstallments = `
+      WITH bulk_transactions := <array<json>>$bulkTransactions,
+      FOR item IN array_unpack(bulk_transactions) UNION (
+        INSERT Transaction {
+          type := <str>item['type'],
+          desc := <str>item['desc'],
+          amount := <int32>item['amount'],
+          category := (SELECT Category FILTER .id = <uuid>item['category']),
+          subCategory := (SELECT subCategory FILTER .id = <uuid>item['subCategory']),
+          account := (SELECT Account FILTER .id = <uuid>item['account']),
+          recurrency := <Recurrency>item['recurrency'],
+          date := <cal::local_date>item['date'],
+          created_by := (SELECT User FILTER .id = <uuid>item['created_by']),
+          install_number := <int16>item['install_number'],
+          installments := <int16>item['installments'],
+          payment_condition := <str>item['payment_condition'],
+          group_installment_id := <uuid>item['group_installment_id']
+        } 
+          UNLESS CONFLICT ON (.group_installment_id, .install_number) 
+          ELSE (
+            UPDATE Transaction
+            SET {
+              desc := <str>item['desc'],
+              amount := <int32>item['amount'],
+              category := (SELECT Category FILTER .id = <uuid>item['category']),
+              subCategory := (
+                SELECT subCategory FILTER .id = <uuid>item['subCategory']
+              ),
+              account := (SELECT Account FILTER .id = <uuid>item['account']),
+              recurrency := <Recurrency>item['recurrency'],
+              date := <cal::local_date>item['date'],
+              installments := <int16>item['installments'],
+            }
+          )
+      )
+    `;
+
+    await clientDB.query(
+      queryUpdateAllInstallments,
+      { bulkTransactions }
+    );
+
+    //after updating time to delete the remaining installments
+    if(installments < queryCurrentData.installments) {
+      const queryDeleteRemainingInstallments = e.delete(e.Transaction, (t) => ({
+        filter: e.op(e.op(t.group_installment_id, "=", e.uuid(queryCurrentData.group_installment_id!)), "and", e.op(t.install_number, ">", installments)),
+      }));
+
+      await queryDeleteRemainingInstallments.run(clientDB);
+    }
+
+    return res.status(200).json({message: "Transaction updated"});
+  }catch(err) {
+    console.error(err);
+    return res.status(422).json({ message: "Couldn't update transaction" });
+  }
+};
+
+export const deleteOneInstallmentTransaction = async (
   req: Request,
   res: Response
 ) => {
@@ -423,7 +618,6 @@ export const deleteOneTransactionInstallment = async (
     const remainingInstallments = groupInstallments.filter(
       (install) => install.id !== id
     );
-    console.log(remainingInstallments);
 
     for (let i = 0; i < remainingInstallments.length; i++) {
       const updateInstallment = remainingInstallments[i];
@@ -447,25 +641,40 @@ export const deleteOneTransactionInstallment = async (
   }
 };
 
-export const deleteAllTransactionInstallment = async (req: Request, res: Response) => {
-  const {id} = req.params;
-  try{
-    const groupInstallmentId = await e.select(e.Transaction, (t) => ({
-      group_installment_id: true,
-      filter_single: e.op(t.id, "=", e.uuid(id))
-    })).run(clientDB);
+export const deleteAllInstallmentsTransaction = async (
+  req: Request,
+  res: Response
+) => {
+  const { id } = req.params;
+  try {
+    const groupInstallmentId = await e
+      .select(e.Transaction, (t) => ({
+        group_installment_id: true,
+        filter_single: e.op(t.id, "=", e.uuid(id)),
+      }))
+      .run(clientDB);
 
-    if(groupInstallmentId === null || groupInstallmentId.group_installment_id === null){
+    if (
+      groupInstallmentId === null ||
+      groupInstallmentId.group_installment_id === null
+    ) {
       throw new Error("Couldn't find group installment");
     }
 
-    await e.delete(e.Transaction, (t) => ({
-      filter: e.op(t.group_installment_id, "=", e.uuid(groupInstallmentId.group_installment_id!))
-    })).run(clientDB);
+    await e
+      .delete(e.Transaction, (t) => ({
+        filter: e.op(
+          t.group_installment_id,
+          "=",
+          e.uuid(groupInstallmentId.group_installment_id!)
+        ),
+      }))
+      .run(clientDB);
 
-    return res.status(200).json({message: 'All transaction installments deleted'});
-
-  }catch(err){
+    return res
+      .status(200)
+      .json({ message: "All transaction installments deleted" });
+  } catch (err) {
     console.error(err);
   }
-}
+};

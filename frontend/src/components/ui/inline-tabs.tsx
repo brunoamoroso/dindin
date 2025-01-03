@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as TabsPrimitive from "@radix-ui/react-tabs"
+import * as React from "react";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-const InlineTabs = TabsPrimitive.Root
+const InlineTabs = TabsPrimitive.Root;
 
 const InlineTabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
@@ -13,14 +13,11 @@ const InlineTabsList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.List
     ref={ref}
-    className={cn(
-      "flex flex-1 text-subtle border-b border-outline",
-      className
-    )}
+    className={cn("flex text-subtle border-b border-outline", className)}
     {...props}
   />
-))
-InlineTabsList.displayName = TabsPrimitive.List.displayName
+));
+InlineTabsList.displayName = TabsPrimitive.List.displayName;
 
 const InlineTabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
@@ -34,8 +31,8 @@ const InlineTabsTrigger = React.forwardRef<
     )}
     {...props}
   />
-))
-InlineTabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+));
+InlineTabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
 const InlineTabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
@@ -49,7 +46,7 @@ const InlineTabsContent = React.forwardRef<
     )}
     {...props}
   />
-))
-InlineTabsContent.displayName = TabsPrimitive.Content.displayName
+));
+InlineTabsContent.displayName = TabsPrimitive.Content.displayName;
 
-export { InlineTabs, InlineTabsList, InlineTabsTrigger, InlineTabsContent }
+export { InlineTabs, InlineTabsList, InlineTabsTrigger, InlineTabsContent };
