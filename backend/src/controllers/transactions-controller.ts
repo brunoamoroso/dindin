@@ -457,29 +457,29 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
   } = req.body;
   const installments = parseInt(req.body.installments);
 
-  const {groupId} = req.params;
-
-  const hasSubCategory = subCategory?.id ?? null
+  const {id} = req.params;
   let localDate = toLocalDate(date.value);
 
   try{
-    if(groupId === undefined) {
-      throw new Error("Group Id is undefined");
+    if(id === undefined) {
+      throw new Error("Id is undefined");
     }
 
     const amountSplit = splitInstallments({ amount, installments }); // in cents
     
     //if installments lower than the current installments, update the installments and delete the remaining
-    const queryCurrentInstallments = await e.select(e.Transaction, (t) => ({
+    const queryCurrentData = await e.select(e.Transaction, (t) => ({
+      group_installment_id: true,
       installments: true,
-      filter: e.op(t.group_installment_id, "=", e.uuid(groupId)),
-      limit: 1,
+      filter_single: e.op(t.id, "=", e.uuid(id)),
     })).run(clientDB);
 
-    console.log(queryCurrentInstallments);
-
-    if(queryCurrentInstallments === null || queryCurrentInstallments[0].installments === null) {
+    if(queryCurrentData === null || queryCurrentData.installments === null) {
       throw new Error("Current Installments returned as null");
+    }
+
+    if(queryCurrentData.group_installment_id === null) {
+      throw new Error("Group Installment Id returned as null");
     }
 
     //if installments higher than the current installments, update the installments and create the new installments (upsert)
@@ -505,7 +505,7 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
         desc: desc,
         amount: amountSplit[i],
         category: category.id,
-        subCategory: hasSubCategory,
+        subCategory: subCategory && subCategory.id ? subCategory.id : null,
         account: account.id,
         recurrency: recurrency.id,
         date: localDate,
@@ -513,80 +513,57 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
         install_number: i + 1,
         payment_condition: "multi",
         installments: installments,
-        group_installment_id: groupId,
+        group_installment_id: queryCurrentData.group_installment_id!,
       };
     });
 
-    const bulkTransactionsObj = {
-      bulkTransactions
-    };
+    const queryUpdateAllInstallments = `
+      WITH bulk_transactions := <array<json>>$bulkTransactions,
+      FOR item IN array_unpack(bulk_transactions) UNION (
+        INSERT Transaction {
+          type := <str>item['type'],
+          desc := <str>item['desc'],
+          amount := <int32>item['amount'],
+          category := (SELECT Category FILTER .id = <uuid>item['category']),
+          subCategory := (SELECT subCategory FILTER .id = <uuid>item['subCategory']),
+          account := (SELECT Account FILTER .id = <uuid>item['account']),
+          recurrency := <Recurrency>item['recurrency'],
+          date := <cal::local_date>item['date'],
+          created_by := (SELECT User FILTER .id = <uuid>item['created_by']),
+          install_number := <int16>item['install_number'],
+          installments := <int16>item['installments'],
+          payment_condition := <str>item['payment_condition'],
+          group_installment_id := <uuid>item['group_installment_id']
+        } 
+          UNLESS CONFLICT ON (.group_installment_id, .install_number) 
+          ELSE (
+            UPDATE Transaction
+            SET {
+              desc := <str>item['desc'],
+              amount := <int32>item['amount'],
+              category := (SELECT Category FILTER .id = <uuid>item['category']),
+              subCategory := (
+                SELECT subCategory FILTER .id = <uuid>item['subCategory']
+              ),
+              account := (SELECT Account FILTER .id = <uuid>item['account']),
+              recurrency := <Recurrency>item['recurrency'],
+              date := <cal::local_date>item['date'],
+              installments := <int16>item['installments'],
+            }
+          )
+      )
+    `;
 
-
-    const queryUpdateAllInstallments = e.params(
-      {
-        bulkTransactions: e.array(
-          e.tuple({
-            type: e.str,
-            desc: e.str,
-            amount: e.int32,
-            category: e.uuid,
-            subCategory: e.uuid,
-            account: e.uuid,
-            recurrency: e.str,
-            date: e.cal.local_date,
-            created_by: e.uuid,
-            payment_condition: e.str,
-            installments: e.int16,
-            install_number: e.int16,
-            group_installment_id: e.uuid,
-          })
-        ),
-      },
-      (params) => {
-        return e.for(e.array_unpack(params.bulkTransactions), (item) => {
-          return e.insert(e.Transaction, {
-            type: item.type,
-            desc: item.desc,
-            amount: item.amount,
-            category: e.cast(e.Category, item.category),
-            subCategory: hasSubCategory ? e.cast(e.subCategory, item.subCategory) : null,
-            account: e.cast(e.Account, item.account),
-            recurrency: e.cast(e.Recurrency, item.recurrency),
-            date: item.date,
-            created_by: e.cast(e.User, item.created_by),
-            payment_condition: item.payment_condition,
-            install_number: item.install_number,
-            installments: installments,
-            group_installment_id: item.group_installment_id,
-          }).unlessConflict((conflict) => ({
-            on: e.tuple([conflict.group_installment_id, conflict.install_number]),
-            else: e.update(e.Transaction, () => ({
-              set: {
-                amount: item.amount,
-                desc: item.desc,
-                category: e.cast(e.Category, item.category),
-                subCategory: hasSubCategory ? e.cast(e.subCategory, item.subCategory) : null,
-                account: e.cast(e.Account, item.account),
-                installments: installments,
-                recurrency: e.cast(e.Recurrency, item.recurrency),
-                date: item.date,
-              }
-            }))
-          }))
-        });
-      }
-    );
-
-    const updateAllInstallments = await queryUpdateAllInstallments.run(
-      clientDB,
-      bulkTransactionsObj
+    const updateAllInstallments = await clientDB.query(
+      queryUpdateAllInstallments,
+      { bulkTransactions }
     );
 
     //after updating time to delete the remaining installments
-    if(installments < queryCurrentInstallments[0].installments) {
-      const remainingInstallments = queryCurrentInstallments[0].installments - installments;
+    if(installments < queryCurrentData.installments) {
+      const remainingInstallments = queryCurrentData.installments - installments;
       const queryDeleteRemainingInstallments = e.delete(e.Transaction, (t) => ({
-        filter: e.op(e.op(t.group_installment_id, "=", e.uuid(groupId)), "and", e.op(t.install_number, ">", remainingInstallments)),
+        filter: e.op(e.op(t.group_installment_id, "=", e.uuid(queryCurrentData.group_installment_id!)), "and", e.op(t.install_number, ">=", remainingInstallments)),
       }));
 
       await queryDeleteRemainingInstallments.run(clientDB);

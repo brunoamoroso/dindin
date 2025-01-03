@@ -160,6 +160,12 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     },
   });
 
+  const mutationUpdateAllInstallments = useMutation({
+    mutationFn: (data: TransactionDataType) => {
+      return api.updateAllInstallmentsTransaction(id!, data);
+    },
+  });
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const {
@@ -248,7 +254,6 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     }
 
     if (mode === "edit") {
-      console.log(contextTransactionData);
       mutationUpdate.mutate(contextTransactionData, {
         onSuccess: (data) => {
           const transactionData = data as Types.TransactionType;

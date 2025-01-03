@@ -38,7 +38,7 @@ transactionRoutes.delete(
 );
 transactionRoutes.delete("/delete/:id", checkToken, deleteTransaction);
 transactionRoutes.put(
-  "/update/all-installments/:groupId",
+  "/update/all-installments/:id",
   checkToken,
   updateAllInstallmentsTransaction
 );
