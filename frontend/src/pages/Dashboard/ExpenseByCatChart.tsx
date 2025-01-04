@@ -15,7 +15,6 @@ export default function ExpenseByCatChart({data} : {data: Types.TransactionType[
     const labelsData = (data: {[desc: string]: Types.TransactionType[]} ) => Object.keys(data);
     
     const valuesData = (data: {[desc: string]: Types.TransactionType[]} ) => Object.values(data).map((i) => i.reduce((acc, cV) => acc + cV.amount, 0));
-    console.log("valuesData: ", valuesData(dataSorted));
     
     const bgColors = (data: {[desc: string]: Types.TransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizColor);
     
@@ -47,8 +46,8 @@ export default function ExpenseByCatChart({data} : {data: Types.TransactionType[
                             datasets:{
                                 doughnut:{
                                     borderRadius: 4,
-                                    borderWidth: 4,
-                                    spacing: 4,
+                                    borderWidth: 3,
+                                    spacing: 2,
                                 },
                             },
                             plugins:{
