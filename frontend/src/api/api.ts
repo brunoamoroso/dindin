@@ -119,6 +119,10 @@ class Api{
     public deleteAllTransactionInstallment<T>(id: string): Promise<T>{
         return this.delete<T>(`/transactions/delete/all-installment/${id}`);
     }
+
+    public getAvatar<T>(): Promise<T>{
+        return this.get<T>("/profile/avatar");
+    }
 }
 
 const instance = new Api();

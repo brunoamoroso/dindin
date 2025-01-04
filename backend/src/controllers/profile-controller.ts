@@ -99,3 +99,28 @@ export const SignIn = async (req: Request, res: Response) => {
 
     await createUserToken(user, req, res);
 }
+
+export const getAvatar = async (req: Request, res: Response) => {
+    const user = req.user;
+
+    if(!user){
+        return res.status(401).json({message: "Usuário não autorizado"});
+    }
+
+    try{
+        const queryAvatar = e.select(e.User, () => ({
+            name: true,
+            surname: true,
+            photo: true,
+            filter_single: {
+                id: e.uuid(user)
+            }
+        }));
+
+        const avatar = await queryAvatar.run(clientDB);
+
+        return res.status(200).json(avatar);
+    }catch(err){
+        console.log(err);
+    }
+}

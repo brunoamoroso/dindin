@@ -87,10 +87,7 @@
 
   @layer base {
     * {
-      @apply border-border font-sans;
-    }
-    body {
-      @apply bg-background text-foreground;
+      @apply font-sans;
     }
 
     .headline-large{
