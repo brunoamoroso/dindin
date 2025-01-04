@@ -1,72 +1,97 @@
-import { MouseEvent, useState } from "react";
-import { Outlet } from "react-router-dom";
-import DatePicker, {registerLocale} from 'react-datepicker';
+import DatePicker, { registerLocale } from "react-datepicker";
 import { IconButton } from "@/components/ui/icon-button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import {ptBR} from 'date-fns/locale';
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ptBR } from "date-fns/locale";
+import { useOutletContext } from "react-router-dom";
+import { MonthPickerContextType } from "@/context/MonthPickerContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
-export default function MonthPicker() {
-  const handleOutsideClose = (e: MouseEvent<HTMLDivElement>) => {
-    if (e.target !== e.currentTarget) return;
-    setShowDatePicker(false);
-  };
+export function MonthPicker() {
+  const { selectedDate, setSelectedDate } =
+    useOutletContext<MonthPickerContextType>();
+  const [open, setOpen] = useState(false);
+
+  const monthLong = selectedDate.toLocaleDateString("pt-BR", { month: "long" });
 
   const handleMonthClick = (date: Date | null) => {
-    if(date === null){date = new Date()}
-    setSelectedDate(date)
-    setShowDatePicker(false);
+    if (date === null) {
+      date = new Date();
+    }
+    setSelectedDate(date);
+    setOpen(false);
   };
+
+  // const handleDecreaseMonth = () => {
+  //   const date = new Date(selectedDate);
+  //   date.setMonth(date.getMonth() - 1);
+  //   setSelectedDate(date);
+  // };
+
+  // const handleIncreaseMonth = () => {
+  //   const date = new Date(selectedDate);
+  //   date.setMonth(date.getMonth() + 1);
+  //   setSelectedDate(date);
+  // };
 
   const startDate = new Date();
   startDate.setDate(1);
   registerLocale("ptBR", ptBR);
 
-  const [selectedDate, setSelectedDate] = useState<Date>(startDate);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-
   return (
-    <>
-    {showDatePicker && (
-      <div className="fixed bg-neutral-950/95 h-dvh w-full flex container flex items-center justify-center z-50" onClick={handleOutsideClose}>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant={"ghost"}>
+          <ChevronDown />{" "}
+          {monthLong.charAt(0).toUpperCase() + monthLong.slice(1)}
+          {selectedDate.getFullYear() < new Date().getFullYear() && (", " + selectedDate.getFullYear())}
+        </Button>
+      </DialogTrigger>
+      <DialogContent
+        className="w-auto bg-transparent border-none"
+        showCloseButton={false}
+      >
+        <DialogTitle className="hidden">Calendário</DialogTitle>
+        <DialogDescription className="hidden">Escolha um mês</DialogDescription>
         <DatePicker
           locale={"ptBR"}
-          selected={selectedDate} 
-          dateFormat="MM/yyyy" 
-          showMonthYearPicker 
+          selected={selectedDate}
+          dateFormat="MM/yyyy"
+          showMonthYearPicker
           showFullMonthYearPicker
           onChange={handleMonthClick}
           inline
-          renderCustomHeader={({
-            date,
-            decreaseYear,
-            increaseYear
-          }) => {return (
-            <div className="flex items-center justify-between py-3 gap-6">
-              <IconButton variant={"ghost"} onClick={decreaseYear}>
-                <ChevronLeft />
-              </IconButton>
-              <span className="label-large text-title">
-                {date.getFullYear()}
-              </span>
-              <IconButton variant={"ghost"} onClick={increaseYear}>
-                <ChevronRight />
-              </IconButton>
-            </div>
-          )}}
+          renderCustomHeader={({ date, decreaseYear, increaseYear }) => {
+            return (
+              <div className="flex items-center justify-between py-3 gap-6">
+                <IconButton variant={"ghost"} onClick={decreaseYear}>
+                  <ChevronLeft />
+                </IconButton>
+                <span className="label-large text-title">
+                  {date.getFullYear()}
+                </span>
+                <IconButton variant={"ghost"} onClick={increaseYear}>
+                  <ChevronRight />
+                </IconButton>
+              </div>
+            );
+          }}
           renderMonthContent={(_month, _shortMonth, longMonth) => {
-            return(
+            return (
               <div className="flex">
                 {longMonth.charAt(0).toLocaleUpperCase() + longMonth.slice(1)}
               </div>
-            )
+            );
           }}
-          />
-      </div>
-    )}
-      <div className="overflow-hidden">
-        <Outlet context={{selectedDate, setSelectedDate, setShowDatePicker}}/>
-      </div>
-    </>
+        />
+      </DialogContent>
+    </Dialog>
   );
 }
-

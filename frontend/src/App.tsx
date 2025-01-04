@@ -13,14 +13,14 @@ import CreateProfile from "./pages/Profile/CreateProfile";
 import TransactionAccount from "./pages/Transactions/TransactionAccount";
 import Recurrency from "./pages/Transactions/Recurrency";
 import SignIn from "./pages/Profile/SignIn";
-import MonthPicker from "./pages/MonthPicker";
 
 //context
 import { TransactionsContextProvider } from "./context/TransactionsContext";
 import { AuthContextProvider } from "./context/AuthContext";
 import AuthenticatedRoutesContext from "./context/AuthenticatedRoutesContext";
 import UnauthRoutesContext from "./context/UnauthRoutesContext";
-import ListAllTransactions from "./pages/Dashboard/ListAllTransactions";
+import {ListAllTransactions} from "./pages/Dashboard/ListAllTransactions";
+import { MonthPickerContext } from "./context/MonthPickerContext";
 
 function AppRoutes() {
   return (
@@ -34,7 +34,7 @@ function AppRoutes() {
           </Route>
 
           <Route element={<AuthenticatedRoutesContext />}>
-            <Route element={<MonthPicker />}>
+            <Route element={<MonthPickerContext />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route
                 path="/transaction/list/:dateParams"

@@ -1,19 +1,18 @@
 import AppBar from "@/components/AppBar";
-import { IconButton } from "@/components/ui/icon-button";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as Types from "@/types/TransactionTypes";
 import api from "@/api/api";
-import { useMonthPicker } from "@/hooks/useMonthPicker";
 import getCategoryIcon from "@/utils/get-category-icon";
 import { currencyFormat } from "@/utils/currency-format";
 import { Separator } from "@/components/ui/separator";
 import ActionsTransaction from "@/components/ActionsTransaction";
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { MonthPickerContextType } from "@/context/MonthPickerContext";
+import { MonthPicker } from "../MonthPicker";
 
-export default function ListAllTransactions() {
-  const { selectedDate, setSelectedDate, setShowDatePicker } = useMonthPicker();
+export function ListAllTransactions() {
+  const { selectedDate, setSelectedDate } = useOutletContext<MonthPickerContextType>();
 
   const { dateParams } = useParams();
 
@@ -22,20 +21,6 @@ export default function ListAllTransactions() {
       setSelectedDate(new Date(dateParams));
     }
   }, [dateParams, setSelectedDate]);
-
-  const monthLong = selectedDate.toLocaleDateString("pt-BR", { month: "long" });
-
-  const handleDecreaseMonth = () => {
-    const date = new Date(selectedDate);
-    date.setMonth(date.getMonth() - 1);
-    setSelectedDate(date);
-  };
-
-  const handleIncreaseMonth = () => {
-    const date = new Date(selectedDate);
-    date.setMonth(date.getMonth() + 1);
-    setSelectedDate(date);
-  };
 
   const { data } = useQuery<Types.DataAllTransactionsType>({
     queryKey: ["listalltransactions-data", selectedDate],
@@ -47,26 +32,7 @@ export default function ListAllTransactions() {
       <AppBar title="Todas as Transações" pageBack="dashboard" />
 
       <div className="flex gap-6 items-center justify-center">
-        <IconButton
-          variant={"ghost"}
-          className="text-primary"
-          onClick={handleDecreaseMonth}
-        >
-          <ChevronLeft />
-        </IconButton>
-        <span
-          className="label-large text-primary"
-          onClick={() => setShowDatePicker(true)}
-        >
-          {monthLong.charAt(0).toUpperCase() + monthLong.slice(1)}
-        </span>
-        <IconButton
-          variant={"ghost"}
-          className="text-primary"
-          onClick={handleIncreaseMonth}
-        >
-          <ChevronRight />
-        </IconButton>
+        <MonthPicker  />
       </div>
 
       <div className="container flex flex-col flex-1 bg-container2 rounded-t-lg py-10">
