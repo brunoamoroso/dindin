@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import { IconButton } from "./ui/icon-button";
-import { CircleUserRound, Goal, LayoutGrid, Plus, Wallet } from "lucide-react";
+import { Goal, LayoutGrid, Plus } from "lucide-react";
 
 export default function BottomNav(){
     const navButtons = [
@@ -8,11 +8,6 @@ export default function BottomNav(){
             link: "/dashboard",
             icon: <LayoutGrid />,
             title: "Início"
-        },
-        {
-            link: "/wallet",
-            icon: <Wallet />,
-            title: "Carteira"
         },
         {
             link: "/transaction",
@@ -23,18 +18,13 @@ export default function BottomNav(){
             link: "/goals",
             icon: <Goal />,
             title: "Objetivos"
-        },
-        {
-            link: "/profile/view",
-            icon: <CircleUserRound />,
-            title: "Perfil"
         }
     ];
 
     return(
-        <div className="flex justify-between items-center px-4 fixed bottom-0 w-dvw bg-container0">
+        <div className="flex justify-between items-center px-8 fixed bottom-0 w-dvw bg-container0">
             {navButtons.map((obj, i) => {
-                if(i === 2){
+                if(i === 1){
                     return(
                     <Link to={obj.link} key={i}>
                         <IconButton className="w-14 h-14">
@@ -45,9 +35,9 @@ export default function BottomNav(){
                 }
 
                 return(
-                    <NavLink to={obj.link} key={i} className={"flex flex-col items-center gap-1 py-5"}>
+                    <NavLink to={obj.link} key={i} className={({isActive}) => `flex flex-col items-center gap-1 py-5 px-10 ${isActive ? " text-primary" : "text-title"}`}>
                         {obj.icon}
-                        <span className="label-small text-title">{obj.title}</span>
+                        <span className="label-small">{obj.title}</span>
                     </NavLink>
                 )
             })}
