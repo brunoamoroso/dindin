@@ -10,11 +10,12 @@ export default function ExpenseByCatChart({data} : {data: Types.TransactionType[
     const chartRef = useRef<Chart<keyof ChartTypeRegistry> | null>(null);
     const dataExtractExpenses = useMemo(() => data.filter((o) => o.type === "expense"), [data]);
     const dataSorted = useMemo(() => Object.groupBy(dataExtractExpenses, ({category}) => category.desc) as {[desc: string]: Types.TransactionType[]}, [dataExtractExpenses]);
-    const totalAllAmount = useMemo(() => data.reduce((acc, cV) => acc + cV.amount, 0), [data]);
+    const totalAllAmount = useMemo(() => dataExtractExpenses.reduce((acc, cV) => acc + cV.amount, 0), [dataExtractExpenses]);
     
     const labelsData = (data: {[desc: string]: Types.TransactionType[]} ) => Object.keys(data);
     
     const valuesData = (data: {[desc: string]: Types.TransactionType[]} ) => Object.values(data).map((i) => i.reduce((acc, cV) => acc + cV.amount, 0));
+    console.log("valuesData: ", valuesData(dataSorted));
     
     const bgColors = (data: {[desc: string]: Types.TransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizColor);
     
