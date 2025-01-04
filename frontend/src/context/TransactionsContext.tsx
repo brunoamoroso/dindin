@@ -66,8 +66,8 @@ export const TransactionsContextProvider = () => {
     });
 
   return (
-    <div>
+    <>
       <Outlet context={{ contextTransactionData, setContextTransactionData }} />
-    </div>
+    </>
   );
 };

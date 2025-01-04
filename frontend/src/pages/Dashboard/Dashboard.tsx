@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown } from "lucide-react";
 import api from '@/api/api';
 import { currencyFormat } from "@/utils/currency-format";
 import BottomNav from "@/components/BottomNav";
@@ -9,12 +8,13 @@ import ExpenseByCatChart from "./ExpenseByCatChart";
 import * as Types from '@/types/TransactionTypes';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@radix-ui/react-separator";
-import { useMonthPicker } from "@/hooks/useMonthPicker";
+import { useOutletContext } from "react-router-dom";
+import { MonthPickerContextType } from "@/context/MonthPickerContext";
+import { MonthPicker } from "../MonthPicker";
 
 
 export default function Dashboard() {
-    const {selectedDate, setShowDatePicker} = useMonthPicker();
-    const monthLong = selectedDate.toLocaleDateString('pt-BR', {month: 'long'});
+    const {selectedDate} = useOutletContext<MonthPickerContextType>();
 
     const {data, isLoading, isError} = useQuery<Types.DataAllTransactionsType>({
         queryKey: ["dashboard-data", selectedDate],
@@ -25,10 +25,7 @@ export default function Dashboard() {
     <div className="min-h-dvh bg-surface flex flex-col text-body">
         <div className="container flex flex-col gap-6 pb-32">
             <div className="flex justify-center py-6">
-                <Button variant={"ghost"} onClick={() => setShowDatePicker(true)}>
-                    <ChevronDown /> {monthLong.charAt(0).toUpperCase() + monthLong.slice(1)}
-                </Button>
-
+                <MonthPicker />  
             </div>
             {isError && (
                 <>
