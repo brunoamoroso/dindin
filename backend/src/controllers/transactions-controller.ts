@@ -97,7 +97,7 @@ export const addTransaction = async (req: Request, res: Response) => {
             desc: desc,
             amount: amountSplit[i],
             category: category.id,
-            subCategory: subCategory.id,
+            subCategory: subCategory && subCategory.id ? subCategory.id : null,
             account: account.id,
             recurrency: recurrency.id,
             date: localDate,
@@ -109,54 +109,27 @@ export const addTransaction = async (req: Request, res: Response) => {
           };
         });
 
-        const bulkTransactionsObj = {
-          bulkTransactions,
-        };
+        queryExpenseTransaction = `WITH bulk_transactions := <array<json>>$bulkTransactions,
+          FOR item IN array_unpack(bulk_transactions) UNION (
+          INSERT Transaction {
+            type := <str>item['type'],
+            desc := <str>item['desc'],
+            amount := <int32>item['amount'],
+            category := (SELECT Category FILTER .id = <uuid>item['category']),
+            subCategory := (SELECT subCategory FILTER .id = <uuid>item['subCategory']),
+            account := (SELECT Account FILTER .id = <uuid>item['account']),
+            recurrency := <Recurrency>item['recurrency'],
+            date := <cal::local_date>item['date'],
+            created_by := (SELECT User FILTER .id = <uuid>item['created_by']),
+            install_number := <int16>item['install_number'],
+            installments := <int16>item['installments'],
+            payment_condition := <str>item['payment_condition'],
+            group_installment_id := <uuid>item['group_installment_id']
+        })`;
 
-        queryExpenseTransaction = e.params(
-          {
-            bulkTransactions: e.array(
-              e.tuple({
-                type: e.str,
-                desc: e.str,
-                amount: e.int32,
-                category: e.uuid,
-                subCategory: e.uuid,
-                account: e.uuid,
-                recurrency: e.str,
-                date: e.cal.local_date,
-                created_by: e.uuid,
-                payment_condition: e.str,
-                installments: e.int16,
-                install_number: e.int16,
-                group_installment_id: e.uuid,
-              })
-            ),
-          },
-          (params) => {
-            return e.for(e.array_unpack(params.bulkTransactions), (item) => {
-              return e.insert(e.Transaction, {
-                type: item.type,
-                desc: item.desc,
-                amount: item.amount,
-                category: e.cast(e.Category, item.category),
-                subCategory: e.cast(e.subCategory, item.subCategory),
-                account: e.cast(e.Account, item.account),
-                recurrency: e.cast(e.Recurrency, item.recurrency),
-                date: item.date,
-                created_by: e.cast(e.User, item.created_by),
-                payment_condition: item.payment_condition,
-                install_number: item.install_number,
-                installments: installments,
-                group_installment_id: item.group_installment_id,
-              });
-            });
-          }
-        );
-
-        expenseTransaction = await queryExpenseTransaction.run(
-          clientDB,
-          bulkTransactionsObj
+        expenseTransaction = await clientDB.query(
+          queryExpenseTransaction,
+          {bulkTransactions}
         );
       }
 
