@@ -123,6 +123,10 @@ class Api{
     public getAvatar<T>(): Promise<T>{
         return this.get<T>("/profile/avatar");
     }
+
+    public getUserProfileData<T>(): Promise<T>{
+        return this.get<T>("/profile/userData");
+    }
 }
 
 const instance = new Api();

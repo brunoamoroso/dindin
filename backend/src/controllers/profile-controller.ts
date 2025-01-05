@@ -103,10 +103,6 @@ export const SignIn = async (req: Request, res: Response) => {
 export const getAvatar = async (req: Request, res: Response) => {
     const user = req.user;
 
-    if(!user){
-        return res.status(401).json({message: "Usuário não autorizado"});
-    }
-
     try{
         const queryAvatar = e.select(e.User, () => ({
             name: true,
@@ -123,4 +119,82 @@ export const getAvatar = async (req: Request, res: Response) => {
     }catch(err){
         console.log(err);
     }
+}
+
+export const getUserProfile = async (req: Request, res: Response) => {
+    const user = req.user;
+
+    try{
+        const queryProfile = e.select(e.User, () => ({
+            photo: true,
+            name: true,
+            surname: true,
+            email: true,
+            username: true,
+            filter_single: {
+                id: e.uuid(user)
+            }
+        }));
+
+        const profile = await queryProfile.run(clientDB);
+
+        return res.status(200).json(profile);
+    }catch(err){
+        console.log(err);
+    }
+}
+
+export const EditUserProfile = async (req: Request, res: Response) => {
+    const user = req.user;
+    const {name, surname, username, email, password} = req.body;
+    let photo = "";
+
+    if(req.file){
+        photo = req.file.filename;
+    }
+
+    try{
+        const queryEmailExists = await e.select(e.User, (u) => ({
+            email: true,
+            filter_single: e.op(
+                e.op(u.email, "=", email),
+                "and",
+                e.op(u.id, "!=", e.uuid(user)))
+        })).run(clientDB);
+
+        if(queryEmailExists){
+            throw new Error("O email que você utilizou já está cadastrado");
+        }
+
+        const queryUsernameExists = await e.select(e.User, (u) => ({
+            username: true,
+            filter_single: e.op(
+                e.op(u.username, "=", username),
+                "and",
+                e.op(u.id, "!=", e.uuid(user))
+            )
+        })).run(clientDB);
+
+        if(queryUsernameExists){
+            throw new Error("O nome de usuário já está em uso");
+        }
+
+        const update = await e.update(e.User, () => ({
+            filter_single: {id: e.uuid(user)},
+            set:{
+                photo: e.str(photo),
+                name: e.str(name),
+                surname: e.str(surname),
+                email: e.str(email),
+                username: e.str(username),
+                password: e.str(password),
+                }
+            })).run(clientDB);
+        
+        return res.status(200).json(update);
+    }catch(err){
+        console.log(err);
+        return res.status(422).json(err);
+    }
+    
 }

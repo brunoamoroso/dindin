@@ -21,6 +21,8 @@ import AuthenticatedRoutesContext from "./context/AuthenticatedRoutesContext";
 import UnauthRoutesContext from "./context/UnauthRoutesContext";
 import {ListAllTransactions} from "./pages/Dashboard/ListAllTransactions";
 import { MonthPickerContext } from "./context/MonthPickerContext";
+import { UserProfile } from "./pages/Profile/UserProfile/UserProfile";
+import EditUserData from "./pages/Profile/UserProfile/EditUserData";
 
 function AppRoutes() {
   return (
@@ -30,7 +32,7 @@ function AppRoutes() {
           <Route element={<UnauthRoutesContext />}>
             <Route path="/" element={<Home />} />
             <Route path="/profile/create" element={<CreateProfile />} />
-            <Route path="profile/signin" element={<SignIn />} />
+            <Route path="/profile/signin" element={<SignIn />} />
           </Route>
 
           <Route element={<AuthenticatedRoutesContext />}>
@@ -67,6 +69,10 @@ function AppRoutes() {
               />
               <Route path="/recurrency" element={<Recurrency />} />
             </Route>
+
+            <Route path="/profile/user" element={<UserProfile />} />
+            <Route path="/profile/user/edit" element={<EditUserData />} />
+
           </Route>
         </Route>
       </Routes>
