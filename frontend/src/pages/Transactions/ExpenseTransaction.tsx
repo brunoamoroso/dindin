@@ -317,7 +317,8 @@ export default function ExpenseTransaction({
                 </Dialog>
               </div>
             </div>
-            <div className="flex flex-col gap-1.5">
+            {/* Removed for first release */}
+            {/* <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">
                 Repetir essa despesa
               </span>
@@ -327,7 +328,7 @@ export default function ExpenseTransaction({
                   {contextTransactionData.recurrency.desc}
                 </MenuListItem>
               </Link>
-            </div>
+            </div> */}
           </div>
           <Button type="submit" size={"lg"}>
             {mode === "create" ? "Adicionar Transação" : "Editar Transação"}

@@ -13,7 +13,7 @@ import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
 import { TransactionsContextType } from "@/context/TransactionsContext";
 import { currencyFormat } from "@/utils/currency-format";
-import { Landmark, RefreshCw, Tag } from "lucide-react";
+import { Landmark, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 
@@ -182,7 +182,8 @@ export default function GainTransaction({
                 </Dialog>
               </div>
             </div>
-            <div className="flex flex-col gap-1.5">
+            {/* Removed for first release */}
+            {/* <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Repetir esse ganho</span>
               <Link to="/recurrency">
                 <MenuListItem>
@@ -190,7 +191,7 @@ export default function GainTransaction({
                   {contextTransactionData.recurrency.desc}
                 </MenuListItem>
               </Link>
-            </div>
+            </div> */}
           </div>
           <Button type="submit" size={"lg"}>
             {mode === "create" ? "Adicionar Transação" : "Editar Transação"}
