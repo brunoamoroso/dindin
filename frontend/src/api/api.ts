@@ -130,6 +130,10 @@ class Api{
     public editProfileData<T>(body: unknown): Promise<T>{
         return this.put("/profile/edit", body)
     }
+
+    public changePassword<T>(body: unknown): Promise<T>{
+        return this.post("/profile/change-password", body)
+    }
 }
 
 const instance = new Api();

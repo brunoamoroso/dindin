@@ -188,13 +188,13 @@ export const EditUserProfile = async (req: Request, res: Response) => {
     if (queryUsernameExists) {
       throw new Error("O nome de usuário já está em uso");
     }
-    
+
     const fieldsToUpdate = {
-        photo: photo !== "" ? e.str(photo) : undefined,
-        name: name ? e.str(name) : undefined,
-        surname: surname ? e.str(surname) : undefined,
-        email: email ? e.str(email) : undefined,
-        username: username ? e.str(username) : undefined,
+      photo: photo !== "" ? e.str(photo) : undefined,
+      name: name ? e.str(name) : undefined,
+      surname: surname ? e.str(surname) : undefined,
+      email: email ? e.str(email) : undefined,
+      username: username ? e.str(username) : undefined,
     };
 
     const buildSetObject = (fields: Record<string, any>) => {
@@ -213,6 +213,47 @@ export const EditUserProfile = async (req: Request, res: Response) => {
       .run(clientDB);
 
     return res.status(200).json(update);
+  } catch (err) {
+    console.error(err);
+    const message = (err instanceof Error && err.message) || "Erro inesperado";
+    return res.status(422).json({ message: message });
+  }
+};
+
+export const ChangePassword = async (req: Request, res: Response) => {
+  const { oldPassword, newPassword } = req.body;
+  const user = req.user;
+
+  try {
+    const checkOldPassword = await e
+      .select(e.User, (u) => ({
+        filter_single: { id: e.uuid(user) },
+        password: true,
+      }))
+      .run(clientDB);
+
+    //check password
+    const checkPassword = await bcrypt.compare(
+      oldPassword,
+      checkOldPassword!.password
+    );
+
+    if (!checkPassword) {
+      throw new Error("Senha atual inválida, não podemos salvar a senha nova");
+    }
+
+    //hash the password
+    const salt = await bcrypt.genSalt(12);
+    const passwordHash = await bcrypt.hash(newPassword, salt);
+
+    await e
+      .update(e.User, () => ({
+        filter_single: { id: e.uuid(user) },
+        set: { password: e.str(passwordHash) },
+      }))
+      .run(clientDB);
+
+    return res.status(200).json("Senha atualizada!");
   } catch (err) {
     console.error(err);
     const message = (err instanceof Error && err.message) || "Erro inesperado";

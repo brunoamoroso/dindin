@@ -1,6 +1,6 @@
 import AppBar from "@/components/AppBar";
 import MenuListItem from "@/components/ui/menu-list-item";
-import { LogOut, UserCircleIcon } from "lucide-react";
+import { LogOut, SquareAsterisk, UserCircleIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
@@ -63,6 +63,13 @@ export function UserProfile() {
             >
               <UserCircleIcon />
               Dados Cadatrais
+            </MenuListItem>
+            <MenuListItem
+              separator
+              onClick={() => navigate("/profile/user/change-password")}
+            >
+              <SquareAsterisk />
+              Mudar Senha
             </MenuListItem>
             <MenuListItem trailingIcon={false} onClick={() => signOut()}>
               <LogOut />

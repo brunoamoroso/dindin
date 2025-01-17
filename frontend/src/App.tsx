@@ -23,6 +23,7 @@ import {ListAllTransactions} from "./pages/Dashboard/ListAllTransactions";
 import { MonthPickerContext } from "./context/MonthPickerContext";
 import { UserProfile } from "./pages/Profile/UserProfile/UserProfile";
 import EditUserData from "./pages/Profile/UserProfile/EditUserData";
+import { ChangePassword } from "./pages/Profile/UserProfile/ChangePassword";
 
 function AppRoutes() {
   return (
@@ -72,6 +73,7 @@ function AppRoutes() {
 
             <Route path="/profile/user" element={<UserProfile />} />
             <Route path="/profile/user/edit" element={<EditUserData />} />
+            <Route path="/profile/user/change-password" element={<ChangePassword />} />
 
           </Route>
         </Route>

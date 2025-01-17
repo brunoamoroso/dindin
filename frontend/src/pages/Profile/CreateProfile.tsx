@@ -13,6 +13,14 @@ import { Camera } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const rules = [
+  "Maiúscula",
+  "Minúscula",
+  "Número",
+  "8 Dígitos",
+  "Símbolo"
+];
+
 
 export default function CreateProfile() {
   const navigate = useNavigate();
@@ -37,14 +45,6 @@ export default function CreateProfile() {
   });
   const [passwordValid, setPasswordValid] = useState(false);
 
-  const rules = [
-      "Maiúscula",
-      "Minúscula",
-      "Número",
-      "8 Dígitos",
-      "Símbolo"
-  ];
-  
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
 
