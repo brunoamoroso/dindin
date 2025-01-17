@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import PasswordValidator from "@/components/ui/passwordvalidator";
 import TextField from "@/components/ui/textfield";
 import { useToast } from "@/components/ui/use-toast";
+import { UserProfileType } from "@/types/UserProfileType";
 import { passwordCheck } from "@/utils/password-check";
 import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
@@ -17,17 +18,13 @@ export default function CreateProfile() {
   const navigate = useNavigate();
   const {toast} = useToast();
 
-  const [user, setUser] = useState<{
-    photo: File | null,
-    name: string,
-    surname: string,
-    email: string,
-    password: string,
-  }>({
-    photo: null,
+  type UserStateType = Omit<UserProfileType, "photo"> & Partial<Pick<UserProfileType, "photo">>;
+
+  const [user, setUser] = useState<UserStateType>({
     name: "",
     surname: "",
     email: "",
+    username: "",
     password: "",
   });
 
@@ -70,7 +67,11 @@ export default function CreateProfile() {
     e.preventDefault();
 
     if(!passwordValid){
-      console.log('senha não é válida');
+      toast({
+        title: "Tivemos um problema ao tentar criar a sua conta",
+        variant: "destructive",
+        duration: 2000,
+      });
       return;
     }
 
@@ -122,16 +123,17 @@ export default function CreateProfile() {
     const passValidations = passwordCheck(password);
     setValidations(passValidations);
 
+    setUser((prevState) => ({
+      ...prevState,
+      "password": password
+    }))
+
     if(!Object.values(passValidations).every((check) => check === true)){
       setPasswordValid(false);
       return;
     }
 
     setPasswordValid(true);
-    setUser((prevState) => ({
-      ...prevState,
-      "password": password
-    }))
   }
 
   return (
@@ -148,7 +150,7 @@ export default function CreateProfile() {
                   </div>
                 )}
                 {user.photo && (
-                    <img src={URL.createObjectURL(user.photo)} alt="User profile picture" className="h-28 w-28 rounded-full"/>
+                    <img src={URL.createObjectURL(user.photo as File)} alt="User profile picture" className="h-28 w-28 rounded-full"/>
                 )}
                 <Button variant={"ghost"}>Escolher uma foto</Button>
               </div>

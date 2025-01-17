@@ -6,11 +6,12 @@ import api from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
 import { UserProfileType } from "@/types/UserProfileType";
 import { Skeleton } from "@/components/ui/skeleton";
+import { signOut } from "@/utils/log-out";
 
 export function UserProfile() {
   const navigate = useNavigate();
 
-  const { data, isLoading, isError } = useQuery<UserProfileType>({
+  const { data, isLoading } = useQuery<UserProfileType>({
     queryKey: ["userData"],
     queryFn: () => api.getUserProfileData(),
   });
@@ -43,7 +44,7 @@ export function UserProfile() {
                 />
               )}
               {data.photo === "" && (
-                <>{data.name.charAt(0) + data.surname.charAt(0)}</>
+                <>{data.name[0] + data.surname[0]}</>
               )}
             </div>
             <div className="flex flex-col">
@@ -63,7 +64,7 @@ export function UserProfile() {
               <UserCircleIcon />
               Dados Cadatrais
             </MenuListItem>
-            <MenuListItem trailingIcon={false}>
+            <MenuListItem trailingIcon={false} onClick={() => signOut()}>
               <LogOut />
               Sair
             </MenuListItem>

@@ -7,6 +7,7 @@ import api from "@/api/api";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
+import { CircleX } from "lucide-react";
 
 export default function SignIn() {
   const [userData, setUserData] = useState({ username: "", password: "" });
@@ -44,22 +45,30 @@ export default function SignIn() {
     }
 
     try {
-      const userAuthenticated: {message: string; token: string;} = await queryClient.fetchQuery({
-        queryKey: ["signIn"],
-        queryFn: () => api.signIn(userData)
-      });
+      const userAuthenticated: { message: string; token: string } =
+        await queryClient.fetchQuery({
+          queryKey: ["signIn"],
+          queryFn: () => api.signIn(userData),
+        });
 
       if (userAuthenticated.token) {
         Cookies.set("token", userAuthenticated.token);
         navigate("/dashboard");
       }
     } catch (err) {
+      const errorMessage = (err as Error).message || "Erro desconhecido. Tente novamente.";
+
       toast({
-        description: err as string,
+        title: (
+          <div className="flex gap-3 items-center">
+            <CircleX />
+            {errorMessage}
+          </div>
+        ),
         variant: "destructive",
         duration: 2000,
       });
-      throw new Error(err as string);
+      console.error("Error: ", err);
     }
   };
 
