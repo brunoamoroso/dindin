@@ -30,8 +30,8 @@ class Api{
         });
 
         if(!response.ok){
-            const errorText = await response.text();
-            throw new Error(`HTTP Error! Status: ${response.status}, Message: ${errorText}`);
+            const errorText = await response.json();
+            throw new Error(errorText.message || 'Erro desconhecido');
         }
 
         return await response.json();
@@ -64,7 +64,6 @@ class Api{
     }
     
     public signIn<T>(body: {username: string; password: string;}): Promise<T>{
-        console.log(body);
         return this.post<T>("/profile/signin", body);
     }
 
@@ -122,6 +121,18 @@ class Api{
 
     public getAvatar<T>(): Promise<T>{
         return this.get<T>("/profile/avatar");
+    }
+
+    public getUserProfileData<T>(): Promise<T>{
+        return this.get<T>("/profile/userData");
+    }
+
+    public editProfileData<T>(body: unknown): Promise<T>{
+        return this.put("/profile/edit", body)
+    }
+
+    public changePassword<T>(body: unknown): Promise<T>{
+        return this.post("/profile/change-password", body)
     }
 }
 

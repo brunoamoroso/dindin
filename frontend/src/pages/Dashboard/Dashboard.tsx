@@ -11,7 +11,7 @@ import { Separator } from "@radix-ui/react-separator";
 import { useOutletContext } from "react-router-dom";
 import { MonthPickerContextType } from "@/context/MonthPickerContext";
 import { MonthPicker } from "../MonthPicker";
-import { Avatar } from "@/components/Avatar";
+import { AvatarDashboard } from "@/components/AvatarDashboard";
 
 export default function Dashboard() {
   const { selectedDate } = useOutletContext<MonthPickerContextType>();
@@ -26,7 +26,7 @@ export default function Dashboard() {
       <div className="container flex flex-1 flex-col gap-6 pb-32">
         <div className="flex items-center justify-between py-6">
           <MonthPicker />
-          <Avatar />
+          <AvatarDashboard />
         </div>
         {isError && (
           <>

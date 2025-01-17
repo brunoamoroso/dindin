@@ -57,8 +57,6 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
-      console.log(new Date(data.date));
       setContextTransactionData((prev) => ({
         ...prev,
         id: data.id,

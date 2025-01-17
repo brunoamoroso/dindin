@@ -1,9 +1,10 @@
-import express, { urlencoded } from 'express';
+import express from 'express';
 import cors from 'cors';
 import profileRoutes from './routes/profile-routes';
 import categoriesRoutes from './routes/categories-routes';
 import accountsRoutes from './routes/account-routes';
 import transactionRoutes from './routes/transaction-routes';
+import path from 'path';
 
 
 const app = express();
@@ -17,6 +18,9 @@ app.use("/profile", profileRoutes)
 app.use("/categories", categoriesRoutes)
 app.use("/accounts", accountsRoutes);
 app.use("/transactions", transactionRoutes);
+
+// Serve static files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
 app.use((req, res) => {
