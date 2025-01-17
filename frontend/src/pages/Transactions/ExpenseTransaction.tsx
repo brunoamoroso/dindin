@@ -14,7 +14,7 @@ import TextField from "@/components/ui/textfield";
 import { TransactionsContextType } from "@/context/TransactionsContext";
 import { currencyFormat } from "@/utils/currency-format";
 import splitInstallmentsDisplay from "@/utils/get-split-installments";
-import { Landmark, RefreshCw, Tag } from "lucide-react";
+import { Landmark, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 
