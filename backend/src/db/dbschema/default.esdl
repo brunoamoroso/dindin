@@ -6,6 +6,7 @@ module default {
         required email: str {constraint exclusive};
         required username: str {constraint exclusive};
         required password: str;
+        multi selectedCoins: Coin;
     }
 
     scalar type CategoryType extending enum<gain, expense>;
@@ -38,13 +39,19 @@ module default {
         required created_by: User;
     }
 
+    type Coin{
+        required desc: str;
+        required code: str;
+        img: str;
+    }
+
     scalar type Recurrency extending enum<`never`, day, week, biweek, month, quarter, semester, annual>;
 
     type Transaction{
         required type: str{
             constraint one_of("gain",  "expense");
         };
-        required coin: str;
+        required coin: Coin;
         desc: str;
         required amount: int32;
         required category: Category;

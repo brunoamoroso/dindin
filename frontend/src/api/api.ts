@@ -37,7 +37,7 @@ class Api{
         return await response.json();
     }
 
-    private get<T>(endpoint: string): Promise<T>{
+    public get<T>(endpoint: string): Promise<T>{
         return this.request<T>(endpoint, "GET");
     }
 
@@ -47,15 +47,15 @@ class Api{
      * @param body 
      * @returns 
      */
-    private post<T>(endpoint: string, body: unknown): Promise<T>{
+    public post<T>(endpoint: string, body: unknown): Promise<T>{
         return this.request<T>(endpoint, "POST", body);
     }
 
-    private put<T>(endpoint: string, body: unknown): Promise<T>{
+    public put<T>(endpoint: string, body: unknown): Promise<T>{
         return this.request<T>(endpoint, "PUT", body);
     }
 
-    private delete<T>(endpoint:string): Promise<T>{
+    public delete<T>(endpoint:string): Promise<T>{
         return this.request<T>(endpoint, "DELETE");
     }
 

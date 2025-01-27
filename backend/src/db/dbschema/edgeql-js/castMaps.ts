@@ -54,7 +54,6 @@ export type scalarAssignableBy<T extends $.ScalarType> =
   T extends _fts.$ElasticLanguage ? _fts.$ElasticLanguage : 
   T extends _default.$Recurrency ? _default.$Recurrency : 
   T extends _default.$CategoryType ? _default.$CategoryType : 
-  T extends _default.$CardType ? _default.$CardType : 
   T extends _cfg.$memory ? _cfg.$memory : 
   T extends _cfg.$QueryCacheMode ? _cfg.$QueryCacheMode : 
   T extends _cfg.$ConnectionTransport ? _cfg.$ConnectionTransport : 
@@ -109,7 +108,6 @@ export type scalarCastableFrom<T extends $.ScalarType> =
   T extends _fts.$ElasticLanguage ? _fts.$ElasticLanguage : 
   T extends _default.$Recurrency ? _default.$Recurrency : 
   T extends _default.$CategoryType ? _default.$CategoryType : 
-  T extends _default.$CardType ? _default.$CardType : 
   T extends _cfg.$memory ? _cfg.$memory : 
   T extends _cfg.$QueryCacheMode ? _cfg.$QueryCacheMode : 
   T extends _cfg.$ConnectionTransport ? _cfg.$ConnectionTransport : 
@@ -376,12 +374,6 @@ type getSharedParentScalar<A, B> =
   :
   A extends _default.$CategoryType ?
     B extends _default.$CategoryType ?
-    B
-    :
-    never
-  :
-  A extends _default.$CardType ?
-    B extends _default.$CardType ?
     B
     :
     never
@@ -711,12 +703,6 @@ function getSharedParentScalar<A extends $.ScalarType, B extends $.ScalarType>(a
     }
   if (a.__name__ === "default::CategoryType") {
     if(b.__name__ === "default::CategoryType") {
-      return b;
-    }
-    throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);
-    }
-  if (a.__name__ === "default::CardType") {
-    if(b.__name__ === "default::CardType") {
       return b;
     }
     throw new Error(`Types are not castable: ${a.__name__}, ${b.__name__}`);

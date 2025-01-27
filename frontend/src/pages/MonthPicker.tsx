@@ -48,7 +48,7 @@ export function MonthPicker() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={"ghost"}>
+        <Button variant={"ghost"} size='sm'>
           <ChevronDown />{" "}
           {monthLong.charAt(0).toUpperCase() + monthLong.slice(1)}
           {selectedDate.getFullYear() < new Date().getFullYear() && (", " + selectedDate.getFullYear())}

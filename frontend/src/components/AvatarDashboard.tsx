@@ -21,7 +21,7 @@ export function AvatarDashboard() {
           {avatar && avatar.photo && avatar.photo !== "" && (
             <div className="flex items-center gap-2">
               <img
-                src={`${import.meta.env.VITE_BACKEND_URL}/uploads/${avatar.photo}`}
+                src={`${import.meta.env.VITE_BACKEND_URL}/assets/uploads/${avatar.photo}`}
                 alt="avatar"
                 className="w-8 h-8 rounded-full object-cover border-2 border-container0"
               />
