@@ -7,6 +7,7 @@ module default {
         required username: str {constraint exclusive};
         required password: str;
         multi selectedCoins: Coin;
+        required user_default_coin: Coin;
     }
 
     scalar type CategoryType extending enum<gain, expense>;

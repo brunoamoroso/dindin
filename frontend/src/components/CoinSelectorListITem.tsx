@@ -2,19 +2,20 @@ import { Check, Trash } from "lucide-react";
 import { IconButton } from "./ui/icon-button";
 
 interface CoinListItemProps {
+    id: string;
     img: string;
     desc: string;
     code: string;
 }
 
-export function CoinListItem({img, desc, code}: CoinListItemProps){
+export function CoinSelectorListItem({img, desc, code}: CoinListItemProps){
     return(
         <div className="flex flex-1 gap-4 items-center pl-2 py-3.5 pr-4">
             <Check className="text-neutral-50" size={16}/>
             <img
                 src={`${
                     import.meta.env.VITE_BACKEND_URL
-                }/assets/coin-covers/${img}`}
+                }/assets/coin-covers/${img}.png`}
                 alt="coin"
                 className="w-7 h-7 object-cover rounded-full">
                 

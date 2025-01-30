@@ -59,8 +59,10 @@ export type $CoinλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c2
   "img": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "<coin[is Transaction]": $.LinkDesc<$Transaction, $.Cardinality.Many, {}, false, false,  false, false>;
   "<selectedCoins[is User]": $.LinkDesc<$User, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<user_default_coin[is User]": $.LinkDesc<$User, $.Cardinality.Many, {}, false, false,  false, false>;
   "<coin": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
   "<selectedCoins": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
+  "<user_default_coin": $.LinkDesc<$.ObjectType, $.Cardinality.Many, {}, false, false,  false, false>;
 }>;
 type $Coin = $.ObjectType<"default::Coin", $CoinλShape, null, [
   ..._std.$Object_8ce8c71ee4fa5f73840c22d7eaa58588['__exclusives__'],
@@ -101,6 +103,7 @@ export type $UserλShape = $.typeutil.flatten<_std.$Object_8ce8c71ee4fa5f73840c2
   "photo": $.PropertyDesc<_std.$str, $.Cardinality.AtMostOne, false, false, false, false>;
   "username": $.PropertyDesc<_std.$str, $.Cardinality.One, true, false, false, false>;
   "selectedCoins": $.LinkDesc<$Coin, $.Cardinality.Many, {}, false, false,  false, false>;
+  "user_default_coin": $.LinkDesc<$Coin, $.Cardinality.One, {}, false, false,  false, false>;
   "<created_by[is Account]": $.LinkDesc<$Account, $.Cardinality.Many, {}, false, false,  false, false>;
   "<created_by[is subCategory]": $.LinkDesc<$subCategory, $.Cardinality.Many, {}, false, false,  false, false>;
   "<created_by[is Category]": $.LinkDesc<$Category, $.Cardinality.Many, {}, false, false,  false, false>;
