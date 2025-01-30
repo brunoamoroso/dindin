@@ -104,3 +104,21 @@ export const setDefaultUserCoin = async (req: Request, res: Response) => {
         res.status(500).json({message: "Internal server error"});
     }
 }
+
+export const getDefaultUserCoin = async (req: Request, res: Response) => {
+    const user = req.user;
+
+    try{
+        const userDefaultCoin = await e.select(e.Coin, (c) => ({
+            img: true,
+            desc: true,
+            code: true,
+            filter_single: e.op(c["<user_default_coin[is User]"].id, "=", e.uuid(user))
+        })).run(clientDB);
+
+        res.status(200).json(userDefaultCoin);
+    }catch(err){
+        console.log(err);
+        res.status(500).json({message: "Internal server error"});
+    }
+}

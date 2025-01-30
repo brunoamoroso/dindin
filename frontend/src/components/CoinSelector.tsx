@@ -10,7 +10,7 @@ import {
 import { Button } from "./ui/button";
 import { CoinSelectorListItem } from "./CoinSelectorListITem";
 import { useQuery } from "@tanstack/react-query";
-import { getUserSelectedCoins } from "@/api/coinService";
+import { getUserDefaultCoin, getUserSelectedCoins } from "@/api/coinService";
 import { CoinType } from "@/types/CoinTypes";
 import { Separator } from "./ui/separator";
 import { Fragment } from "react/jsx-runtime";
@@ -18,9 +18,14 @@ import { useNavigate } from "react-router-dom";
 
 export function CoinSelector() {
     const navigate = useNavigate();
-    const {data} = useQuery<CoinType[]>({
+    const {data: userCoins} = useQuery<CoinType[]>({
         queryKey: ["userCoins"],
         queryFn: () => getUserSelectedCoins(),
+    });
+
+    const {data: userDefaultCoin} = useQuery<CoinType>({
+        queryKey: ["userDefaultCoin"],
+        queryFn: () => getUserDefaultCoin(),
     });
   return (
     <Dialog>
@@ -29,12 +34,12 @@ export function CoinSelector() {
           <img
             src={`${
               import.meta.env.VITE_BACKEND_URL
-            }/assets/coin-covers/brl.png`}
+            }/assets/coin-covers/${userDefaultCoin?.img}.png`}
             alt="coin"
             className="w-7 h-7 object-cover rounded-full"
           />
           <div className="flex gap-1 items-center">
-            <span className="text-subtle label-medium">BRL</span>
+            <span className="text-subtle label-medium">{userDefaultCoin?.code}</span>
             <IconButton variant="ghost" size="small">
               <ChevronDown className="text-primary" />
             </IconButton>
@@ -53,7 +58,7 @@ export function CoinSelector() {
         </div>
         <div className="flex flex-col gap-8">
           <div className="flex flex-col">
-            {data?.map((coin, i, arr) => (
+            {userCoins?.map((coin, i, arr) => (
                 <Fragment key={i}>
                   <CoinSelectorListItem id={coin.id} img={coin.img} desc={coin.desc} code={coin.code}/>
                   {arr.length - 1 !== i && <Separator />}
