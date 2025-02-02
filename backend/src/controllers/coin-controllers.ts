@@ -7,6 +7,7 @@ export const getUserSelectedCoins = async (req: Request, res: Response) => {
 
     try {
         const userCoins = await e.select(e.Coin, (c) => ({
+            id: true,
             img: true,
             desc: true,
             code: true,
@@ -110,6 +111,7 @@ export const getDefaultUserCoin = async (req: Request, res: Response) => {
 
     try{
         const userDefaultCoin = await e.select(e.Coin, (c) => ({
+            id: true,
             img: true,
             desc: true,
             code: true,

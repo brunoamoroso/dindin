@@ -15,3 +15,7 @@ export function getUserDefaultCoin<T>(): Promise<T>{
 export function addNewUserSelectedCoin<T>(body: {coinId: string}): Promise<T>{
     return api.put<T>("/coins/user-coins/add", body);
 }
+
+export function setDefaultUserCoin <T>(body: {coinId: string}): Promise<T>{
+    return api.put<T>("/coins/user-coins/set-default", body);
+}

@@ -9,27 +9,64 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { CoinSelectorListItem } from "./CoinSelectorListITem";
-import { useQuery } from "@tanstack/react-query";
-import { getUserDefaultCoin, getUserSelectedCoins } from "@/api/coinService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getUserDefaultCoin, getUserSelectedCoins, setDefaultUserCoin } from "@/api/coinService";
 import { CoinType } from "@/types/CoinTypes";
 import { Separator } from "./ui/separator";
 import { Fragment } from "react/jsx-runtime";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Skeleton } from "./ui/skeleton";
 
 export function CoinSelector() {
     const navigate = useNavigate();
-    const {data: userCoins} = useQuery<CoinType[]>({
+    const queryClient = useQueryClient();
+    const [open, setOpen] = useState(false);
+
+    const {data: userCoins, isError: errorUsercCoins, isLoading: loadingUserCoins} = useQuery<CoinType[]>({
         queryKey: ["userCoins"],
         queryFn: () => getUserSelectedCoins(),
     });
 
-    const {data: userDefaultCoin} = useQuery<CoinType>({
+    const {data: userDefaultCoin, isError: errorDefaultCoin, isLoading: loadingDefaultCoin} = useQuery<CoinType>({
         queryKey: ["userDefaultCoin"],
         queryFn: () => getUserDefaultCoin(),
     });
+
+    const setDefaultCoinMutation = useMutation({
+      mutationFn: (data: {coinId: string}) => setDefaultUserCoin(data),
+      onSuccess: () => {
+        setOpen(false);
+        queryClient.invalidateQueries({
+          queryKey: ["userDefaultCoin"],
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: ["dashboard-data"],  
+        });
+      }
+    });
+
+    const handleClickCoin = (e: React.MouseEvent<HTMLDivElement>) => {
+      const coinId = e.currentTarget.dataset.id;
+      if(!coinId){
+        return console.error("user tried to set a default coin, but coinId is undefined");
+      }
+
+      setDefaultCoinMutation.mutate({coinId: coinId});
+    };
+
+    const sortedUserCoins = [...(userCoins || [])].sort((a, b) => {
+      if (userDefaultCoin && a.code === userDefaultCoin.code) return -1;
+      if (userDefaultCoin && b.code === userDefaultCoin.code) return 1;
+      return 0;
+    });
   return (
-    <Dialog>
-      <DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      {loadingDefaultCoin && (
+        <Skeleton className="w-10 h-7 rounded-xl" />
+      )}
+      <DialogTrigger asChild>
         <div className="flex gap-2 items-center">
           <img
             src={`${
@@ -47,29 +84,46 @@ export function CoinSelector() {
         </div>
       </DialogTrigger>
       <DialogContent className="flex flex-1 flex-col bg-container0 border-outline border p-6">
-        <div className="flex flex-col gap-1">
+        {errorUsercCoins || errorDefaultCoin && (
+          <div className="flex flex-col gap-1">
             <DialogTitle className="flex justify-center title-small text-title">
-                Selecione uma moeda
+                Error ao carregar suas moedas
             </DialogTitle>
             <DialogDescription className="body-medium text-body">
-                Selecione uma moeda para gerir suas finanças, caso esteja utilizando
-                alguma outra adicione ela a suas moedas.
+                Não conseguimos encontrar suas moedas, contate um administrador da aplicação para resolver.
             </DialogDescription>
-        </div>
-        <div className="flex flex-col gap-8">
-          <div className="flex flex-col">
-            {userCoins?.map((coin, i, arr) => (
-                <Fragment key={i}>
-                  <CoinSelectorListItem id={coin.id} img={coin.img} desc={coin.desc} code={coin.code}/>
-                  {arr.length - 1 !== i && <Separator />}
-                </Fragment>
-            ))}
           </div>
-          <Button variant="outline" size="lg" className="gap-2" onClick={() => navigate('/coins/search')}>
-            <Plus />
-            Adicionar Moeda
-          </Button>
-        </div>
+        )}
+        {loadingUserCoins && (
+          <Skeleton className="w-full h-12 rounded-xl" />
+        )}
+        {!loadingUserCoins && !errorUsercCoins && !errorDefaultCoin && (
+          <Fragment>    
+            <div className="flex flex-col gap-1">
+                <DialogTitle className="flex justify-center title-small text-title">
+                    Selecione uma moeda
+                </DialogTitle>
+                <DialogDescription className="body-medium text-body">
+                    Selecione uma moeda para gerir suas finanças, caso esteja utilizando
+                    alguma outra adicione ela a suas moedas.
+                </DialogDescription>
+            </div>
+            <div className="flex flex-col gap-8">
+              <div className="flex flex-col">
+                {sortedUserCoins?.map((coin, i, arr) => (
+                    <Fragment key={i}>
+                      <CoinSelectorListItem isDefault={coin.code === userDefaultCoin?.code} id={coin.id} img={coin.img} desc={coin.desc} code={coin.code} onClick={handleClickCoin}/>
+                      {arr.length - 1 !== i && <Separator />}
+                    </Fragment>
+                ))}
+              </div>
+              <Button variant="outline" size="lg" className="gap-2" onClick={() => navigate('/coins/search')}>
+                <Plus />
+                Adicionar Moeda
+              </Button>
+            </div>
+          </Fragment>
+        )}
       </DialogContent>
     </Dialog>
   );

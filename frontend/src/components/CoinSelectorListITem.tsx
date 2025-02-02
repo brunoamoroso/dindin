@@ -1,17 +1,20 @@
 import { Check, Trash } from "lucide-react";
 import { IconButton } from "./ui/icon-button";
+import { cn } from "@/lib/utils";
 
 interface CoinListItemProps {
+    isDefault?: boolean;
     id: string;
     img: string;
     desc: string;
     code: string;
+    onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-export function CoinSelectorListItem({img, desc, code}: CoinListItemProps){
+export function CoinSelectorListItem({id, isDefault=false, img, desc, code, onClick}: CoinListItemProps){
     return(
-        <div className="flex flex-1 gap-4 items-center pl-2 py-3.5 pr-4">
-            <Check className="text-neutral-50" size={16}/>
+        <div className="flex flex-1 gap-4 items-center pl-2 py-3.5 pr-4" onClick={onClick} data-id={id}>
+            <Check className={cn("text-neutral-50", `${!isDefault && "opacity-0"}`)} size={16}/>
             <img
                 src={`${
                     import.meta.env.VITE_BACKEND_URL

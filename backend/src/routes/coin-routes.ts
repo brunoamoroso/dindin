@@ -9,6 +9,7 @@ coinRoutes.get('/get-coins', checkToken, getCoins);
 coinRoutes.get('/user-coins/default', checkToken, getDefaultUserCoin);
 
 coinRoutes.put('/user-coins/add', checkToken, addNewUserSelectedCoin, setDefaultUserCoin);
+coinRoutes.put('/user-coins/set-default', checkToken, setDefaultUserCoin);
 
 
 
