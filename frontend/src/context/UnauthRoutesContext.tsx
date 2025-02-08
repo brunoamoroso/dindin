@@ -1,10 +1,11 @@
-import { useAuth } from "@/hooks/useAuth";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useOutletContext } from "react-router-dom";
+import { AuthContextType } from "./AuthContext";
 
 export default function UnauthRoutesContext(){
-    const {token} = useAuth();
+    const location = useLocation();
+    const {token} = useOutletContext<AuthContextType>();    
 
-    if(token){
+    if(token && !location.state.creationFlow){
         return <Navigate to={"/dashboard"} />
     }
 

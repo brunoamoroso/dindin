@@ -1,12 +1,15 @@
 import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
 import imgSplash from '@/assets/main-coin.png';
+import { Progress } from "@/components/ui/progress";
+import { Link } from "react-router-dom";
 
 export function SplashDefaultCoin(){
     return (
         <div className="flex flex-col bg-surface min-h-dvh">
             <div className="flex flex-col">
                 <AppBar title="Configurar Conta"/>
+                <Progress value={80} />
             </div>
             <main className="container my-10 flex flex-col flex-1 justify-between">
                 <div className="flex flex-col gap-10">
@@ -20,7 +23,9 @@ export function SplashDefaultCoin(){
                         </span>
                     </div>
                 </div>
-                <Button variant='default' size='lg'>Escolher minha moeda</Button>
+                <Link state={{creationFlow: true}} to="/profile/default-coin/search" className="w-full">
+                    <Button variant='default' size='lg' className="w-full">Escolher minha moeda</Button>
+                </Link>
             </main>
         </div>
     );

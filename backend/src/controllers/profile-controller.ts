@@ -54,6 +54,9 @@ export const CreateProfile = async (req: Request, res: Response) => {
       email: e.str(email),
       password: e.str(passwordHash),
       username: e.str(username),
+      user_default_coin: e.select(e.Coin, (coin) => ({
+        filter_single: e.op(coin.code, "=", e.str("BRL")),
+      }))
     });
 
     const newUser = await insert.run(clientDB);

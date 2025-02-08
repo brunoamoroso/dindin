@@ -3,6 +3,7 @@ import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PasswordValidator from "@/components/ui/passwordvalidator";
+import { Progress } from "@/components/ui/progress";
 import TextField from "@/components/ui/textfield";
 import { useToast } from "@/components/ui/use-toast";
 import { UserProfileType } from "@/types/UserProfileType";
@@ -84,9 +85,8 @@ export default function CreateProfile() {
     try{
         mutation.mutate(formData, {
           onSuccess: (data) => {
-              console.log(data);
               Cookies.set("token", data.token);
-              navigate("/dashboard");
+              navigate("/profile/default-coin", {state: {creationFlow: true}});
           },
           onError: () => {
             toast({
@@ -138,7 +138,10 @@ export default function CreateProfile() {
 
   return (
     <div className="min-h-dvh flex flex-col bg-surface">
-      <AppBar title="Configurar Conta" />
+      <div className="flex flex-col">
+        <AppBar title="Configurar Conta" />
+        <Progress value={50} />
+      </div>
       <div className="container flex flex-1 py-10">
           <form className="flex flex-col gap-10 flex-1 justify-between" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">

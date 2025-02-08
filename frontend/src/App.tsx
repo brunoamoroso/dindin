@@ -26,6 +26,7 @@ import EditUserData from "./pages/Profile/UserProfile/EditUserData";
 import { ChangePassword } from "./pages/Profile/UserProfile/ChangePassword";
 import { SearchCoin } from "./pages/SearchCoin";
 import { SplashDefaultCoin } from "./pages/Profile/SplashDefaultCoin";
+import { ProfileCreationDefaultCoin } from "./pages/Profile/ProfileCreationDefaultCoin";
 
 function AppRoutes() {
   return (
@@ -37,10 +38,11 @@ function AppRoutes() {
             <Route path="/profile/create" element={<CreateProfile />} />
             <Route path="/profile/signin" element={<SignIn />} />
             <Route path="/profile/default-coin" element={<SplashDefaultCoin />} />
-            <Route path="/profile/default-coin/search" element={<SearchCoin />} />
+            <Route path="/profile/default-coin/search" element={<ProfileCreationDefaultCoin />} />
           </Route>
 
           <Route element={<AuthenticatedRoutesContext />}>
+            
             <Route element={<DashboardContext />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route
