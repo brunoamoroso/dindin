@@ -15,16 +15,17 @@ import Recurrency from "./pages/Transactions/Recurrency";
 import SignIn from "./pages/Profile/SignIn";
 
 //context
-import { TransactionsContextProvider } from "./context/TransactionsContext";
+import { TransactionsContext } from "./context/TransactionsContext";
 import { AuthContextProvider } from "./context/AuthContext";
 import AuthenticatedRoutesContext from "./context/AuthenticatedRoutesContext";
 import UnauthRoutesContext from "./context/UnauthRoutesContext";
 import {ListAllTransactions} from "./pages/Dashboard/ListAllTransactions";
-import { MonthPickerContext } from "./context/MonthPickerContext";
+import { DashboardContext } from "./context/DashboardContext";
 import { UserProfile } from "./pages/Profile/UserProfile/UserProfile";
 import EditUserData from "./pages/Profile/UserProfile/EditUserData";
 import { ChangePassword } from "./pages/Profile/UserProfile/ChangePassword";
 import { SearchCoin } from "./pages/SearchCoin";
+import { SplashDefaultCoin } from "./pages/Profile/SplashDefaultCoin";
 
 function AppRoutes() {
   return (
@@ -35,10 +36,12 @@ function AppRoutes() {
             <Route path="/" element={<Home />} />
             <Route path="/profile/create" element={<CreateProfile />} />
             <Route path="/profile/signin" element={<SignIn />} />
+            <Route path="/profile/default-coin" element={<SplashDefaultCoin />} />
+            <Route path="/profile/default-coin/search" element={<SearchCoin />} />
           </Route>
 
           <Route element={<AuthenticatedRoutesContext />}>
-            <Route element={<MonthPickerContext />}>
+            <Route element={<DashboardContext />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route
                 path="/transaction/list/:dateParams"
@@ -50,7 +53,7 @@ function AppRoutes() {
               />
             </Route>
 
-            <Route element={<TransactionsContextProvider />}>
+            <Route element={<TransactionsContext />}>
               <Route
                 path="/transaction/edit/:paramTransactionScope/:paramId"
                 element={<Transaction mode="edit" />}

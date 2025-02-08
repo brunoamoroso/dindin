@@ -118,7 +118,7 @@ export default function ExpenseTransaction({
         <div className="py-8 ">
           <span className="label-medium text-subtle">Valor Gasto</span>
           <div className="flex gap-1">
-            <span className="headline-small text-title">R$</span>
+            <span className="headline-small text-title">{contextTransactionData.coin}</span>
             <span
               id="amount_placeholder"
               className="headline-small text-negative"
@@ -126,7 +126,7 @@ export default function ExpenseTransaction({
             >
               {contextTransactionData.amount
                 ? currencyFormat(contextTransactionData.amount)
-                : "0,00"}
+                : "0.00"}
             </span>
             <Input
               variant={"ghost"}
@@ -135,7 +135,7 @@ export default function ExpenseTransaction({
               id="amount_input"
               type="text"
               className="hidden text-negative"
-              placeholder="0,00"
+              placeholder="0.00"
               onChange={handleAmountChange}
               value={currencyFormat(contextTransactionData.amount)}
             />

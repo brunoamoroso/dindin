@@ -119,7 +119,7 @@ export const addTransaction = async (req: Request, res: Response) => {
         queryExpenseTransaction = `WITH bulk_transactions := <array<json>>$bulkTransactions,
           FOR item IN array_unpack(bulk_transactions) UNION (
           INSERT Transaction {
-            coin := (SELECT Coin FILTER .<[user_default_coin[is User].id = <uuid>item['coin']),
+            coin := (SELECT Coin FILTER .<user_default_coin[is User].id = <uuid>item['coin'] LIMIT 1),
             type := <str>item['type'],
             desc := <str>item['desc'],
             amount := <int32>item['amount'],
@@ -490,6 +490,7 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
       }
 
       return {
+        coin: req.user,
         type: "expense",
         desc: desc,
         amount: amountSplit[i],
@@ -510,6 +511,7 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
       WITH bulk_transactions := <array<json>>$bulkTransactions,
       FOR item IN array_unpack(bulk_transactions) UNION (
         INSERT Transaction {
+          coin := (SELECT Coin FILTER .<user_default_coin[is User].id = <uuid>item['coin'] LIMIT 1),
           type := <str>item['type'],
           desc := <str>item['desc'],
           amount := <int32>item['amount'],

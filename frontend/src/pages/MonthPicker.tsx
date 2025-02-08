@@ -3,7 +3,7 @@ import { IconButton } from "@/components/ui/icon-button";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { ptBR } from "date-fns/locale";
 import { useOutletContext } from "react-router-dom";
-import { MonthPickerContextType } from "@/context/MonthPickerContext";
+import { DashboardContextType } from "@/context/DashboardContext";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,7 @@ import { useState } from "react";
 
 export function MonthPicker() {
   const { selectedDate, setSelectedDate } =
-    useOutletContext<MonthPickerContextType>();
+    useOutletContext<DashboardContextType>();
   const [open, setOpen] = useState(false);
 
   const monthLong = selectedDate.toLocaleDateString("pt-BR", { month: "long" });

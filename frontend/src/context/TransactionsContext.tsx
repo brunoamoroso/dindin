@@ -1,3 +1,5 @@
+import { useUserDefaultCoin } from "@/hooks/useUserDefaultCoin";
+import { getCurrencySymbol } from "@/utils/get-currency-symbol";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
@@ -22,6 +24,7 @@ interface RecurrencyType {
 }
 
 export interface TransactionDataType {
+  coin: string;
   id?: string;
   type: "gain" | "expense";
   amount: number | 0;
@@ -46,9 +49,15 @@ export interface TransactionsContextType {
   >;
 }
 
-export const TransactionsContextProvider = () => {
+function CoinTransaction(): string{
+  const {data} = useUserDefaultCoin();
+  return getCurrencySymbol(data!.code);
+}
+
+export function TransactionsContext(){
   const [contextTransactionData, setContextTransactionData] =
     useState<TransactionDataType>({
+      coin: CoinTransaction(),
       type: "gain",
       amount: 0,
       desc: "",
@@ -70,4 +79,4 @@ export const TransactionsContextProvider = () => {
       <Outlet context={{ contextTransactionData, setContextTransactionData }} />
     </>
   );
-};
+}

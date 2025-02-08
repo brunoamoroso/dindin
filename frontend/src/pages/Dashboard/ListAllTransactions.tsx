@@ -8,11 +8,12 @@ import { Separator } from "@/components/ui/separator";
 import ActionsTransaction from "@/components/ActionsTransaction";
 import { useOutletContext, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { MonthPickerContextType } from "@/context/MonthPickerContext";
+import { DashboardContextType } from "@/context/DashboardContext";
 import { MonthPicker } from "../MonthPicker";
+import { CoinSelector } from "@/components/CoinSelector";
 
 export function ListAllTransactions() {
-  const { selectedDate, setSelectedDate } = useOutletContext<MonthPickerContextType>();
+  const { selectedDate, setSelectedDate } = useOutletContext<DashboardContextType>();
 
   const { dateParams } = useParams();
 
@@ -31,7 +32,8 @@ export function ListAllTransactions() {
     <div className="min-h-dvh bg-surface flex flex-col text-body gap-6">
       <AppBar title="Todas as Transações" pageBack="dashboard" />
 
-      <div className="flex gap-6 items-center justify-center">
+      <div className="container flex gap-6 items-center justify-between">
+        <CoinSelector />
         <MonthPicker  />
       </div>
 
@@ -61,7 +63,7 @@ export function ListAllTransactions() {
                     d.type === "gain" ? "text-positive" : "text-negative"
                   }`}
                 >
-                  {"R$" + currencyFormat(d.amount)}
+                  {currencyFormat(d.amount)}
                 </span>
                 <span className="body-small text-subtle">{d.account.desc}</span>
               </div>

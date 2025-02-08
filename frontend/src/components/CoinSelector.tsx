@@ -10,27 +10,25 @@ import {
 import { Button } from "./ui/button";
 import { CoinSelectorListItem } from "./CoinSelectorListITem";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getUserDefaultCoin, getUserSelectedCoins, setDefaultUserCoin } from "@/api/coinService";
+import { getUserSelectedCoins, setDefaultUserCoin } from "@/api/coinService";
 import { CoinType } from "@/types/CoinTypes";
 import { Separator } from "./ui/separator";
 import { Fragment } from "react/jsx-runtime";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useState } from "react";
 import { Skeleton } from "./ui/skeleton";
+import { DashboardContextType } from "@/context/DashboardContext";
 
 export function CoinSelector() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
 
+    const {userDefaultCoin, isLoadingDefaultCoin} = useOutletContext<DashboardContextType>();
+
     const {data: userCoins, isError: errorUsercCoins, isLoading: loadingUserCoins} = useQuery<CoinType[]>({
         queryKey: ["userCoins"],
         queryFn: () => getUserSelectedCoins(),
-    });
-
-    const {data: userDefaultCoin, isError: errorDefaultCoin, isLoading: loadingDefaultCoin} = useQuery<CoinType>({
-        queryKey: ["userDefaultCoin"],
-        queryFn: () => getUserDefaultCoin(),
     });
 
     const setDefaultCoinMutation = useMutation({
@@ -44,6 +42,10 @@ export function CoinSelector() {
         queryClient.invalidateQueries({
           queryKey: ["dashboard-data"],  
         });
+
+        queryClient.invalidateQueries({
+          queryKey: ["listalltransactions-data"],  
+        });
       }
     });
 
@@ -55,15 +57,9 @@ export function CoinSelector() {
 
       setDefaultCoinMutation.mutate({coinId: coinId});
     };
-
-    const sortedUserCoins = [...(userCoins || [])].sort((a, b) => {
-      if (userDefaultCoin && a.code === userDefaultCoin.code) return -1;
-      if (userDefaultCoin && b.code === userDefaultCoin.code) return 1;
-      return 0;
-    });
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {loadingDefaultCoin && (
+      {isLoadingDefaultCoin && (
         <Skeleton className="w-10 h-7 rounded-xl" />
       )}
       <DialogTrigger asChild>
@@ -84,7 +80,7 @@ export function CoinSelector() {
         </div>
       </DialogTrigger>
       <DialogContent className="flex flex-1 flex-col bg-container0 border-outline border p-6">
-        {errorUsercCoins || errorDefaultCoin && (
+        {errorUsercCoins && (
           <div className="flex flex-col gap-1">
             <DialogTitle className="flex justify-center title-small text-title">
                 Error ao carregar suas moedas
@@ -97,7 +93,7 @@ export function CoinSelector() {
         {loadingUserCoins && (
           <Skeleton className="w-full h-12 rounded-xl" />
         )}
-        {!loadingUserCoins && !errorUsercCoins && !errorDefaultCoin && (
+        {!loadingUserCoins && !errorUsercCoins && (
           <Fragment>    
             <div className="flex flex-col gap-1">
                 <DialogTitle className="flex justify-center title-small text-title">
@@ -110,7 +106,7 @@ export function CoinSelector() {
             </div>
             <div className="flex flex-col gap-8">
               <div className="flex flex-col">
-                {sortedUserCoins?.map((coin, i, arr) => (
+                {userCoins?.map((coin, i, arr) => (
                     <Fragment key={i}>
                       <CoinSelectorListItem isDefault={coin.code === userDefaultCoin?.code} id={coin.id} img={coin.img} desc={coin.desc} code={coin.code} onClick={handleClickCoin}/>
                       {arr.length - 1 !== i && <Separator />}

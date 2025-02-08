@@ -9,13 +9,13 @@ import * as Types from "@/types/TransactionTypes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@radix-ui/react-separator";
 import { useOutletContext } from "react-router-dom";
-import { MonthPickerContextType } from "@/context/MonthPickerContext";
 import { MonthPicker } from "../MonthPicker";
 import { AvatarDashboard } from "@/components/AvatarDashboard";
 import { CoinSelector } from "@/components/CoinSelector";
+import { DashboardContextType } from "@/context/DashboardContext";
 
 export default function Dashboard() {
-  const { selectedDate } = useOutletContext<MonthPickerContextType>();
+  const { selectedDate, userDefaultCoin } = useOutletContext<DashboardContextType>();
 
   const { data, isLoading, isError } = useQuery<Types.DataAllTransactionsType>({
     queryKey: ["dashboard-data", selectedDate],
@@ -50,7 +50,7 @@ export default function Dashboard() {
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-positive">
-                  {"R$" + currencyFormat(data.sumAllAmountGained)}
+                  {currencyFormat(data.sumAllAmountGained, userDefaultCoin?.code)}
                 </span>
               )}
             </div>
@@ -59,7 +59,7 @@ export default function Dashboard() {
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-negative">
-                  {"R$" + currencyFormat(data.sumAllAmountExpend)}
+                  {currencyFormat(data.sumAllAmountExpend, userDefaultCoin?.code)}
                 </span>
               )}
             </div>
