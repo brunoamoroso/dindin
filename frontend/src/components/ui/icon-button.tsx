@@ -14,9 +14,9 @@ const IconButtonVariants = cva(
       },
       size: {
         default: "h-10 w-14 px-4 py-2",
-        small: "h-7 w-7 label-small"
+        small: "h-6 w-6 label-small peer [&>svg]:h-4 [&>svg]:w-4",
       },
-    },
+    }, 
     defaultVariants: {
       variant: "default",
       size: "default",

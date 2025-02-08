@@ -6,6 +6,8 @@ module default {
         required email: str {constraint exclusive};
         required username: str {constraint exclusive};
         required password: str;
+        multi selectedCoins: Coin;
+        required user_default_coin: Coin;
     }
 
     scalar type CategoryType extending enum<gain, expense>;
@@ -35,16 +37,13 @@ module default {
         required amount: int32{
             default := 0;
         };
-        multi cards: Card;
         required created_by: User;
     }
 
-    scalar type CardType extending enum<credit, debit, credit_debit>;
-
-    type Card{
+    type Coin{
         required desc: str;
-        required type: CardType;
-        card_exp_date: cal::local_date;
+        required code: str;
+        img: str;
     }
 
     scalar type Recurrency extending enum<`never`, day, week, biweek, month, quarter, semester, annual>;
@@ -53,6 +52,7 @@ module default {
         required type: str{
             constraint one_of("gain",  "expense");
         };
+        required coin: Coin;
         desc: str;
         required amount: int32;
         required category: Category;

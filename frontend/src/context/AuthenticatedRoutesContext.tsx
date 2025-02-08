@@ -1,9 +1,9 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { Navigate, Outlet, useOutletContext } from "react-router-dom";
+import { AuthContextType } from "./AuthContext";
 
 
 export default function AuthenticatedRoutesContext(){
-    const {token} = useAuth();
+    const {token} = useOutletContext<AuthContextType>();
 
     if(!token){
         return <Navigate to="/"/>

@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import clientDB from "../db/conn";
 import e from "../db/dbschema/edgeql-js";
-import { subCategory, User } from "../db/dbschema/edgeql-js/modules/default";
 
 export const getCategories = async (req: Request, res: Response) => {
   const { type } = req.params;

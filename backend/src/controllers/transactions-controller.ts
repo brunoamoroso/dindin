@@ -26,6 +26,9 @@ export const addTransaction = async (req: Request, res: Response) => {
   try {
     if (type === "gain") {
       const queryGainTransaction = e.insert(e.Transaction, {
+        coin: e.select(e.Coin, (c) => ({
+          filter_single: e.op(c["<user_default_coin[is User]"].id, "=", e.uuid(req.user)),
+        })),
         type: type,
         desc: e.str(desc),
         amount: e.int32(amount),
@@ -55,6 +58,9 @@ export const addTransaction = async (req: Request, res: Response) => {
 
       if (paymentCondition === "single") {
         queryExpenseTransaction = e.insert(e.Transaction, {
+          coin: e.select(e.Coin, (c) => ({
+            filter_single: e.op(c["<user_default_coin[is User]"].id, "=", e.uuid(req.user)),
+          })),
           type: type,
           desc: e.str(desc),
           amount: e.int32(amount),
@@ -93,6 +99,7 @@ export const addTransaction = async (req: Request, res: Response) => {
           }
 
           return {
+            coin: req.user,
             type: type,
             desc: desc,
             amount: amountSplit[i],
@@ -112,6 +119,7 @@ export const addTransaction = async (req: Request, res: Response) => {
         queryExpenseTransaction = `WITH bulk_transactions := <array<json>>$bulkTransactions,
           FOR item IN array_unpack(bulk_transactions) UNION (
           INSERT Transaction {
+            coin := (SELECT Coin FILTER .<user_default_coin[is User].id = <uuid>item['coin'] LIMIT 1),
             type := <str>item['type'],
             desc := <str>item['desc'],
             amount := <int32>item['amount'],
@@ -170,6 +178,13 @@ export const getAllTransactionsByMonth = async (
           "and",
           e.op(transaction.date, "<=", e.cal.local_date(endDate))
         );
+        const filterByDefaultCoin = e.op(
+          transaction.coin,
+          "=",
+          e.select(e.Coin, (c) => ({
+            filter_single: e.op(c["<user_default_coin[is User]"].id, "=", e.uuid(req.user)),
+          }))
+        );
 
         return {
           id: true,
@@ -188,7 +203,7 @@ export const getAllTransactionsByMonth = async (
           installments: true,
           install_number: true,
           date: true,
-          filter: e.op(filterByUser, "and", filterByDate),
+          filter: e.op(e.op(filterByUser, "and", filterByDefaultCoin), "and", filterByDate),
           order_by: {
             expression: transaction.date,
             direction: e.DESC,
@@ -475,6 +490,7 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
       }
 
       return {
+        coin: req.user,
         type: "expense",
         desc: desc,
         amount: amountSplit[i],
@@ -495,6 +511,7 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
       WITH bulk_transactions := <array<json>>$bulkTransactions,
       FOR item IN array_unpack(bulk_transactions) UNION (
         INSERT Transaction {
+          coin := (SELECT Coin FILTER .<user_default_coin[is User].id = <uuid>item['coin'] LIMIT 1),
           type := <str>item['type'],
           desc := <str>item['desc'],
           amount := <int32>item['amount'],

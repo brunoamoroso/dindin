@@ -9,12 +9,13 @@ import * as Types from "@/types/TransactionTypes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@radix-ui/react-separator";
 import { useOutletContext } from "react-router-dom";
-import { MonthPickerContextType } from "@/context/MonthPickerContext";
 import { MonthPicker } from "../MonthPicker";
 import { AvatarDashboard } from "@/components/AvatarDashboard";
+import { CoinSelector } from "@/components/CoinSelector";
+import { DashboardContextType } from "@/context/DashboardContext";
 
 export default function Dashboard() {
-  const { selectedDate } = useOutletContext<MonthPickerContextType>();
+  const { selectedDate, userDefaultCoin } = useOutletContext<DashboardContextType>();
 
   const { data, isLoading, isError } = useQuery<Types.DataAllTransactionsType>({
     queryKey: ["dashboard-data", selectedDate],
@@ -24,8 +25,11 @@ export default function Dashboard() {
   return (
     <div className="min-h-dvh bg-surface flex flex-col text-body">
       <div className="container flex flex-1 flex-col gap-6 pb-32">
-        <div className="flex items-center justify-between py-6">
-          <MonthPicker />
+        <div className="relative flex items-center justify-between py-6">
+          <CoinSelector />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <MonthPicker />
+          </div>
           <AvatarDashboard />
         </div>
         {isError && (
@@ -46,7 +50,7 @@ export default function Dashboard() {
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-positive">
-                  {"R$" + currencyFormat(data.sumAllAmountGained)}
+                  {currencyFormat(data.sumAllAmountGained, userDefaultCoin?.code)}
                 </span>
               )}
             </div>
@@ -55,7 +59,7 @@ export default function Dashboard() {
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-negative">
-                  {"R$" + currencyFormat(data.sumAllAmountExpend)}
+                  {currencyFormat(data.sumAllAmountExpend, userDefaultCoin?.code)}
                 </span>
               )}
             </div>
