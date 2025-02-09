@@ -4,12 +4,12 @@ import { checkToken } from '../utils/check-token';
 
 const coinRoutes = express.Router();
 
-coinRoutes.get('/user-coins-selection', checkToken, getUserSelectedCoins);
+coinRoutes.get('/user/selection', checkToken, getUserSelectedCoins);
 coinRoutes.get('/get-coins', checkToken, getCoins);
-coinRoutes.get('/user-coins/default', checkToken, getDefaultUserCoin);
+coinRoutes.get('/user/get-default', checkToken, getDefaultUserCoin);
 
-coinRoutes.put('/user-coins/add', checkToken, addNewUserSelectedCoin, setDefaultUserCoin);
-coinRoutes.put('/user-coins/set-default', checkToken, setDefaultUserCoin);
+coinRoutes.put('/user/add', checkToken, addNewUserSelectedCoin, setDefaultUserCoin);
+coinRoutes.put('/user/set-default', checkToken, setDefaultUserCoin);
 
 
 

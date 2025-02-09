@@ -19,7 +19,7 @@ app.use(express.urlencoded({extended: true}));
 app.use("/categories", categoriesRoutes)
 // app.use("/accounts", accountsRoutes);
 // app.use("/transactions", transactionRoutes);
-// app.use("/coins", coinRoutes);
+app.use("/coins", coinRoutes);
 
 // Serve static files
 app.use("/assets/uploads", express.static(path.join(__dirname, "/assets/uploads")));
