@@ -8,10 +8,10 @@ const profileRoutes = express.Router();
 profileRoutes.post('/create', imageUploader.single('photo'), CreateProfile);
 profileRoutes.post('/signin', SignIn);
 profileRoutes.put('/edit', checkToken, imageUploader.single('photo'), EditUserProfile);
-profileRoutes.post('/change-password', checkToken, ChangePassword);
+profileRoutes.post('/password/change', checkToken, ChangePassword);
 
 
 profileRoutes.get('/avatar', checkToken, getAvatar);
-profileRoutes.get('/userData', checkToken, getUserProfile);
+profileRoutes.get('/user/data', checkToken, getUserProfile);
 
 export default profileRoutes;

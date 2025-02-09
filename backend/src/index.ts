@@ -15,7 +15,7 @@ app.use(cors({credentials: true, origin: "http://localhost:5173"}));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-// app.use("/profile", profileRoutes)
+app.use("/profile", profileRoutes)
 app.use("/categories", categoriesRoutes)
 app.use("/accounts", accountsRoutes);
 // app.use("/transactions", transactionRoutes);
