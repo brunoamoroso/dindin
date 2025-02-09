@@ -17,7 +17,7 @@ app.use(express.urlencoded({extended: true}));
 
 // app.use("/profile", profileRoutes)
 app.use("/categories", categoriesRoutes)
-// app.use("/accounts", accountsRoutes);
+app.use("/accounts", accountsRoutes);
 // app.use("/transactions", transactionRoutes);
 app.use("/coins", coinRoutes);
 
