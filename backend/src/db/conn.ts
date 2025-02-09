@@ -1,7 +1,7 @@
-import * as edgedb from 'edgedb';
+import pg from 'pg';
 
-const clientDB = edgedb.createClient({
-    instanceName: "dindindb"
+const {Pool} = pg;
+export const db = new Pool({
+    host: 'localhost',
+    database: 'dindin',
 });
-
-export default clientDB;
