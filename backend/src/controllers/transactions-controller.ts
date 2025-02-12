@@ -7,7 +7,7 @@ export const addTransaction = async (req: Request, res: Response) => {
   const {
     type,
     amount,
-    desc,
+    description,
     category,
     subCategory,
     account,
@@ -22,7 +22,7 @@ export const addTransaction = async (req: Request, res: Response) => {
       const queryGainTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, date, created_by)
       VALUES ((SELECT user_default_coin FROM users WHERE id = $1),
       $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`;
-      const valuesGainTransaction = [req.user, type, desc, amount, account.id, category.id, subCategory?.id, localDate, req.user];
+      const valuesGainTransaction = [req.user, type, description, amount, account.id, category.id, subCategory?.id || null, localDate, req.user];
 
       const {rows: gainTransaction} = await db.query(queryGainTransaction, valuesGainTransaction);
       res.status(201).json(gainTransaction);
@@ -43,7 +43,7 @@ export const addTransaction = async (req: Request, res: Response) => {
       queryExpenseTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, date, payment_condition, created_by)
       VALUES ((SELECT user_default_coin FROM users WHERE id = $1),$2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`;
 
-      expenseValues = [req.user, type, desc, amount, account.id, category.id, subCategory?.id, localDate, paymentCondition, req.user];
+      expenseValues = [req.user, type, description, amount, account.id, category.id, subCategory?.id || null, localDate, paymentCondition, req.user];
 
       const {rows: expenseTransaction} = await db.query(queryExpenseTransaction, expenseValues);
       return res.status(201).json(expenseTransaction);
@@ -71,7 +71,7 @@ export const addTransaction = async (req: Request, res: Response) => {
           localDate = toPostgresDate(dateIncrease.toISOString());
         }
 
-        return [req.user, type, desc, amountSplit[i], account.id, category.id, subCategory?.id, localDate, paymentCondition, i + 1, installments, groupInstallmentId, req.user];
+        return [req.user, type, description, amountSplit[i], account.id, category.id, subCategory?.id || null, localDate, paymentCondition, i + 1, installments, groupInstallmentId, req.user];
       });
 
       queryExpenseTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id,
@@ -238,72 +238,35 @@ export const getAllInstallmentsTransaction = async (req: Request, res: Response)
   }
 };
 
-// export const updateTransaction = async (req: Request, res: Response) => {
-//   const {
-//     id,
-//     type,
-//     amount,
-//     desc,
-//     category,
-//     subCategory,
-//     account,
-//     recurrency,
-//     date,
-//   } = req.body;
-//   const hasSubCategory = subCategory?.id
-//     ? e.cast(e.subCategory, e.uuid(subCategory.id))
-//     : null;
-//   const localDate = toLocalDate(date.value);
+export const updateTransaction = async (req: Request, res: Response) => {
+  const {id} = req.params;
+  const {
+    type,
+    amount,
+    description,
+    category,
+    subCategory,
+    account,
+    date,
+  } = req.body;
+  const localDate = toPostgresDate(date.value);
 
-//   let queryUpdateTransaction;
-//   try {
-//     if (type === "gain") {
-//       queryUpdateTransaction = e.update(e.Transaction, () => ({
-//         filter_single: { id: id },
-//         set: {
-//           type: type,
-//           amount: e.int32(amount),
-//           desc: e.str(desc),
-//           category: e.cast(e.Category, e.uuid(category.id)),
-//           subCategory: hasSubCategory,
-//           account: e.cast(e.Account, e.uuid(account.id)),
-//           recurrency: e.cast(e.Recurrency, recurrency.id),
-//           date: e.cal.local_date(localDate),
-//           created_by: e.cast(e.User, e.uuid(req.user)),
-//         },
-//       }));
-//     }
+  try {
+      const queryUpdateTransaction = `UPDATE transactions
+      SET type = $1, amount = $2, description = $3, account_id = $4, category_id = $5, subcategory_id = $6, date = $7
+      WHERE id = $8
+      RETURNING *`;
 
-//     if (type === "expense") {
-//       queryUpdateTransaction = e.update(e.Transaction, () => ({
-//         filter_single: { id: id },
-//         set: {
-//           type: type,
-//           amount: e.int32(amount),
-//           desc: e.str(desc),
-//           category: e.cast(e.Category, e.uuid(category.id)),
-//           subCategory: hasSubCategory,
-//           account: e.cast(e.Account, e.uuid(account.id)),
-//           recurrency: e.cast(e.Recurrency, recurrency.id),
-//           date: e.cal.local_date(localDate),
-//           created_by: e.cast(e.User, e.uuid(req.user)),
-//         },
-//       }));
-//     }
-
-//     if(queryUpdateTransaction === undefined) {
-//       throw new Error("queryUpdateTransaction is undefined");
-//     }
-
-//     await queryUpdateTransaction.run(clientDB);
-
-//     return res
-//       .status(200)
-//       .json({ message: "Transaction updated", date: date.value });
-//   } catch (err) {
-//     return res.status(422).json({ message: err });
-//   }
-// };
+      const queryValues = [type, amount, description, account.id, category.id, subCategory?.id || null, localDate, id];
+      
+      const {rows: responseUpdateTransaction} = await db.query(queryUpdateTransaction, queryValues);
+      
+      return res.status(200).json(responseUpdateTransaction);
+  } catch (err) {
+    console.error(err);
+    return res.status(422).json({ message: err });
+  }
+};
 
 // export const updateAllInstallmentsTransaction = async (req: Request, res: Response) => {
 //   const {
@@ -503,40 +466,23 @@ export const getAllInstallmentsTransaction = async (req: Request, res: Response)
 //   }
 // };
 
-// export const deleteAllInstallmentsTransaction = async (
-//   req: Request,
-//   res: Response
-// ) => {
-//   const { id } = req.params;
-//   try {
-//     const groupInstallmentId = await e
-//       .select(e.Transaction, (t) => ({
-//         group_installment_id: true,
-//         filter_single: e.op(t.id, "=", e.uuid(id)),
-//       }))
-//       .run(clientDB);
+export const deleteAllInstallmentsTransaction = async (
+  req: Request,
+  res: Response
+) => {
+  const { id } = req.params;
+  try {
+    const queryDeleteAllInstallments = `DELETE 
+    FROM transactions 
+    WHERE group_installment_id = (SELECT group_installment_id FROM transactions WHERE id = $1)`;
 
-//     if (
-//       groupInstallmentId === null ||
-//       groupInstallmentId.group_installment_id === null
-//     ) {
-//       throw new Error("Couldn't find group installment");
-//     }
+    const valuesDeleteAllInstallments = [id];
 
-//     await e
-//       .delete(e.Transaction, (t) => ({
-//         filter: e.op(
-//           t.group_installment_id,
-//           "=",
-//           e.uuid(groupInstallmentId.group_installment_id!)
-//         ),
-//       }))
-//       .run(clientDB);
+    await db.query(queryDeleteAllInstallments, valuesDeleteAllInstallments);
 
-//     return res
-//       .status(200)
-//       .json({ message: "All transaction installments deleted" });
-//   } catch (err) {
-//     console.error(err);
-//   }
-// };
+    return res.status(200).json({ message: "All transaction installments deleted" });
+  } catch (err) {
+    console.error(err);
+    return res.status(422).json({ message: "Error trying to delete transaction" });
+  }
+};
