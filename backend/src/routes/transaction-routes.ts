@@ -26,22 +26,22 @@ transactionRoutes.get(
   getAllInstallmentsTransaction
 );
 transactionRoutes.post("/add", checkToken, addTransaction);
-transactionRoutes.delete(
-  "/delete/one-installment/:id",
-  checkToken,
-  deleteOneInstallmentTransaction
-);
-transactionRoutes.delete(
-  "/delete/all-installment/:id",
-  checkToken,
-  deleteAllInstallmentsTransaction
-);
+// transactionRoutes.delete(
+//   "/delete/one-installment/:id",
+//   checkToken,
+//   deleteOneInstallmentTransaction
+// );
+// transactionRoutes.delete(
+//   "/delete/all-installment/:id",
+//   checkToken,
+//   deleteAllInstallmentsTransaction
+// );
 transactionRoutes.delete("/delete/:id", checkToken, deleteTransaction);
-transactionRoutes.put(
-  "/update/all-installments/:id",
-  checkToken,
-  updateAllInstallmentsTransaction
-);
-transactionRoutes.put("/update/:id", checkToken, updateTransaction);
+// transactionRoutes.put(
+//   "/update/all-installments/:id",
+//   checkToken,
+//   updateAllInstallmentsTransaction
+// );
+// transactionRoutes.put("/update/:id", checkToken, updateTransaction);
 
 export default transactionRoutes;
