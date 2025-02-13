@@ -26,11 +26,11 @@ transactionRoutes.get(
   getAllInstallmentsTransaction
 );
 transactionRoutes.post("/add", checkToken, addTransaction);
-// transactionRoutes.delete(
-//   "/delete/one-installment/:id",
-//   checkToken,
-//   deleteOneInstallmentTransaction
-// );
+transactionRoutes.delete(
+  "/delete/one-installment/:id",
+  checkToken,
+  deleteOneInstallmentTransaction
+);
 transactionRoutes.delete(
   "/delete/all-installment/:id",
   checkToken,

@@ -281,7 +281,7 @@ export const updateTransaction = async (req: Request, res: Response) => {
 //   const installments = parseInt(req.body.installments);
 
 //   const {id} = req.params;
-//   let localDate = toLocalDate(date.value);
+//   let localDate = toLocalDate(date.value);z
 
 //   try{
 //     if(id === undefined) {
@@ -400,71 +400,56 @@ export const updateTransaction = async (req: Request, res: Response) => {
 //   }
 // };
 
-// export const deleteOneInstallmentTransaction = async (
-//   req: Request,
-//   res: Response
-// ) => {
-//   const { id } = req.params;
+export const deleteOneInstallmentTransaction = async (
+  req: Request,
+  res: Response
+) => {
+  const { id } = req.params;
 
-//   try {
-//     const currentTransaction = await e
-//       .select(e.Transaction, (t) => ({
-//         group_installment_id: true,
-//         filter_single: e.op(t.id, "=", e.uuid(id)),
-//       }))
-//       .run(clientDB);
+  try {
+    const queryCurrentTransaction = `SELECT group_installment_id, installments FROM transactions WHERE id = $1`;
+    const valuesCurrentTransaction = [id];
 
-//     if (
-//       currentTransaction === null ||
-//       currentTransaction.group_installment_id === null
-//     ) {
-//       throw new Error("Couldn't find group installment");
-//     }
+    const {rows: currentTransaction} = await db.query(queryCurrentTransaction, valuesCurrentTransaction);
 
-//     const groupInstallments = await e
-//       .select(e.Transaction, (t) => ({
-//         id: true,
-//         install_number: true,
-//         installments: true,
-//         filter: e.op(
-//           t.group_installment_id,
-//           "=",
-//           e.uuid(currentTransaction.group_installment_id!)
-//         ),
-//       }))
-//       .run(clientDB);
+    if (
+      currentTransaction === null ||
+      currentTransaction[0].group_installment_id === null
+    ) {
+      throw new Error("Couldn't find group installment");
+    }
 
-//     await e
-//       .delete(e.Transaction, (t) => ({
-//         filter_single: { id: id },
-//       }))
-//       .run(clientDB);
+    const queryDeleteOneInstallment = `DELETE FROM transactions WHERE id = $1`;
+    const valuesDeleteOneInstallment = [id];
 
-//     const remainingInstallments = groupInstallments.filter(
-//       (install) => install.id !== id
-//     );
+    await db.query(queryDeleteOneInstallment, valuesDeleteOneInstallment);
 
-//     for (let i = 0; i < remainingInstallments.length; i++) {
-//       const updateInstallment = remainingInstallments[i];
-//       await e
-//         .update(e.Transaction, (t) => ({
-//           filter_single: e.op(t.id, "=", e.uuid(updateInstallment.id)),
-//           set: {
-//             install_number: i + 1,
-//             installments: remainingInstallments.length,
-//           },
-//         }))
-//         .run(clientDB);
-//     }
+    const queryRemainingInstallments = `SELECT id FROM transactions WHERE group_installment_id = $1 ORDER BY install_number ASC`;
+    const valuesRemaningInstallments = [currentTransaction[0].group_installment_id];
 
-//     return res.status(200).json({ message: "Transaction deleted" });
-//   } catch (err) {
-//     console.error(err);
-//     return res
-//       .status(422)
-//       .json({ message: "Error trying to delete transaction" });
-//   }
-// };
+    const {rows: remainingInstallments} = await db.query(queryRemainingInstallments, valuesRemaningInstallments);
+
+    const lengthRemainingInstallments = remainingInstallments.length;
+
+    for (let i = 0; i < lengthRemainingInstallments; i++) {
+      const updateInstallment = remainingInstallments[i];
+
+      const queryUpdateInstallment = `UPDATE transactions 
+      SET install_number = $1, installments = $2
+      WHERE id = $3`;
+      const valuesUpdateInstallments = [i+1, lengthRemainingInstallments, updateInstallment.id];
+
+      await db.query(queryUpdateInstallment, valuesUpdateInstallments);
+    }
+
+    return res.status(200).json({ message: "Transaction deleted" });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(422)
+      .json({ message: "Error trying to delete transaction" });
+  }
+};
 
 export const deleteAllInstallmentsTransaction = async (
   req: Request,
