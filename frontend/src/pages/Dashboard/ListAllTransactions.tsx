@@ -48,11 +48,11 @@ export function ListAllTransactions() {
               className="flex px-4 py-3.5 gap-4 justify-between items-center"
             >
               <div className="flex flex-1 gap-4 items-center">
-                <div>{getCategoryIcon(d.category.desc).icon}</div>
+                <div>{getCategoryIcon(d.category).icon}</div>
                 <div className="flex flex-col">
-                  <span className="label-large text-title">{d.desc}</span>
+                  <span className="label-large text-title">{d.category}</span>
                   <span className="body-medium text-subtle">
-                    {new Date(d.date + "T00:00:00").toLocaleDateString()}
+                    {new Date(d.date).toLocaleDateString()}
                     {d.install_number && " - " + d.install_number + " / " + d.installments}
                   </span>
                 </div>
@@ -65,11 +65,11 @@ export function ListAllTransactions() {
                 >
                   {currencyFormat(d.amount)}
                 </span>
-                <span className="body-small text-subtle">{d.account.desc}</span>
+                <span className="body-small text-subtle">{d.account}</span>
               </div>
               <ActionsTransaction
                 id={d.id!}
-                desc={d.desc}
+                desc={d.description}
                 date={d.date}
                 amount={d.amount}
                 installments={d.installments}
