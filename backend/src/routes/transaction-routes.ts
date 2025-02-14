@@ -37,11 +37,11 @@ transactionRoutes.delete(
   deleteAllInstallmentsTransaction
 );
 transactionRoutes.delete("/delete/:id", checkToken, deleteTransaction);
-// transactionRoutes.put(
-//   "/update/all-installments/:id",
-//   checkToken,
-//   updateAllInstallmentsTransaction
-// );
+transactionRoutes.put(
+  "/update/all-installments/:id",
+  checkToken,
+  updateAllInstallmentsTransaction
+);
 transactionRoutes.put("/update/:id", checkToken, updateTransaction);
 
 export default transactionRoutes;

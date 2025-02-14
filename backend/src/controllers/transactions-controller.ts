@@ -71,8 +71,39 @@ export const addTransaction = async (req: Request, res: Response) => {
           localDate = toPostgresDate(dateIncrease.toISOString());
         }
 
-        return [req.user, type, description, amountSplit[i], account.id, category.id, subCategory?.id || null, localDate, paymentCondition, i + 1, installments, groupInstallmentId, req.user];
+        return {
+          coin: req.user, 
+          type: "expense", 
+          description: description, 
+          amount: amountSplit[i],
+          account: account.id,
+          category: category.id,
+          subCategory: subCategory?.id || null,
+          date: localDate,
+          payment_condition: paymentCondition,
+          install_number: i + 1,
+          installments: installments,
+          group_installment_id: groupInstallmentId,
+          created_by: req.user
+        };
       });
+
+      //Convert the bulk transactions into a flat array, did like this to keep a better readability and maintainability
+      const valuesAddTransaction = bulkTransactions.flatMap(obj => [
+        obj.coin,
+        obj.type,
+        obj.description,
+        obj.amount,
+        obj.account,
+        obj.category,
+        obj.subCategory,
+        obj.date,
+        obj.payment_condition,
+        obj.install_number,
+        obj.installments,
+        obj.group_installment_id,
+        obj.created_by
+      ]);
 
       queryExpenseTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id,
       category_id, subcategory_id, date, payment_condition, install_number, installments, group_installment_id, created_by)
@@ -84,7 +115,7 @@ export const addTransaction = async (req: Request, res: Response) => {
 
       queryExpenseTransaction += valuesPlaceholder + " RETURNING *";
 
-      const {rows: expenseTransaction} = await db.query(queryExpenseTransaction, bulkTransactions.flat());
+      const {rows: expenseTransaction} = await db.query(queryExpenseTransaction, valuesAddTransaction);
       return res.status(201).json(expenseTransaction);
     }
   } catch (err) {
@@ -268,137 +299,128 @@ export const updateTransaction = async (req: Request, res: Response) => {
   }
 };
 
-// export const updateAllInstallmentsTransaction = async (req: Request, res: Response) => {
-//   const {
-//     amount,
-//     desc,
-//     category,
-//     subCategory,
-//     account,
-//     recurrency,
-//     date,
-//   } = req.body;
-//   const installments = parseInt(req.body.installments);
+export const updateAllInstallmentsTransaction = async (req: Request, res: Response) => {
+  const {
+    amount,
+    description,
+    category,
+    subCategory,
+    account,
+    date,
+  } = req.body;
+  const newInstallments = parseInt(req.body.installments);
 
-//   const {id} = req.params;
-//   let localDate = toLocalDate(date.value);z
+  const {id} = req.params;
+  let localDate = toPostgresDate(date.value);
 
-//   try{
-//     if(id === undefined) {
-//       throw new Error("Id is undefined");
-//     }
-
-//     const amountSplit = splitInstallments({ amount, installments }); // in cents
+  try{
+    if(id === undefined) {
+      throw new Error("Id is undefined");
+    }
     
-//     //if installments lower than the current installments, update the installments and delete the remaining
-//     const queryCurrentData = await e.select(e.Transaction, (t) => ({
-//       group_installment_id: true,
-//       installments: true,
-//       filter_single: e.op(t.id, "=", e.uuid(id)),
-//     })).run(clientDB);
+    const queryCurrentData = `SELECT group_installment_id, installments FROM transactions WHERE id = $1`;
+    const valuesCurrentData = [id];
+    
+    const {rows: currentData} = await db.query(queryCurrentData, valuesCurrentData);
+    
+    if(currentData[0].installments === null) {
+      throw new Error("Current Installments returned as null");
+    }
+    
+    if(currentData[0].group_installment_id === null) {
+      throw new Error("Group Installment Id returned as null");
+    }
 
-//     if(queryCurrentData === null || queryCurrentData.installments === null) {
-//       throw new Error("Current Installments returned as null");
-//     }
+    const amountSplit = splitInstallments({ amount, installments: newInstallments }); // in cents
 
-//     if(queryCurrentData.group_installment_id === null) {
-//       throw new Error("Group Installment Id returned as null");
-//     }
+    const bulkTransactions = Array.from({ length: newInstallments }, (_, i) => {
+      // create and array of objects of the transactions
+      if (i > 0) {
+        const dateIncrease = new Date(date.value);
+        if (dateIncrease.getDate() === 31) {
+          // +1 because 0 returns the last day from the previous month
+          dateIncrease.setFullYear(
+            dateIncrease.getFullYear(),
+            dateIncrease.getMonth() + (i + 1),
+            0
+          );
+        } else {
+          dateIncrease.setMonth(dateIncrease.getMonth() + i);
+        }
+        localDate = toPostgresDate(dateIncrease.toISOString());
+      }
 
-//     //if installments higher than the current installments, update the installments and create the new installments (upsert)
-//     const bulkTransactions = Array.from({ length: installments }, (_, i) => {
-//       // create and array of objects of the transactions
-//       if (i > 0) {
-//         const dateIncrease = new Date(date.value);
-//         if (dateIncrease.getDate() === 31) {
-//           // +1 because 0 returns the last day from the previous month
-//           dateIncrease.setFullYear(
-//             dateIncrease.getFullYear(),
-//             dateIncrease.getMonth() + (i + 1),
-//             0
-//           );
-//         } else {
-//           dateIncrease.setMonth(dateIncrease.getMonth() + i);
-//         }
-//         localDate = toLocalDate(dateIncrease.toISOString());
-//       }
+      return {
+        coin: req.user,
+        type: "expense",
+        description: description,
+        amount: amountSplit[i],
+        account: account.id,
+        category: category.id,
+        subCategory: subCategory && subCategory.id ? subCategory.id : null,
+        date: localDate,
+        payment_condition: "multi",
+        install_number: i + 1,
+        installments: newInstallments,
+        group_installment_id: currentData[0].group_installment_id,
+        created_by: req.user,
+      };
+    });
 
-//       return {
-//         coin: req.user,
-//         type: "expense",
-//         desc: desc,
-//         amount: amountSplit[i],
-//         category: category.id,
-//         subCategory: subCategory && subCategory.id ? subCategory.id : null,
-//         account: account.id,
-//         recurrency: recurrency.id,
-//         date: localDate,
-//         created_by: req.user,
-//         install_number: i + 1,
-//         payment_condition: "multi",
-//         installments: installments,
-//         group_installment_id: queryCurrentData.group_installment_id!,
-//       };
-//     });
+    //Convert the bulk transactions into a flat array, did like this to keep a better readability and maintainability
+    const valuesUpdateallInstallments = bulkTransactions.flatMap(obj => [
+      obj.coin,
+      obj.type,
+      obj.description,
+      obj.amount,
+      obj.account,
+      obj.category,
+      obj.subCategory,
+      obj.date,
+      obj.payment_condition,
+      obj.install_number,
+      obj.installments,
+      obj.group_installment_id,
+      obj.created_by
+    ]);
 
-//     const queryUpdateAllInstallments = `
-//       WITH bulk_transactions := <array<json>>$bulkTransactions,
-//       FOR item IN array_unpack(bulk_transactions) UNION (
-//         INSERT Transaction {
-//           coin := (SELECT Coin FILTER .<user_default_coin[is User].id = <uuid>item['coin'] LIMIT 1),
-//           type := <str>item['type'],
-//           desc := <str>item['desc'],
-//           amount := <int32>item['amount'],
-//           category := (SELECT Category FILTER .id = <uuid>item['category']),
-//           subCategory := (SELECT subCategory FILTER .id = <uuid>item['subCategory']),
-//           account := (SELECT Account FILTER .id = <uuid>item['account']),
-//           recurrency := <Recurrency>item['recurrency'],
-//           date := <cal::local_date>item['date'],
-//           created_by := (SELECT User FILTER .id = <uuid>item['created_by']),
-//           install_number := <int16>item['install_number'],
-//           installments := <int16>item['installments'],
-//           payment_condition := <str>item['payment_condition'],
-//           group_installment_id := <uuid>item['group_installment_id']
-//         } 
-//           UNLESS CONFLICT ON (.group_installment_id, .install_number) 
-//           ELSE (
-//             UPDATE Transaction
-//             SET {
-//               desc := <str>item['desc'],
-//               amount := <int32>item['amount'],
-//               category := (SELECT Category FILTER .id = <uuid>item['category']),
-//               subCategory := (
-//                 SELECT subCategory FILTER .id = <uuid>item['subCategory']
-//               ),
-//               account := (SELECT Account FILTER .id = <uuid>item['account']),
-//               recurrency := <Recurrency>item['recurrency'],
-//               date := <cal::local_date>item['date'],
-//               installments := <int16>item['installments'],
-//             }
-//           )
-//       )
-//     `;
+    const valuesUpdateallInstallmentsPlaceholder = bulkTransactions.map((_, i) => `((SELECT user_default_coin FROM users WHERE id = $${i * 13 + 1}), $${i * 13 + 2}, $${i * 13 + 3}, $${i * 13 + 4}, 
+         $${i * 13 + 5}, $${i * 13 + 6}, $${i * 13 + 7}, $${i * 13 + 8}, 
+         $${i * 13 + 9}, $${i * 13 + 10}, $${i * 13 + 11}, $${i * 13 + 12}, $${i * 13 + 13})`).join(", ");
 
-//     await clientDB.query(
-//       queryUpdateAllInstallments,
-//       { bulkTransactions }
-//     );
+    const queryUpdateAllInstallments = `INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id,
+    subcategory_id, date, payment_condition, install_number, installments, group_installment_id, created_by)
+    VALUES ${valuesUpdateallInstallmentsPlaceholder}
+    ON CONFLICT (group_installment_id, install_number)
+    DO UPDATE SET
+      description = EXCLUDED.description,
+      amount = EXCLUDED.amount,
+      category_id = EXCLUDED.category_id,
+      subcategory_id = EXCLUDED.subcategory_id,
+      account_id = EXCLUDED.account_id,
+      date = EXCLUDED.date,
+      installments = EXCLUDED.installments
+    RETURNING *`;
 
-//     //after updating time to delete the remaining installments
-//     if(installments < queryCurrentData.installments) {
-//       const queryDeleteRemainingInstallments = e.delete(e.Transaction, (t) => ({
-//         filter: e.op(e.op(t.group_installment_id, "=", e.uuid(queryCurrentData.group_installment_id!)), "and", e.op(t.install_number, ">", installments)),
-//       }));
+    const {rows: updateTransactions } = await db.query(queryUpdateAllInstallments, valuesUpdateallInstallments);
 
-//       await queryDeleteRemainingInstallments.run(clientDB);
-//     }
+    //if the new installments are less than the current installments, delete the remaining installments
+    if(newInstallments < currentData[0].installments) {
+      const queryDeleteRemainingInstallments = `DELETE 
+      FROM transactions 
+      WHERE group_installment_id = $1 AND install_number > $2`;
 
-//     return res.status(200).json({message: "Transaction updated"});
-//   }catch(err) {
-//     console.error(err);
-//     return res.status(422).json({ message: "Couldn't update transaction" });
-//   }
-// };
+      const valuesDeleteRemainingInstallments = [currentData[0].group_installment_id, newInstallments];
+
+      await db.query(queryDeleteRemainingInstallments, valuesDeleteRemainingInstallments);
+    }
+
+    return res.status(200).json({updateTransactions});
+  }catch(err) {
+    console.error(err);
+    return res.status(422).json({ message: "Couldn't update transaction" });
+  }
+};
 
 export const deleteOneInstallmentTransaction = async (
   req: Request,
