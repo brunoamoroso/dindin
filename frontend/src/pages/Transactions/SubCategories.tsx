@@ -27,7 +27,7 @@ export default function SubCategories() {
 
   interface SubCategoryType {
     id: string;
-    desc: string;
+    description: string;
   }
 
   const { data, isError, isLoading } = useQuery<SubCategoryType[]>({
@@ -100,37 +100,19 @@ export default function SubCategories() {
         {!isLoading && data !== undefined && (
           <>
             <div className="flex flex-col flex-1">
-              {data.map((subCategory, index, arr) => {
-                if (arr.length - 1 === index) {
-                  //last item
-                  return (
+              {data.map((subCategory, index, arr) => (
                     <MenuListItem
                       size="lg"
                       trailingIcon={false}
                       key={index}
                       dataId={subCategory.id}
-                      value={subCategory.desc}
+                      value={subCategory.description}
                       onClick={handleClick}
+                      separator={(arr.length - 1) !== index}
                     >
-                      {subCategory.desc}
+                      {subCategory.description}
                     </MenuListItem>
-                  );
-                } else {
-                  return (
-                    <MenuListItem
-                      size="lg"
-                      trailingIcon={false}
-                      key={index}
-                      dataId={subCategory.id}
-                      value={subCategory.desc}
-                      onClick={handleClick}
-                      separator={true}
-                    >
-                      {subCategory.desc}
-                    </MenuListItem>
-                  );
-                }
-              })}
+                  ))}
               {data.length === 0 && (
                 <h1 className="title-large text-title">
                   Essa categoria não possuí nenhuma subcategoria ainda.

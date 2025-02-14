@@ -65,7 +65,7 @@ export const getSearchCategories = async (req: Request, res: Response) => {
 
     const { rows: categories } = await db.query(querySearchCategories, valuesSearchCategories);
 
-    const querySearchSubCategories = `SELECT sub.*
+    const querySearchSubCategories = `SELECT sub.*, cat.id as category_id, cat.description as category_description
     FROM subcategories sub
     JOIN categories_subcategories cs ON sub.id = cs.subcategory_id
     JOIN categories cat ON cat.id = cs.category_id

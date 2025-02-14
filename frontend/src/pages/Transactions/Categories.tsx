@@ -31,16 +31,14 @@ export default function Categories() {
 
   interface CategoryType {
     id: string;
-    desc: string;
+    description: string;
   }
 
   interface SearchQueryType {
     id: string;
-    desc: string;
-    category?: {
-      id: string;
-      desc: string;
-    }[];
+    description: string;
+    category_id?: string;
+    category_description?: string;
     isCategory: boolean;
   }
 
@@ -63,6 +61,8 @@ export default function Categories() {
     queryFn: () => api.getSearchCategories(type, searchQuery),
     enabled: !!searchQuery,
   });
+
+  console.log(searchedCategories);
 
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     const idCat = e.currentTarget.dataset.id;
@@ -159,11 +159,11 @@ export default function Categories() {
                 size="lg"
                 key={index}
                 dataId={category.id}
-                value={category.desc}
+                value={category.description}
                 onClick={handleClick}
                 separator={arr.length > index + 1}
               >
-                {category.desc}
+                {category.description}
               </MenuListItem>
             ))}
           </div>
@@ -184,11 +184,11 @@ export default function Categories() {
                             size="lg"
                             key={index}
                             dataId={item.id}
-                            value={item.desc}
+                            value={item.description}
                             onClick={handleClick}
                             separator={arr.length > index + 1}
                           >
-                            {item.desc}
+                            {item.description}
                           </MenuListItem>
                         );
                       })}
@@ -202,41 +202,34 @@ export default function Categories() {
                   <div className="flex flex-col">
                     {searchedCategories
                       .filter((item) => !item.isCategory)
-                      .map((item, index, arrInitial) => {
-                        if (item.category !== undefined) {
-                          return item.category.map(
-                            (
-                              itemCat: { id: string; desc: string },
-                              i,
-                              arrSecondary
-                            ) => (
+                      .map((item, i, arrInitial) => {
+                        if (item.category_id !== undefined || item.category_description !== undefined) {
+                          return (
                               <MenuListItem
                                 size="lg"
-                                key={`${index}-${i}`}
+                                key={`${item.category_id}-${i}`}
                                 dataId={item.id}
-                                value={item.desc}
+                                value={item.description}
                                 onClick={() =>
                                   handleClickSub({
-                                    idCat: item.category?.[i]?.id || "",
-                                    descCat: item.category?.[i]?.desc || "",
+                                    idCat: item.category_id!,
+                                    descCat: item.category_description!,
                                     idSub: item.id,
-                                    descSub: item.desc,
+                                    descSub: item.description,
                                   })
                                 }
                                 trailingIcon={false}
                                 separator={
-                                  arrInitial.length > index + 1 ||
-                                  arrSecondary.length > i + 1
+                                  arrInitial.length > i + 1
                                 }
                               >
                                 <div className="flex flex-col gap-0.5">
-                                  {itemCat.desc}
+                                  {item.category_description}
                                   <span className="body-medium text-subtle">
-                                    {item.desc}
+                                    {item.description}
                                   </span>
                                 </div>
                               </MenuListItem>
-                            )
                           );
                         }
                       })}
