@@ -16,9 +16,9 @@ export default function LastTransactions({data}: {data: Types.TransactionType[]}
                     data.map((d, i) => (
                         <div key={i} className="flex px-4 py-3.5 gap-4 justify-between items-center">
                             <div className="flex gap-4 items-center">
-                                <div>{getCategoryIcon(d.category.desc).icon}</div>
+                                <div>{getCategoryIcon(d.category).icon}</div>
                                 <div className="flex flex-col">
-                                    <span className="label-large text-title">{d.desc}</span>
+                                    <span className="label-large text-title">{d.description}</span>
                                     <span className="body-medium text-subtle">
                                         {new Date(d.date+"T00:00:00").toLocaleDateString()}
                                         {d.install_number && " - " + d.install_number + " / "+ d.installments}</span>
@@ -26,7 +26,7 @@ export default function LastTransactions({data}: {data: Types.TransactionType[]}
                             </div>
                             <div className="flex flex-col items-end">
                                 <span className={`label-medium ${d.type === 'gain' ? 'text-positive' : 'text-negative'}`}>{(d.type === "gain" ? "+ " : "- ") + currencyFormat(d.amount)}</span>
-                                <span className="body-small text-subtle">{d.account.desc}</span>
+                                <span className="body-small text-subtle">{d.account}</span>
                             </div>
                         </div>
                     ))

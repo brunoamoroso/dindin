@@ -101,7 +101,7 @@ export const getDefaultUserCoin = async (req: Request, res: Response) => {
 
         const {rows: userDefaultCoin} = await db.query(queryUserDefaultCoin, values);
 
-        res.status(200).json(userDefaultCoin);
+        res.status(200).json(userDefaultCoin[0]);
     }catch(err){
         console.log(err);
         res.status(500).json({message: "Internal server error"});

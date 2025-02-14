@@ -1,7 +1,7 @@
 import api from "@/api/api";
 
 export function getUserSelectedCoins<T>(): Promise<T>{
-    return api.get<T>("/coins/user-coins-selection");
+    return api.get<T>("/coins/user/selection");
 }
 
 export function getCoins<T>(): Promise<T>{
@@ -9,13 +9,13 @@ export function getCoins<T>(): Promise<T>{
 }
 
 export function getUserDefaultCoin<T>(): Promise<T>{
-    return api.get<T>("/coins/user-coins/default");
+    return api.get<T>("/coins/user/get-default");
 }
 
 export function addNewUserSelectedCoin<T>(body: {coinId: string}): Promise<T>{
-    return api.put<T>("/coins/user-coins/add", body);
+    return api.put<T>("/coins/user/add", body);
 }
 
 export function setDefaultUserCoin <T>(body: {coinId: string}): Promise<T>{
-    return api.put<T>("/coins/user-coins/set-default", body);
+    return api.put<T>("/coins/user/set-default", body);
 }
