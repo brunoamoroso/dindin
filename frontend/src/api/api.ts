@@ -124,7 +124,7 @@ class Api{
     }
 
     public getUserProfileData<T>(): Promise<T>{
-        return this.get<T>("/profile/userData");
+        return this.get<T>("/profile/user/data");
     }
 
     public editProfileData<T>(body: unknown): Promise<T>{

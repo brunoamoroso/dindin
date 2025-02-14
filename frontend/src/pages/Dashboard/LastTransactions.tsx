@@ -20,7 +20,7 @@ export default function LastTransactions({data}: {data: Types.TransactionType[]}
                                 <div className="flex flex-col">
                                     <span className="label-large text-title">{d.description}</span>
                                     <span className="body-medium text-subtle">
-                                        {new Date(d.date+"T00:00:00").toLocaleDateString()}
+                                        {new Date(d.date).toLocaleDateString()}
                                         {d.install_number && " - " + d.install_number + " / "+ d.installments}</span>
                                 </div>
                             </div>
