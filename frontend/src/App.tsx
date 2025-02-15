@@ -27,6 +27,7 @@ import { ChangePassword } from "./pages/Profile/UserProfile/ChangePassword";
 import { SearchCoin } from "./pages/SearchCoin";
 import { SplashDefaultCoin } from "./pages/Profile/SplashDefaultCoin";
 import { ProfileCreationDefaultCoin } from "./pages/Profile/ProfileCreationDefaultCoin";
+import { Goals } from "./pages/Goals";
 
 function AppRoutes() {
   return (
@@ -82,6 +83,8 @@ function AppRoutes() {
             <Route path="/profile/user/change-password" element={<ChangePassword />} />
 
             <Route path="/coins/search" element={<SearchCoin />} />
+
+            <Route path="goals" element={<Goals />} />
 
           </Route>
         </Route>
