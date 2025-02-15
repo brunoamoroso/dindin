@@ -45,10 +45,8 @@ export default function SubCategories() {
 
     setContextTransactionData((prevTransaction) => ({
       ...prevTransaction,
-      subCategory: {
-        id: idSubCat,
-        desc: descSubCat,
-      },
+      subcategory_id: idSubCat,
+      subcategory: descSubCat,
     }));
 
     navigate("/transaction", { state: { mode: mode, id: id, transactionScope: transactionScope } });
@@ -57,10 +55,8 @@ export default function SubCategories() {
   const handleClickNoSub = () => {
     setContextTransactionData((prev) => ({
       ...prev,
-      subCategory: {
-        id: "",
-        desc: "",
-      },
+      subcategory_id: "",
+      subcategory: "",
     }));
 
     navigate("/transaction", { state: { mode: mode, id: id, transactionScope: transactionScope } });

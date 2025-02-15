@@ -62,8 +62,6 @@ export default function Categories() {
     enabled: !!searchQuery,
   });
 
-  console.log(searchedCategories);
-
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     const idCat = e.currentTarget.dataset.id;
     const descCat = e.currentTarget.dataset.value;
@@ -74,10 +72,8 @@ export default function Categories() {
 
     setContextTransactionData((prev) => ({
       ...prev,
-      category: {
-        id: idCat,
-        desc: descCat,
-      },
+      category_id: idCat,
+      category: descCat,
     }));
 
     navigate(`/categories/sub/${descCat}`, { state: { mode: mode, id: id, transactionScope: transactionScope } });
@@ -96,14 +92,10 @@ export default function Categories() {
   }) => {
     setContextTransactionData((prev) => ({
       ...prev,
-      category: {
-        id: idCat,
-        desc: descCat,
-      },
-      subCategory: {
-        id: idSub,
-        desc: descSub,
-      },
+      category_id: idCat,
+      category: descCat,
+      subcategory_id: idSub,
+      subcategory: descSub,
     }));
 
     navigate(`/transaction`, { state: { mode: mode, id: id, transactionScope: transactionScope } });

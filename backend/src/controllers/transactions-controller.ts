@@ -8,9 +8,9 @@ export const addTransaction = async (req: Request, res: Response) => {
     type,
     amount,
     description,
-    category,
-    subCategory,
-    account,
+    category_id,
+    subcategory_id,
+    account_id,
     date,
     paymentCondition,
   } = req.body;
@@ -22,7 +22,7 @@ export const addTransaction = async (req: Request, res: Response) => {
       const queryGainTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, date, created_by)
       VALUES ((SELECT user_default_coin FROM users WHERE id = $1),
       $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`;
-      const valuesGainTransaction = [req.user, type, description, amount, account.id, category.id, subCategory?.id || null, localDate, req.user];
+      const valuesGainTransaction = [req.user, type, description, amount, account_id, category_id, subcategory_id || null, localDate, req.user];
 
       const {rows: gainTransaction} = await db.query(queryGainTransaction, valuesGainTransaction);
       res.status(201).json(gainTransaction);
@@ -43,7 +43,7 @@ export const addTransaction = async (req: Request, res: Response) => {
       queryExpenseTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, date, payment_condition, created_by)
       VALUES ((SELECT user_default_coin FROM users WHERE id = $1),$2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`;
 
-      expenseValues = [req.user, type, description, amount, account.id, category.id, subCategory?.id || null, localDate, paymentCondition, req.user];
+      expenseValues = [req.user, type, description, amount, account_id, category_id, subcategory_id || null, localDate, paymentCondition, req.user];
 
       const {rows: expenseTransaction} = await db.query(queryExpenseTransaction, expenseValues);
       return res.status(201).json(expenseTransaction);
@@ -76,9 +76,9 @@ export const addTransaction = async (req: Request, res: Response) => {
           type: "expense", 
           description: description, 
           amount: amountSplit[i],
-          account: account.id,
-          category: category.id,
-          subCategory: subCategory?.id || null,
+          account: account_id,
+          category: category_id,
+          subCategory: subcategory_id || null,
           date: localDate,
           payment_condition: paymentCondition,
           install_number: i + 1,
@@ -255,7 +255,7 @@ export const getAllInstallmentsTransaction = async (req: Request, res: Response)
       amount: allInstallmentsTransaction.reduce((totalAmount, transaction) => totalAmount + transaction.amount, 0),
       account: allInstallmentsTransaction[0].account,
       category: allInstallmentsTransaction[0].category,
-      subCategory: allInstallmentsTransaction[0].subcategory,
+      subcategory: allInstallmentsTransaction[0].subcategory,
       date: allInstallmentsTransaction[0].date,
       installments: allInstallmentsTransaction[0].installments,  
       payment_condition: allInstallmentsTransaction[0].payment_condition,

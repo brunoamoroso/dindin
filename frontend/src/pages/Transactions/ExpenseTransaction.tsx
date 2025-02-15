@@ -149,9 +149,9 @@ export default function ExpenseTransaction({
         >
           <div className="flex flex-col gap-6">
             <TextField
-              id="desc"
+              id="description"
               label="Descrição"
-              value={contextTransactionData.desc}
+              value={contextTransactionData.description}
               placeholder="Escreva uma descrição"
               onChange={handleInputChange}
             />
@@ -168,10 +168,10 @@ export default function ExpenseTransaction({
                       "Escolha uma categoria"}
                     {contextTransactionData.category && (
                       <div className="flex flex-col">
-                        {contextTransactionData.category.desc}
-                        {contextTransactionData.subCategory && (
+                        {contextTransactionData.category}
+                        {contextTransactionData.subcategory && (
                           <span className="body-small text-subtle">
-                            {contextTransactionData.subCategory.desc}
+                            {contextTransactionData.subcategory}
                           </span>
                         )}
                       </div>
@@ -188,7 +188,7 @@ export default function ExpenseTransaction({
                   <Landmark />
                   {!contextTransactionData.account && "Escolha uma conta"}
                   {contextTransactionData.account &&
-                    contextTransactionData.account.desc}
+                    contextTransactionData.account}
                 </MenuListItem>
               </Link>
             </div>
