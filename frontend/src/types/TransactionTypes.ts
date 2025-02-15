@@ -1,20 +1,14 @@
 export interface TransactionType {
     id?: string;
     type: "gain" | "expense";
-    desc: string;
+    description: string;
     amount: number;
-    account: {
-        id: string;
-        desc: string;
-    }
-    category: {
-        id: string;
-        desc: string;
-    }
-    subCategory?:{
-        id: string;
-        desc: string;
-    }
+    account: string;
+    account_id: string;
+    category: string;
+    category_id: string;
+    subcategory?: string;
+    subcategory_id?: string;
     date: string;
     recurrency: string;
     installments: number;

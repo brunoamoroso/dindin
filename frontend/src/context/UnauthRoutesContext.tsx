@@ -5,7 +5,7 @@ export default function UnauthRoutesContext(){
     const location = useLocation();
     const {token} = useOutletContext<AuthContextType>();    
 
-    if(token && !location.state.creationFlow){
+    if(token && !location.state?.creationFlow){
         return <Navigate to={"/dashboard"} />
     }
 

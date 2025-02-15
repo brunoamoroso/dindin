@@ -1,67 +1,41 @@
 import { Request, Response } from "express";
-import clientDB from "../db/conn";
-import e from "../db/dbschema/edgeql-js";
+import { db } from "../db/conn";
 
 export const getCategories = async (req: Request, res: Response) => {
   const { type } = req.params;
+  const user = req.user;
 
   try {
-    const queryCategories = e.select(e.Category, (category) => {
-      const createdByUser = e.op(
-        category.created_by.id,
-        "=",
-        e.uuid(req.user as string)
-      );
-      const createdBySystem = e.op(category.is_public, "=", true);
-      const filterType = e.op(category.type, "=", e.cast(e.CategoryType, type));
+    const queryCategories = `SELECT * FROM categories WHERE type = $1 AND (is_public = true OR created_by = $2)`;
+    const value = [type, user];
 
-      return {
-        id: true,
-        desc: true,
-        filter: e.op(
-          filterType,
-          "and",
-          e.op(createdBySystem, "or", createdByUser)
-        ),
-      };
-    });
+    const { rows: categories } = await db.query(queryCategories, value);
 
-    const categories = await queryCategories.run(clientDB);
-
-    return res.status(200).send(categories);
+    return res.status(200).json(categories);
   } catch (err: unknown) {
     console.log(err);
     return res
       .status(422)
-      .send("Não conseguimos encontrar nenhuma categoria nesse momento.");
+      .send("Houve um erro ao buscar as categorias. Tente novamente.");
   }
 };
 
 export const getSubCategories = async (req: Request, res: Response) => {
   const { category } = req.params;
+  const user = req.user;
 
   try {
-    const querySubcategories = e.select(e.Category, (cat) => {
-      const createdByUser = e.op(
-        cat.created_by.id,
-        "=",
-        e.uuid(req.user as string)
-      );
-      const createdBySystem = e.op(cat.is_public, "=", true);
+    const querySubcategories = ` SELECT sub.*
+    FROM subcategories as sub
+    JOIN categories_subcategories as cs ON sub.id = cs.subcategory_id
+    JOIN categories as cat ON cat.id = cs.category_id
+    WHERE cat.description = $1 AND (sub.is_public = true OR sub.created_by = $2)
+    `;
+    const value = [category, user];
 
-      return {
-        subCategories: () => ({
-          id: true,
-          desc: true,
-          filter: e.op(createdBySystem, "or", createdByUser),
-        }),
-        filter: e.op(cat.desc, "=", category),
-      };
-    });
+    const { rows: subcategories } = await db.query(querySubcategories, value);
 
-    const subCategories = await querySubcategories.run(clientDB);
-    res.status(200).json(subCategories[0].subCategories);
-    return;
+    return res.status(200).json(subcategories);
   } catch (err: unknown) {
     console.log(err);
     return res
@@ -74,6 +48,7 @@ export const getSubCategories = async (req: Request, res: Response) => {
 
 export const getSearchCategories = async (req: Request, res: Response) => {
   const { type, query } = req.query;
+  const user = req.user;
 
   if (type === null || type === undefined) {
     return res
@@ -82,76 +57,30 @@ export const getSearchCategories = async (req: Request, res: Response) => {
   }
 
   try {
-    const querySearchCategories = e.select(e.Category, (cat) => {
-      const createdByUser = e.op(
-        cat.created_by.id,
-        "=",
-        e.uuid(req.user as string)
-      );
-      const createdBySystem = e.op(cat.is_public, "=", true);
-      const filterType = e.op(
-        cat.type,
-        "=",
-        e.cast(e.CategoryType, type as string)
-      );
-      const filterQuery = e.op(cat.desc, "ilike", "%" + query + "%");
+    const querySearchCategories = `SELECT * 
+    FROM categories
+    WHERE type = $1 AND (is_public = true OR created_by = $2) AND description ILIKE $3`;
 
-      return {
-        id: true,
-        desc: true,
-        subCategories: sub => ({
-          id: true,
-          desc: true,
-          filter: e.op(
-            e.op(sub.desc, "ilike", "%" + query + "%"),
-            "and",
-            e.op(createdBySystem, "or", createdByUser)
-          ),
-        }),
-        filter: e.op(
-          e.op(filterType, "and", filterQuery),
-          "and",
-          e.op(createdBySystem, "or", createdByUser)
-        ),
-      };
-    });
+    const valuesSearchCategories = [type, user, `%${query}%`];
 
-    const runSearchCategories = await querySearchCategories.run(clientDB);
+    const { rows: categories } = await db.query(querySearchCategories, valuesSearchCategories);
 
-    const querySearchSubCategories = e.select(e.subCategory, (sub) => {
-      const createdByUser = e.op(
-        sub.created_by.id,
-        "=",
-        e.uuid(req.user as string)
-      );
-      const createdBySystem = e.op(sub.is_public, "=", true);
-      const categoryTypeFilter = e.cast(e.CategoryType, type as string);
-      const filterType = e.op(sub["<subCategories[is Category]"].type, "=", categoryTypeFilter);
-      const filterQuery = e.op(sub.desc, "ilike", "%" + query + "%");
+    const querySearchSubCategories = `SELECT sub.*, cat.id as category_id, cat.description as category_description
+    FROM subcategories sub
+    JOIN categories_subcategories cs ON sub.id = cs.subcategory_id
+    JOIN categories cat ON cat.id = cs.category_id
+    WHERE cat.type = $1 AND (sub.is_public = true OR sub.created_by = $2) AND sub.description ILIKE $3`;
 
-      return {
-        id: true,
-        desc: true,
-        category: e.select(sub["<subCategories[is Category]"], (cat) => ({
-          id: true,
-          desc: true
-        })),
-        filter: e.op(
-          e.op(filterType, "and", filterQuery),
-          "and",
-          e.op(createdBySystem, "or", createdByUser)
-        ),
-      };
-    });
+    const valuesSearchSubCategories = [type, user, `%${query}%`];
 
-    const runSearchSubCategories = await querySearchSubCategories.run(clientDB);
+    const { rows: subcategories } = await db.query(querySearchSubCategories, valuesSearchSubCategories);
 
-    const categoriesFlagged = runSearchCategories.map((cat) => ({...cat, isCategory: true}));
-    const subCategoriesFlagged = runSearchSubCategories.map((sub) => ({...sub, isCategory: false}));
+    const categoriesFlagged = categories.map((cat) => ({...cat, isCategory: true}));
+    const subCategoriesFlagged = subcategories.map((sub) => ({...sub, isCategory: false}));
 
     const combinedResults = [...categoriesFlagged, ...subCategoriesFlagged];
 
-    return res.status(200).json(combinedResults)
+    return res.status(200).json(combinedResults);
   } catch (err) {
     console.error(err);
   }

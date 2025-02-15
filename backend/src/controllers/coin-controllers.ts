@@ -1,22 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import e from "../db/dbschema/edgeql-js";
-import clientDB from "../db/conn";
+import { db } from "../db/conn";
 
 export const getUserSelectedCoins = async (req: Request, res: Response) => {
     const user = req.user;
 
     try {
-        const userCoins = await e.select(e.Coin, (c) => ({
-            id: true,
-            img: true,
-            desc: true,
-            code: true,
-            filter: e.op(c["<selectedCoins[is User]"].id, "=", e.uuid(user)),
-            order_by:{
-                expression: c.code,
-                direction: e.ASC,
-            }
-        })).run(clientDB);
+        const queryUserSelectedCoins = `SELECT c.*
+        FROM coins c
+        JOIN user_selected_coins uc ON c.id = uc.coin_id
+        WHERE uc.user_id = $1
+        `;
+
+        const valuesUserSelectedCoins = [user];
+
+        const {rows: userCoins} = await db.query(queryUserSelectedCoins, valuesUserSelectedCoins);
 
         res.status(200).json(userCoins);
     } catch (error) {
@@ -32,25 +29,14 @@ export const getUserSelectedCoins = async (req: Request, res: Response) => {
 export const getCoins = async (req: Request, res: Response) =>  {
     const user = req.user;
     try{
-        const coins = await e.select(e.Coin, (c) => ({
-            id: true,
-            img: true,
-            desc: true,
-            code: true,
-            userHas: e.count(e.select(e.User, (selectUser) => ({
-                filter_single: e.op(
-                            e.op(selectUser.id, "=", e.uuid(user)),
-                            "and",
-                            e.op(selectUser.selectedCoins.id, "=", c.id)
-                        )
-            }))),
-            order_by: {
-                expression: c.code,
-                direction: e.ASC,
-            }
-        })).run(clientDB);
+        const queryGetCoins = `SELECT c.*, EXISTS (SELECT * FROM user_selected_coins uc WHERE uc.coin_id = c.id AND user_id = $1) AS userHas
+        FROM coins c
+        ORDER BY userHas DESC
+        `;
 
-        coins.sort((a,b) => b.userHas - a.userHas);
+        const valuesGetCoins = [user];
+
+        const {rows: coins} = await db.query(queryGetCoins, valuesGetCoins);
 
         res.status(200).json(coins);
 
@@ -69,14 +55,11 @@ export const addNewUserSelectedCoin = async (req: Request, res: Response, next: 
     }
 
     try{
-        await e.update(e.User, (u) => ({
-            set: {
-                selectedCoins: {"+=" : e.select(e.Coin, (c) => ({
-                    filter_single: e.op(c.id, "=", e.uuid(coinId))
-                }))}
-            },
-            filter_single: e.op(u.id, "=", e.uuid(user))
-        })).run(clientDB);
+        const queryAddNewUserSelectedCoin = `INSERT INTO user_selected_coins (user_id, coin_id) VALUES ($1, $2)`;
+
+        const valuesAddNewUserSelectedCoin = [user, coinId];
+
+        await db.query(queryAddNewUserSelectedCoin, valuesAddNewUserSelectedCoin);
 
         next();
     }catch(err){
@@ -90,14 +73,13 @@ export const setDefaultUserCoin = async (req: Request, res: Response) => {
     const {coinId} = req.body;
 
     try{
-        const mutateSetDefaultUserCoin = await e.update(e.User, (u) => ({
-            set: {
-                user_default_coin: e.select(e.Coin, (c) => ({
-                    filter_single: e.op(c.id, "=", e.uuid(coinId))
-                }))
-            },
-            filter_single: e.op(u.id, "=", e.uuid(user)),
-        })).run(clientDB);
+        const querySetDefaultUserCoin = `UPDATE users
+        SET user_default_coin = (SELECT id FROM coins WHERE id = $1)
+        WHERE users.id = $2`;
+
+        const valuesSetDefaultUserCoin = [coinId, user];
+
+        const {rows: mutateSetDefaultUserCoin} = await db.query(querySetDefaultUserCoin, valuesSetDefaultUserCoin);
 
         return res.status(200).json(mutateSetDefaultUserCoin);
     }catch(err){
@@ -110,15 +92,16 @@ export const getDefaultUserCoin = async (req: Request, res: Response) => {
     const user = req.user;
 
     try{
-        const userDefaultCoin = await e.select(e.Coin, (c) => ({
-            id: true,
-            img: true,
-            desc: true,
-            code: true,
-            filter_single: e.op(c["<user_default_coin[is User]"].id, "=", e.uuid(user))
-        })).run(clientDB);
+        const queryUserDefaultCoin = `SELECT coins.*
+        FROM coins
+        JOIN users ON coins.id = users.user_default_coin
+        WHERE users.id = $1`;
 
-        res.status(200).json(userDefaultCoin);
+        const values = [user];
+
+        const {rows: userDefaultCoin} = await db.query(queryUserDefaultCoin, values);
+
+        res.status(200).json(userDefaultCoin[0]);
     }catch(err){
         console.log(err);
         res.status(500).json({message: "Internal server error"});

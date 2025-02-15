@@ -24,7 +24,6 @@ import {
 } from "react-router-dom";
 import { CircleCheck, CircleX } from "lucide-react";
 import * as Types from "@/types/TransactionTypes";
-import { getRecurrencyDesc } from "@/utils/get-recurrency-desc";
 
 export default function Transaction({ mode }: { mode: "create" | "edit" }) {
   const navigate = useNavigate();
@@ -62,17 +61,13 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
         id: data.id,
         type: data.type,
         amount: data.amount,
-        desc: data.desc,
+        description: data.description,
         category: data.category,
-        subCategory: data.subCategory,
-        account: data.account,
-        recurrency: {
-          id: data.recurrency,
-          desc: getRecurrencyDesc(data.recurrency),
-        },
+        subcategory: data.subcategory,
+        account: data.account,  
         date: {
           chip: "otherDate",
-          value: new Date(data.date+"T00:00:00"),
+          value: new Date(data.date),
         },
         paymentCondition: data.payment_condition,
         installments:

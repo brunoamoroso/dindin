@@ -36,7 +36,7 @@ export function UserProfile() {
             <div className="bg-container2 rounded-full w-16 h-16 flex items-center justify-center title-small text-body">
               {data.photo !== "" && (
                 <img
-                  src={`${import.meta.env.VITE_BACKEND_URL}/uploads/${
+                  src={`${import.meta.env.VITE_BACKEND_URL}/assets/uploads/${
                     data.photo
                   }`}
                   alt="user"

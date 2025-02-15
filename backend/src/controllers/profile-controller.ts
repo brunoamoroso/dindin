@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import clientDB from "../db/conn";
-import e from "../db/dbschema/edgeql-js";
+import { db } from "../db/conn";
 import { createUserToken } from "../utils/create-user-token";
 import bcrypt from "bcrypt";
+import fs from "fs";
 
 export const CreateProfile = async (req: Request, res: Response) => {
   const { name, surname, email, password, username } = req.body;
@@ -13,60 +13,44 @@ export const CreateProfile = async (req: Request, res: Response) => {
   }
 
   try {
-    const queryEmail = e.select(e.User, () => ({
-      email: true,
-      filter_single: {
-        email: e.str(email),
-      },
-    }));
+    const queryEmail = `SELECT email FROM users WHERE email = $1`;
+    const valuesEmail = [email];
+    const {rows: emailExists} = await db.query(queryEmail, valuesEmail);
 
-    const emailExists = await queryEmail.run(clientDB);
-
-    if (emailExists) {
-      return res
-        .status(422)
-        .json({ message: "O email que você utilizou já está cadastrado" });
+    if (emailExists.length > 0) {  
+      throw new Error ("O email que você utilizou já está cadastrado");
     }
 
-    const queryUsername = e.select(e.User, () => ({
-      username: true,
-      filter_single: {
-        username: e.str(username),
-      },
-    }));
+    const queryUsername = `SELECT username FROM users WHERE username = $1`;
+    const valuesUsername = [username];
+    const {rows: usernameExists} = await db.query(queryUsername, valuesUsername);
 
-    const usernameExists = await queryUsername.run(clientDB);
-
-    if (usernameExists) {
-      return res
-        .status(422)
-        .json({ message: "O nome de usuário já está em uso" });
+    if (usernameExists.length > 0) {
+      throw new Error("O nome de usuário já está em uso");
     }
 
     //hash the password
     const salt = await bcrypt.genSalt(12);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    const insert = e.insert(e.User, {
-      photo: e.str(photo),
-      name: e.str(name),
-      surname: e.str(surname),
-      email: e.str(email),
-      password: e.str(passwordHash),
-      username: e.str(username),
-      user_default_coin: e.select(e.Coin, (coin) => ({
-        filter_single: e.op(coin.code, "=", e.str("BRL")),
-      }))
-    });
+    const queryCreateProfile = `INSERT INTO users (photo, name, surname, email, password, username, user_default_coin) 
+    VALUES ($1, $2, $3, $4, $5, $6, (SELECT id FROM coins WHERE code = 'BRL')) RETURNING id`;
+    
+    const valuesCreateProfile = [photo, name, surname, email, passwordHash, username];
 
-    const newUser = await insert.run(clientDB);
+    const {rows: newUser} = await db.query(queryCreateProfile, valuesCreateProfile);
 
-    await createUserToken(newUser, req, res);
+    await createUserToken(newUser[0], req, res);
   } catch (err: unknown) {
-    return res.status(422).json({ message: "Error inesperado." });
+    console.error(err);
+    const message = (err instanceof Error && err.message) || "Erro inesperado";
+    return res.status(422).json({ message: message });
   }
 };
 
+/**
+ * username can be username or email
+ */
 export const SignIn = async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
@@ -80,19 +64,12 @@ export const SignIn = async (req: Request, res: Response) => {
     return res.status(422).json({ message: "A senha é obrigatória" });
   }
 
-  const queryUser = e.select(e.User, (userSelect) => {
-    const isUsername = e.op(userSelect.username, "=", username);
-    const isEmail = e.op(userSelect.email, "=", username);
+  const querySignIn = `SELECT id, password FROM users WHERE username = $1 OR email = $1 LIMIT 1`;
 
-    return {
-      id: true,
-      username: true,
-      password: true,
-      filter_single: e.op(isUsername, "or", isEmail),
-    };
-  });
+  const valuesSignIn = [username];
 
-  const user = await queryUser.run(clientDB);
+  const {rows} = await db.query(querySignIn, valuesSignIn);
+  const user = rows[0];
 
   if (!user) {
     return res.status(422).json({ message: "Usuário não existe" });
@@ -112,18 +89,13 @@ export const getAvatar = async (req: Request, res: Response) => {
   const user = req.user;
 
   try {
-    const queryAvatar = e.select(e.User, () => ({
-      name: true,
-      surname: true,
-      photo: true,
-      filter_single: {
-        id: e.uuid(user),
-      },
-    }));
+    const queryAvatar = `SELECT name, surname, photo FROM users WHERE id = $1`;
+    
+    const valuesAvatar = [user];
 
-    const avatar = await queryAvatar.run(clientDB);
+    const {rows: avatar} = await db.query(queryAvatar, valuesAvatar);
 
-    return res.status(200).json(avatar);
+    return res.status(200).json(avatar[0]);
   } catch (err) {
     console.log(err);
   }
@@ -133,20 +105,13 @@ export const getUserProfile = async (req: Request, res: Response) => {
   const user = req.user;
 
   try {
-    const queryProfile = e.select(e.User, () => ({
-      photo: true,
-      name: true,
-      surname: true,
-      email: true,
-      username: true,
-      filter_single: {
-        id: e.uuid(user),
-      },
-    }));
+    const queryGetUserProfile = `SELECT photo, name, surname, email, username FROM users WHERE id = $1`;
+    
+    const valuesGetUserProfile = [user];
 
-    const profile = await queryProfile.run(clientDB);
+    const {rows: profile} = await db.query(queryGetUserProfile, valuesGetUserProfile);
 
-    return res.status(200).json(profile);
+    return res.status(200).json(profile[0]);
   } catch (err) {
     console.log(err);
   }
@@ -154,7 +119,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
 
 export const EditUserProfile = async (req: Request, res: Response) => {
   const user = req.user;
-  const { name, surname, username, email, password } = req.body;
+  const { name, surname, username, email } = req.body;
   let photo = "";
 
   if (req.file) {
@@ -162,60 +127,60 @@ export const EditUserProfile = async (req: Request, res: Response) => {
   }
 
   try {
-    const queryEmailExists = await e
-      .select(e.User, (u) => ({
-        email: true,
-        filter_single: e.op(
-          e.op(u.email, "=", email),
-          "and",
-          e.op(u.id, "!=", e.uuid(user))
-        ),
-      }))
-      .run(clientDB);
+    const queryEmail = `SELECT email FROM users WHERE email = $1 AND id != $2`;
+    const valuesEmail = [email, user];
+    const {rows: emailExists} = await db.query(queryEmail, valuesEmail);
 
-    if (queryEmailExists) {
-      throw new Error("O email que você utilizou já está cadastrado");
+    if (emailExists.length > 0) {  
+      throw new Error ("O email que você utilizou já está cadastrado");
     }
 
-    const queryUsernameExists = await e
-      .select(e.User, (u) => ({
-        username: true,
-        filter_single: e.op(
-          e.op(u.username, "=", username),
-          "and",
-          e.op(u.id, "!=", e.uuid(user))
-        ),
-      }))
-      .run(clientDB);
+    const queryUsername = `SELECT username FROM users WHERE username = $1 AND id != $2`;
+    const valuesUsername = [username, user];
+    const {rows: usernameExists} = await db.query(queryUsername, valuesUsername);
 
-    if (queryUsernameExists) {
+    if (usernameExists.length > 0) {
       throw new Error("O nome de usuário já está em uso");
     }
 
+    const queryOldPhotName = `SELECT photo FROM users WHERE id = $1`;
+    const valuesOldPhotoName = [user];
+    const {rows: oldPhotoName} = await db.query(queryOldPhotName, valuesOldPhotoName);
+
+    const deleteOldPhoto = (oldPhotoFilename: string) => {
+      if (oldPhotoFilename !== "") {
+        const path = `src/assets/uploads/${oldPhotoFilename}`;
+        fs.unlink(path, (err) => {
+          if (err) {
+            console.error(err);
+          }
+        });
+      }
+    }
+
     const fieldsToUpdate = {
-      photo: photo !== "" ? e.str(photo) : undefined,
-      name: name ? e.str(name) : undefined,
-      surname: surname ? e.str(surname) : undefined,
-      email: email ? e.str(email) : undefined,
-      username: username ? e.str(username) : undefined,
+      photo: photo !== "" ? photo: undefined,
+      name: name ? name : undefined,
+      surname: surname ? surname : undefined,
+      email: email ? email : undefined,
+      username: username ? username : undefined,
     };
 
-    const buildSetObject = (fields: Record<string, any>) => {
-      return Object.fromEntries(
-        Object.entries(fields).filter(([_, value]) => value !== undefined)
-      );
-    };
+    // cleanup of undefined key:values pairs
+    const filteredFields = Object.fromEntries(Object.entries(fieldsToUpdate).filter(([_,value]) => value !== undefined));
 
-    const filteredSet = buildSetObject(fieldsToUpdate);
+    const setClause = Object.keys(filteredFields).map((key, index) => `${key} = $${index + 1}`).join(", ");
 
-    const update = await e
-      .update(e.User, () => ({
-        filter_single: { id: e.uuid(user) },
-        set: filteredSet,
-      }))
-      .run(clientDB);
+    const queryEditUserProfile = `UPDATE users SET ${setClause} WHERE id = $${Object.keys(filteredFields).length + 1} RETURNING *`;
 
-    return res.status(200).json(update);
+    const valuesEditUserProfile = [...Object.values(filteredFields), user];
+
+    const {rows: updatedProfile} = await db.query(queryEditUserProfile, valuesEditUserProfile);
+
+    deleteOldPhoto(oldPhotoName[0].photo);
+
+
+    return res.status(200).json(updatedProfile);
   } catch (err) {
     console.error(err);
     const message = (err instanceof Error && err.message) || "Erro inesperado";
@@ -228,17 +193,15 @@ export const ChangePassword = async (req: Request, res: Response) => {
   const user = req.user;
 
   try {
-    const checkOldPassword = await e
-      .select(e.User, (u) => ({
-        filter_single: { id: e.uuid(user) },
-        password: true,
-      }))
-      .run(clientDB);
+    const queryOldPassword = `SELECT password FROM users WHERE id = $1`;
+    const valuesOldPassword = [user];
+
+    const {rows: checkOldPassword} = await db.query(queryOldPassword, valuesOldPassword);
 
     //check password
     const checkPassword = await bcrypt.compare(
       oldPassword,
-      checkOldPassword!.password
+      checkOldPassword[0].password
     );
 
     if (!checkPassword) {
@@ -249,14 +212,12 @@ export const ChangePassword = async (req: Request, res: Response) => {
     const salt = await bcrypt.genSalt(12);
     const passwordHash = await bcrypt.hash(newPassword, salt);
 
-    await e
-      .update(e.User, () => ({
-        filter_single: { id: e.uuid(user) },
-        set: { password: e.str(passwordHash) },
-      }))
-      .run(clientDB);
+    const queryChangePassword = `UPDATE users SET password = $1 WHERE id = $2`;
+    const valuesChangePassword = [passwordHash, user];
 
-    return res.status(200).json("Senha atualizada!");
+    await db.query(queryChangePassword, valuesChangePassword);
+
+    return res.status(200).json({message: "Senha atualizada!"});
   } catch (err) {
     console.error(err);
     const message = (err instanceof Error && err.message) || "Erro inesperado";

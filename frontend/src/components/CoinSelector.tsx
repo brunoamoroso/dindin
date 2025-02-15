@@ -63,21 +63,23 @@ export function CoinSelector() {
         <Skeleton className="w-10 h-7 rounded-xl" />
       )}
       <DialogTrigger asChild>
-        <div className="flex gap-2 items-center">
-          <img
-            src={`${
-              import.meta.env.VITE_BACKEND_URL
-            }/assets/coin-covers/${userDefaultCoin?.img}.png`}
-            alt="coin"
-            className="w-7 h-7 object-cover rounded-full"
-          />
-          <div className="flex gap-1 items-center">
-            <span className="text-subtle label-medium">{userDefaultCoin?.code}</span>
-            <IconButton variant="ghost" size="small">
-              <ChevronDown className="text-primary" />
-            </IconButton>
+        {!isLoadingDefaultCoin && ( 
+          <div className="flex gap-2 items-center">
+            <img
+              src={`${
+                import.meta.env.VITE_BACKEND_URL
+              }/assets/coin-covers/${userDefaultCoin?.img}.png`}
+              alt="coin"
+              className="w-7 h-7 object-cover rounded-full"
+            />
+            <div className="flex gap-1 items-center">
+              <span className="text-subtle label-medium">{userDefaultCoin?.code}</span>
+              <IconButton variant="ghost" size="small">
+                <ChevronDown className="text-primary" />
+              </IconButton>
+            </div>
           </div>
-        </div>
+        )}
       </DialogTrigger>
       <DialogContent className="flex flex-1 flex-col bg-container0 border-outline border p-6">
         {errorUsercCoins && (

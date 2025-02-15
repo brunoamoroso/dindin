@@ -143,7 +143,7 @@ export default function EditUserData() {
 
                 {user.photo && typeof user.photo === "string" && (
                   <img
-                    src={`${import.meta.env.VITE_BACKEND_URL}/uploads/${
+                    src={`${import.meta.env.VITE_BACKEND_URL}/assets/uploads/${
                       user.photo
                     }`}
                     alt="User profile picture"

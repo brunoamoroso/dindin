@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TransactionsContextType } from "@/context/TransactionsContext";
 
-export default function TransactionAccount() {
+export default function Accounts() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -15,7 +15,7 @@ export default function TransactionAccount() {
     useOutletContext();
   const { id: idTransaction, mode } = location.state || {};
 
-  const { data, isError, isLoading } = useQuery<{ id: string; desc: string }[]>(
+  const { data, isError, isLoading } = useQuery<{ id: string; description: string }[]>(
     {
       queryKey: ["accountsList"],
       queryFn: () => api.getAccounts(),
@@ -32,10 +32,8 @@ export default function TransactionAccount() {
 
     setContextTransactionData((prevTransaction) => ({
       ...prevTransaction,
-      account: {
-        id: id,
-        desc: value,
-      },
+      account_id: id,
+      account: value,
     }));
 
     navigate("/transaction", {
@@ -72,11 +70,11 @@ export default function TransactionAccount() {
               trailingIcon={false}
               key={index}
               dataId={account.id}
-              value={account.desc}
+              value={account.description}
               onClick={handleClick}
               separator={arr.length - 1 !== index}
               >
-              {account.desc}
+              {account.description}
             </MenuListItem>
           ))}
         {!isLoading && data?.length === 0 && (

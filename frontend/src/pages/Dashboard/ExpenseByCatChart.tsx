@@ -9,16 +9,16 @@ import * as Types from '@/types/TransactionTypes';
 export default function ExpenseByCatChart({data} : {data: Types.TransactionType[]}){
     const chartRef = useRef<Chart<keyof ChartTypeRegistry> | null>(null);
     const dataExtractExpenses = useMemo(() => data.filter((o) => o.type === "expense"), [data]);
-    const dataSorted = useMemo(() => Object.groupBy(dataExtractExpenses, ({category}) => category.desc) as {[desc: string]: Types.TransactionType[]}, [dataExtractExpenses]);
+    const dataSorted = useMemo(() => Object.groupBy(dataExtractExpenses, ({category}) => category) as {[desc: string]: Types.TransactionType[]}, [dataExtractExpenses]);
     const totalAllAmount = useMemo(() => dataExtractExpenses.reduce((acc, cV) => acc + cV.amount, 0), [dataExtractExpenses]);
     
-    const labelsData = (data: {[desc: string]: Types.TransactionType[]} ) => Object.keys(data);
+    const labelsData = (data: {[description: string]: Types.TransactionType[]} ) => Object.keys(data);
     
-    const valuesData = (data: {[desc: string]: Types.TransactionType[]} ) => Object.values(data).map((i) => i.reduce((acc, cV) => acc + cV.amount, 0));
+    const valuesData = (data: {[description: string]: Types.TransactionType[]} ) => Object.values(data).map((i) => i.reduce((acc, cV) => acc + cV.amount, 0));
     
-    const bgColors = (data: {[desc: string]: Types.TransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizColor);
+    const bgColors = (data: {[description: string]: Types.TransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizColor);
     
-    const borderColors = (data: {[desc: string]: Types.TransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizBorderColor);
+    const borderColors = (data: {[description: string]: Types.TransactionType[]} ) => Object.keys(data).map((desc: string) => getCategoryIcon(desc).dataVizBorderColor);
 
     useEffect(() => {
         if(dataSorted !== undefined && Object.keys(dataSorted).length > 0){
@@ -76,13 +76,13 @@ export default function ExpenseByCatChart({data} : {data: Types.TransactionType[
             }
         }, [dataSorted, totalAllAmount]); 
 
-    const categoriesList = (dataSorted : {[desc: string]: Types.TransactionType[]}) => {
+    const categoriesList = (dataSorted : {[description: string]: Types.TransactionType[]}) => {
         const el = [];
         let i = 1;
-        for (const desc in dataSorted){
-            const totalCatAmount = dataSorted[desc].reduce((acc, cV) => acc + cV.amount, 0);
+        for (const description in dataSorted){
+            const totalCatAmount = dataSorted[description].reduce((acc, cV) => acc + cV.amount, 0);
             const percentage = Math.round((totalCatAmount / totalAllAmount) * 100);
-            const badge = getCategoryIcon(desc);
+            const badge = getCategoryIcon(description);
             el.push(
                 <div className='flex flex-col px-6' key={i}>
                     <div className='flex items-center py-3.5 gap-4 justify-between'>
@@ -94,8 +94,8 @@ export default function ExpenseByCatChart({data} : {data: Types.TransactionType[
                                 {badge.icon}
                             </div>
                             <div>
-                                <h2 className='label-large text-title'>{desc}</h2>
-                                <p className='body-small text-subtle'>{dataSorted[desc].length} {dataSorted[desc].length > 1 ? "transações" : "transação"}</p>
+                                <h2 className='label-large text-title'>{description}</h2>
+                                <p className='body-small text-subtle'>{dataSorted[description].length} {dataSorted[description].length > 1 ? "transações" : "transação"}</p>
                             </div>
                         </div>
 

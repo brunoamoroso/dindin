@@ -10,7 +10,7 @@ import Categories from "./pages/Transactions/Categories";
 import SubCategories from "./pages/Transactions/SubCategories";
 import Home from "./pages/Home";
 import CreateProfile from "./pages/Profile/CreateProfile";
-import TransactionAccount from "./pages/Transactions/TransactionAccount";
+import Accounts from "./pages/Transactions/Accounts";
 import Recurrency from "./pages/Transactions/Recurrency";
 import SignIn from "./pages/Profile/SignIn";
 
@@ -27,6 +27,7 @@ import { ChangePassword } from "./pages/Profile/UserProfile/ChangePassword";
 import { SearchCoin } from "./pages/SearchCoin";
 import { SplashDefaultCoin } from "./pages/Profile/SplashDefaultCoin";
 import { ProfileCreationDefaultCoin } from "./pages/Profile/ProfileCreationDefaultCoin";
+import { Goals } from "./pages/Goals";
 
 function AppRoutes() {
   return (
@@ -72,7 +73,7 @@ function AppRoutes() {
               />
               <Route
                 path="/transaction-accounts/list"
-                element={<TransactionAccount />}
+                element={<Accounts />}
               />
               <Route path="/recurrency" element={<Recurrency />} />
             </Route>
@@ -82,6 +83,8 @@ function AppRoutes() {
             <Route path="/profile/user/change-password" element={<ChangePassword />} />
 
             <Route path="/coins/search" element={<SearchCoin />} />
+
+            <Route path="goals" element={<Goals />} />
 
           </Route>
         </Route>
