@@ -146,7 +146,7 @@ export const getAllTransactionsByMonth = async (
     LEFT JOIN accounts acc ON t.account_id = acc.id
     LEFT JOIN categories cat ON t.category_id = cat.id
     LEFT JOIN subcategories sub ON t.subcategory_id = sub.id
-    WHERE t.created_by = $1 AND t.date BETWEEN $2 AND $3
+    WHERE t.created_by = $1 AND t.date BETWEEN $2 AND $3 AND u.user_default_coin = t.coin_id
     ORDER BY t.date DESC
     `;
 
