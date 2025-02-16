@@ -81,8 +81,8 @@ export default function GainTransaction({
           </div>
         </div>
       </div>
-      <div className="container rounded-t-lg bg-container2 py-10">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-16">
+      <div className="container rounded-t-lg bg-container2 py-10 flex flex-col flex-1">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 gap-16 justify-between">
           <div className="flex flex-col gap-6">
             <TextField
               id="description"
@@ -116,7 +116,7 @@ export default function GainTransaction({
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Conta</span>
               <Link
-                to="/transaction-accounts/list"
+                to="/accounts/list"
                 state={{ mode: mode, id: contextTransactionData.id }}
               >
                 <MenuListItem>

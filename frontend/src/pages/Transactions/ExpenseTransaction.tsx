@@ -183,7 +183,7 @@ export default function ExpenseTransaction({
 
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Conta</span>
-              <Link to="/transaction-accounts/list" state={{mode: mode, id: id, transactionScope: transactionScope}}>
+              <Link to="/accounts/list" state={{mode: mode, id: id, transactionScope: transactionScope}}>
                 <MenuListItem>
                   <Landmark />
                   {!contextTransactionData.account && "Escolha uma conta"}
