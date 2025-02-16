@@ -75,10 +75,6 @@ class Api{
         return this.get<T>(`/categories/sub/${category}`);
     }
 
-    public getAccounts<T>(): Promise<T>{
-        return this.get<T>(`/accounts/list`);
-    }
-
     public addTransaction<T>(body: unknown): Promise<T>{
         return this.post<T>("/transactions/add", body);
     }

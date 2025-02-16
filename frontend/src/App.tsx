@@ -10,7 +10,7 @@ import Categories from "./pages/Transactions/Categories";
 import SubCategories from "./pages/Transactions/SubCategories";
 import Home from "./pages/Home";
 import CreateProfile from "./pages/Profile/CreateProfile";
-import Accounts from "./pages/Transactions/Accounts";
+import Accounts from "./pages/Transactions/Accounts/Accounts";
 import Recurrency from "./pages/Transactions/Recurrency";
 import SignIn from "./pages/Profile/SignIn";
 
@@ -28,6 +28,7 @@ import { SearchCoin } from "./pages/SearchCoin";
 import { SplashDefaultCoin } from "./pages/Profile/SplashDefaultCoin";
 import { ProfileCreationDefaultCoin } from "./pages/Profile/ProfileCreationDefaultCoin";
 import { Goals } from "./pages/Goals";
+import { CreateAccount } from "./pages/Transactions/Accounts/CreateAccount";
 
 function AppRoutes() {
   return (
@@ -72,9 +73,10 @@ function AppRoutes() {
                 element={<SubCategories />}
               />
               <Route
-                path="/transaction-accounts/list"
+                path="/accounts/list"
                 element={<Accounts />}
               />
+              <Route path="/accounts/create" element={<CreateAccount />} />
               <Route path="/recurrency" element={<Recurrency />} />
             </Route>
 

@@ -344,7 +344,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
             Despesa
           </InlineTabsTrigger>
         </InlineTabsList>
-        <InlineTabsContent value="gain">
+        <InlineTabsContent value="gain" className="flex flex-col flex-1 data-[state='inactive']:hidden">
           <GainTransaction
             handleAmountChange={handleAmountChange}
             handleInputChange={handleInputChange}
@@ -354,7 +354,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
             mode={mode}
           />
         </InlineTabsContent>
-        <InlineTabsContent value="expense" className="flex flex-col flex-1">
+        <InlineTabsContent value="expense" className="flex flex-col flex-1 data-[state='inactive']:hidden">
           <ExpenseTransaction
             handleAmountChange={handleAmountChange}
             handleInputChange={handleInputChange}
