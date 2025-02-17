@@ -16,7 +16,12 @@ export const getUserSelectedCoins = async (req: Request, res: Response) => {
 
         const {rows: userCoins} = await db.query(queryUserSelectedCoins, valuesUserSelectedCoins);
 
-        res.status(200).json(userCoins);
+        const userCoinsWithImages = await Promise.all(userCoins.map(async (coin: any) => {
+            coin.img = await getCoinCoversURL(coin.img);
+            return coin;
+        }));
+
+        res.status(200).json(userCoinsWithImages);
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
     }
@@ -39,7 +44,12 @@ export const getCoins = async (req: Request, res: Response) =>  {
 
         const {rows: coins} = await db.query(queryGetCoins, valuesGetCoins);
 
-        res.status(200).json(coins);
+        const coinsWithImages = await Promise.all(coins.map(async (coin: any) => {
+            coin.img = await getCoinCoversURL(coin.img);
+            return coin;
+        }));
+
+        res.status(200).json(coinsWithImages);
 
     }catch(err){
         console.log(err);
@@ -104,7 +114,7 @@ export const getDefaultUserCoin = async (req: Request, res: Response) => {
         
         const coinCover = await getCoinCoversURL(userDefaultCoin[0].img);
 
-        userDefaultCoin[0].img = coinCover?.signedUrl;
+        userDefaultCoin[0].img = coinCover;
 
         res.status(200).json(userDefaultCoin[0]);
     }catch(err){

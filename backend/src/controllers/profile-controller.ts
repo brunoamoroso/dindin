@@ -98,8 +98,6 @@ export const getAvatar = async (req: Request, res: Response) => {
 
     const supabase = supabaseClient();
 
-    console.log(avatar[0].photo);
-
     const {data, error} = await supabase.storage.from("dindin-bucket").createSignedUrl(`/assets/uploads/${avatar[0].photo}`, 60);
 
     if(error){

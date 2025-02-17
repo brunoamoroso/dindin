@@ -16,9 +16,7 @@ export function CoinSelectorListItem({id, isDefault=false, img, desc, code, onCl
         <div className="flex flex-1 gap-4 items-center pl-2 py-3.5 pr-4" onClick={onClick} data-id={id}>
             <Check className={cn("text-neutral-50", `${!isDefault && "opacity-0"}`)} size={16}/>
             <img
-                src={`${
-                    import.meta.env.VITE_BACKEND_URL
-                }/assets/coin-covers/${img}.png`}
+                src={img}
                 alt="coin"
                 className="w-7 h-7 object-cover rounded-full">
                 
