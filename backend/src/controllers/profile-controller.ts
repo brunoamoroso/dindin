@@ -3,6 +3,7 @@ import { db } from "../db/conn";
 import { createUserToken } from "../utils/create-user-token";
 import bcrypt from "bcrypt";
 import fs from "fs";
+import { supabaseClient } from "../utils/supabaseClient";
 
 export const CreateProfile = async (req: Request, res: Response) => {
   const { name, surname, email, password, username } = req.body;
@@ -94,6 +95,18 @@ export const getAvatar = async (req: Request, res: Response) => {
     const valuesAvatar = [user];
 
     const {rows: avatar} = await db.query(queryAvatar, valuesAvatar);
+
+    const supabase = supabaseClient();
+
+    console.log(avatar[0].photo);
+
+    const {data, error} = await supabase.storage.from("dindin-bucket").createSignedUrl(`/assets/uploads/${avatar[0].photo}`, 60);
+
+    if(error){
+      throw error;
+    }
+
+    avatar[0].photo = data.signedUrl;
 
     return res.status(200).json(avatar[0]);
   } catch (err) {

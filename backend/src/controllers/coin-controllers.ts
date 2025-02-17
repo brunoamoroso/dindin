@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { db } from "../db/conn";
+import { getCoinCoversURL } from "../utils/get-coin-covers";
 
 export const getUserSelectedCoins = async (req: Request, res: Response) => {
     const user = req.user;
@@ -98,8 +99,12 @@ export const getDefaultUserCoin = async (req: Request, res: Response) => {
         WHERE users.id = $1`;
 
         const values = [user];
-
+        
         const {rows: userDefaultCoin} = await db.query(queryUserDefaultCoin, values);
+        
+        const coinCover = await getCoinCoversURL(userDefaultCoin[0].img);
+
+        userDefaultCoin[0].img = coinCover?.signedUrl;
 
         res.status(200).json(userDefaultCoin[0]);
     }catch(err){
