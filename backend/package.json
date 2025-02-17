@@ -23,6 +23,7 @@
   "author": "Bruno Amoroso <pamoroso.bruno@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@supabase/supabase-js": "^2.48.1",
     "@types/pg": "^8.11.11",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",

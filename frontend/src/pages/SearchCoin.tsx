@@ -77,9 +77,7 @@ export function SearchCoin(){
                         >
                         <div className="flex gap-4 items-center">
                             <img
-                                src={`${
-                                    import.meta.env.VITE_BACKEND_URL
-                                }/assets/coin-covers/${item.img}.png`}
+                                src={item.img}
                                 alt="coin"
                                 className="w-7 h-7 object-cover rounded-full">
                                 

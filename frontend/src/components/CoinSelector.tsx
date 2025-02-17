@@ -66,9 +66,7 @@ export function CoinSelector() {
         {!isLoadingDefaultCoin && ( 
           <div className="flex gap-2 items-center">
             <img
-              src={`${
-                import.meta.env.VITE_BACKEND_URL
-              }/assets/coin-covers/${userDefaultCoin?.img}.png`}
+              src={userDefaultCoin?.img} 
               alt="coin"
               className="w-7 h-7 object-cover rounded-full"
             />

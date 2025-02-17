@@ -7,6 +7,7 @@ import transactionRoutes from './routes/transaction-routes';
 import path from 'path';
 import coinRoutes from './routes/coin-routes';
 import dotenv from 'dotenv';
+import { getCoinCoversURL } from './utils/get-coin-covers';
 
 dotenv.config({path: '.env.local'});
 
@@ -22,13 +23,6 @@ app.use("/categories", categoriesRoutes)
 app.use("/accounts", accountsRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/coins", coinRoutes);
-
-// Serve static files
-app.use("/assets/uploads", express.static(path.join(__dirname, "/assets/uploads")));
-
-// Serve static files
-app.use("/assets/coin-covers", express.static(path.join(__dirname, "/assets/coin-covers")));
-
 
 app.use((req, res) => {
     res.status(404);
