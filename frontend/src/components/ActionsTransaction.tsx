@@ -23,8 +23,8 @@ import {
 } from "./ui/dialog";
 import { currencyFormat } from "@/utils/currency-format";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "@/api/api";
 import { toast } from "./ui/use-toast";
+import { deleteAllTransactionInstallment, deleteOneTransactionInstallment, deleteTransaction } from "@/api/transactionService";
 
 interface ActionsTransactionProps {
   id: string;
@@ -51,7 +51,7 @@ export default function ActionsTransaction({
 
   const mutationOneTransaction = useMutation({
     mutationFn: (id: string) => {
-      return api.deleteTransaction(id);
+      return deleteTransaction(id);
     },
   });
 
@@ -81,7 +81,7 @@ export default function ActionsTransaction({
 
   const mutationOneInstallmentTransaction = useMutation({
     mutationFn: (id: string) => {
-      return api.deleteOneTransactionInstallment(id);
+      return deleteOneTransactionInstallment(id);
     },
   });
 
@@ -110,7 +110,7 @@ export default function ActionsTransaction({
 
   const mutationAllInstallmentTransaction = useMutation({
     mutationFn: (id: string) => {
-      return api.deleteAllTransactionInstallment(id);
+      return deleteAllTransactionInstallment(id);
     },
   });
 

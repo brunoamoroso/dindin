@@ -1,4 +1,4 @@
-import api from "@/api/api";
+import { createProfile } from "@/api/profileService";
 import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,7 +62,7 @@ export default function CreateProfile() {
   }
   
   const mutation = useMutation<CreationResponse, Error, FormData>({
-    mutationFn: (data: FormData) => {return api.createProfile(data)}
+    mutationFn: (data: FormData) => {return createProfile(data)}
   });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

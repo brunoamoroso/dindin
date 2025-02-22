@@ -2,18 +2,18 @@ import AppBar from "@/components/AppBar";
 import MenuListItem from "@/components/ui/menu-list-item";
 import { LogOut, SquareAsterisk, UserCircleIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import api from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
 import { UserProfileType } from "@/types/UserProfileType";
 import { Skeleton } from "@/components/ui/skeleton";
 import { signOut } from "@/utils/log-out";
+import { getUserProfileData } from "@/api/profileService";
 
 export function UserProfile() {
   const navigate = useNavigate();
 
   const { data, isLoading } = useQuery<UserProfileType>({
     queryKey: ["userData"],
-    queryFn: () => api.getUserProfileData(),
+    queryFn: () => getUserProfileData(),
   });
 
   return (

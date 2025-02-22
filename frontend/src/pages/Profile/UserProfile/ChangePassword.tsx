@@ -6,9 +6,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { passwordCheck } from "@/utils/password-check";
 import { useMutation } from "@tanstack/react-query";
 import { ChangeEvent, FormEvent, useState } from "react";
-import api from "@/api/api";
 import { CircleCheck, CircleX, LoaderCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { changePassword } from "@/api/profileService";
 
 const rules = ["Maiúscula", "Minúscula", "Número", "8 Dígitos", "Símbolo"];
 
@@ -57,7 +57,7 @@ export function ChangePassword() {
 
   const mutation = useMutation({
     mutationFn: (data: { oldPassword: string; newPassword: string }) => {
-      return api.changePassword(data);
+      return changePassword(data);
     },
   });
 

@@ -6,12 +6,12 @@ import {
   useParams,
   useLocation,
 } from "react-router-dom";
-import api from "@/api/api";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { TransactionsContextType } from "@/context/TransactionsContext";
+import { getSubCategories } from "@/api/categoriesService";
 
 export default function SubCategories() {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export default function SubCategories() {
 
   const { data, isError, isLoading } = useQuery<SubCategoryType[]>({
     queryKey: ["subCategories", category],
-    queryFn: () => api.getSubCategories(category),
+    queryFn: () => getSubCategories(category),
   });
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {

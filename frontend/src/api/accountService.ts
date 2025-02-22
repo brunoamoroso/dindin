@@ -1,5 +1,5 @@
 import { AccountType } from '@/types/AccountTypes';
-import api from './api';
+import { api } from './api';
 
 export function getAccounts<T>(): Promise<T>{
     return api.get<T>(`/accounts/list`);

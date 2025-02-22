@@ -5,10 +5,10 @@ import TextField from "@/components/ui/textfield";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Camera, CircleCheck, CircleX, LoaderCircle } from "lucide-react";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import api from "@/api/api";
 import { UserProfileType } from "@/types/UserProfileType";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import { editProfileData, getUserProfileData } from "@/api/profileService";
 
 export default function EditUserData() {
   const { toast } = useToast();
@@ -16,7 +16,7 @@ export default function EditUserData() {
 
   const { data, isLoading, isError } = useQuery<UserProfileType>({
     queryKey: ["userData"],
-    queryFn: () => api.getUserProfileData(),
+    queryFn: () => getUserProfileData(),
   });
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function EditUserData() {
 
   const mutation = useMutation<CreationResponse, Error, FormData>({
     mutationFn: (data: FormData) => {
-      return api.editProfileData(data);
+      return editProfileData(data);
     },
   });
 
@@ -144,9 +144,7 @@ export default function EditUserData() {
 
                 {user.photo && typeof user.photo === "string" && (
                   <img
-                    src={`${import.meta.env.VITE_BACKEND_URL}/assets/uploads/${
-                      user.photo
-                    }`}
+                    src={user.photo}
                     alt="User profile picture"
                     className="h-28 w-28 rounded-full object-cover"
                   />

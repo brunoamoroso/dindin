@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import api from "@/api/api";
 import { Skeleton } from "./ui/skeleton";
 import { Link } from "react-router-dom";
+import { getAvatar } from "@/api/profileService";
 
 export function AvatarDashboard() {
   const { data: avatar, isLoading } = useQuery<{
@@ -10,7 +10,7 @@ export function AvatarDashboard() {
     surname: string;
   }>({
     queryKey: ["getAvatar"],
-    queryFn: () => api.getAvatar(),
+    queryFn: () => getAvatar(),
   });
 
   return (
