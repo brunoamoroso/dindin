@@ -12,8 +12,9 @@ import { InputChips } from "@/components/ui/input-chips";
 import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
 import { TransactionsContextType } from "@/context/TransactionsContext";
+import { cn } from "@/lib/utils";
 import { currencyFormat } from "@/utils/currency-format";
-import { Landmark, Tag } from "lucide-react";
+import { Landmark, LoaderCircle, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 
@@ -23,6 +24,7 @@ interface GainTransactionType {
   handleAmountPlaceholder: (e: MouseEvent<HTMLDivElement>) => void;
   handleDateToday: (e: MouseEvent<HTMLButtonElement>) => void;
   handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  mutationPending: boolean;
   mode: string;
 }
 
@@ -32,6 +34,7 @@ export default function GainTransaction({
   handleAmountPlaceholder,
   handleDateToday,
   handleSubmit,
+  mutationPending,
   mode,
 }: GainTransactionType) {
   const {
@@ -57,7 +60,9 @@ export default function GainTransaction({
         <div className="py-8 ">
           <span className="label-medium text-subtle">Valor Recebido</span>
           <div className="flex gap-1">
-            <span className="headline-small text-title">{contextTransactionData.coin}</span>
+            <span className="headline-small text-title">
+              {contextTransactionData.coin}
+            </span>
             <span
               id="amount_placeholder"
               className="headline-small text-positive"
@@ -82,7 +87,10 @@ export default function GainTransaction({
         </div>
       </div>
       <div className="container rounded-t-lg bg-container2 py-10 flex flex-col flex-1">
-        <form onSubmit={handleSubmit} className="flex flex-col flex-1 gap-16 justify-between">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col flex-1 gap-16 justify-between"
+        >
           <div className="flex flex-col gap-6">
             <TextField
               id="description"
@@ -193,8 +201,26 @@ export default function GainTransaction({
               </Link>
             </div> */}
           </div>
-          <Button type="submit" size={"lg"}>
-            {mode === "create" ? "Adicionar Transação" : "Editar Transação"}
+          <Button
+            type="submit"
+            size={"lg"}
+            className={cn(
+              `${
+                mutationPending &&
+                "opacity-50 cursor-not-allowed pointer-events-none flex items-center gap-2"
+              }`
+            )}
+          >
+            {mutationPending ? (
+              <div className="flex items-center gap-2">
+                <LoaderCircle size={16} className="animate-spin" />
+                Carregando
+              </div>
+            ) : (
+              <>
+                {mode === "create" ? "Adicionar Transação" : "Editar Transação"}
+              </>
+            )}
           </Button>
         </form>
       </div>

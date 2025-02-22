@@ -180,7 +180,7 @@ export default function CreateProfile() {
               className={cn("w-full", `${mutation.isPending && "opacity-50 cursor-not-allowed pointer-events-none"}`)} 
             >
               {mutation.isPending ? (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <LoaderCircle size={16} className="animate-spin"/>
                   Carregando
                 </div>

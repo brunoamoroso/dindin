@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import TextField from "@/components/ui/textfield";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Camera, CircleCheck, CircleX } from "lucide-react";
+import { Camera, CircleCheck, CircleX, LoaderCircle } from "lucide-react";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import api from "@/api/api";
 import { UserProfileType } from "@/types/UserProfileType";
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 
 export default function EditUserData() {
   const { toast } = useToast();
@@ -187,8 +188,13 @@ export default function EditUserData() {
               />
             </div>
 
-            <Button size={"lg"} type="submit" className="w-full">
-              Salvar
+            <Button size={"lg"} type="submit" className={cn("w-full", `${mutation.isPending && "opacity-50 cursor-not-allowed pointer-events-none"}`)}>
+              {mutation.isPending ? (
+                <div className="flex items-center gap-2">
+                  <LoaderCircle size={16} className="animate-spin" />
+                  Carregando
+                </div>
+              ) : ("Salvar")}
             </Button>
           </form>
         </div>

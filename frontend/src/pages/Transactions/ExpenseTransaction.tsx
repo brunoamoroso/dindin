@@ -14,7 +14,7 @@ import TextField from "@/components/ui/textfield";
 import { TransactionsContextType } from "@/context/TransactionsContext";
 import { currencyFormat } from "@/utils/currency-format";
 import splitInstallmentsDisplay from "@/utils/get-split-installments";
-import { Landmark, Tag } from "lucide-react";
+import { Landmark, LoaderCircle, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 
@@ -27,6 +27,7 @@ interface ExpenseTransactionType {
   handleAmountPlaceholder: (e: MouseEvent<HTMLDivElement>) => void;
   handleDateToday: (e: MouseEvent<HTMLButtonElement>) => void;
   handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  mutationPending: boolean;
   mode: string;
   transactionScope: string;
   id?: string;
@@ -41,9 +42,10 @@ export default function ExpenseTransaction({
   handleAmountPlaceholder,
   handleDateToday,
   handleSubmit,
+  mutationPending,
   mode,
   transactionScope,
-  id
+  id,
 }: ExpenseTransactionType) {
   const {
     contextTransactionData,
@@ -118,7 +120,9 @@ export default function ExpenseTransaction({
         <div className="py-8 ">
           <span className="label-medium text-subtle">Valor Gasto</span>
           <div className="flex gap-1">
-            <span className="headline-small text-title">{contextTransactionData.coin}</span>
+            <span className="headline-small text-title">
+              {contextTransactionData.coin}
+            </span>
             <span
               id="amount_placeholder"
               className="headline-small text-negative"
@@ -156,12 +160,18 @@ export default function ExpenseTransaction({
               onChange={handleInputChange}
             />
 
-            {(((transactionScope !== "one-installment") &&
-              mode === "edit") ||
+            {((transactionScope !== "one-installment" && mode === "edit") ||
               mode === "create") && (
               <div className="flex flex-col gap-1.5">
                 <span className="label-large text-title">Categoria</span>
-                <Link to="/categories/expense" state={{mode: mode, id: id, transactionScope: transactionScope}}>
+                <Link
+                  to="/categories/expense"
+                  state={{
+                    mode: mode,
+                    id: id,
+                    transactionScope: transactionScope,
+                  }}
+                >
                   <MenuListItem>
                     <Tag />
                     {!contextTransactionData.category &&
@@ -183,7 +193,14 @@ export default function ExpenseTransaction({
 
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-title">Conta</span>
-              <Link to="/accounts/list" state={{mode: mode, id: id, transactionScope: transactionScope}}>
+              <Link
+                to="/accounts/list"
+                state={{
+                  mode: mode,
+                  id: id,
+                  transactionScope: transactionScope,
+                }}
+              >
                 <MenuListItem>
                   <Landmark />
                   {!contextTransactionData.account && "Escolha uma conta"}
@@ -330,8 +347,24 @@ export default function ExpenseTransaction({
               </Link>
             </div> */}
           </div>
-          <Button type="submit" size={"lg"}>
-            {mode === "create" ? "Adicionar Transação" : "Editar Transação"}
+          <Button
+            type="submit"
+            size={"lg"}
+            className={`${
+              mutationPending &&
+              "opacity-50 cursor-not-allowed pointer-events-none"
+            }`}
+          >
+            {mutationPending ? (
+              <div className="flex items-center gap-2">
+                <LoaderCircle size={16} className="animate-spin" />
+                Carregando
+              </div>
+            ) : (
+              <>
+                {mode === "create" ? "Adicionar Transação" : "Editar Transação"}
+              </>
+            )}
           </Button>
         </form>
       </div>

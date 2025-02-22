@@ -351,6 +351,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
             handleAmountPlaceholder={handleAmountPlaceholder}
             handleDateToday={handleDate}
             handleSubmit={handleSubmit}
+            mutationPending={mutationAdd.isPending || mutationUpdate.isPending || mutationUpdateAllInstallments.isPending}
             mode={mode}
           />
         </InlineTabsContent>
@@ -361,6 +362,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
             handleAmountPlaceholder={handleAmountPlaceholder}
             handleDateToday={handleDate}
             handleSubmit={handleSubmit}
+            mutationPending={mutationAdd.isPending || mutationUpdate.isPending || mutationUpdateAllInstallments.isPending}
             mode={mode}
             transactionScope={transactionScope}
             id={id}

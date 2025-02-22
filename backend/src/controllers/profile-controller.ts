@@ -100,8 +100,6 @@ export const getAvatar = async (req: Request, res: Response) => {
 
     const {rows: avatar} = await db.query(queryAvatar, valuesAvatar);
 
-    console.log(avatar);
-
     if(avatar[0].photo !== ""){
       const supabase = supabaseClient();
   

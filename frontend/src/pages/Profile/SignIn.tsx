@@ -7,10 +7,11 @@ import api from "@/api/api";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
-import { CircleX } from "lucide-react";
+import { CircleX, LoaderCircle } from "lucide-react";
 
 export default function SignIn() {
   const [userData, setUserData] = useState({ username: "", password: "" });
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -45,6 +46,7 @@ export default function SignIn() {
     }
 
     try {
+      setLoading(true);
       const userAuthenticated: { message: string; token: string } =
         await queryClient.fetchQuery({
           queryKey: ["signIn"],
@@ -69,6 +71,8 @@ export default function SignIn() {
         duration: 2000,
       });
       console.error("Error: ", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,8 +96,13 @@ export default function SignIn() {
               onChange={handleChange}
             />
           </div>
-          <Button type="submit" size={"lg"}>
-            Entrar
+          <Button type="submit" size={"lg"} className={`${loading && "opacity-50 cursor-not-allowed pointer-events-none"}`}>
+            {loading ? (
+              <div className="flex items-center gap-2">
+                <LoaderCircle />
+                Carregando
+              </div>
+            ): "Entrar"}
           </Button>
         </form>
       </div>

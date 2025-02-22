@@ -1,4 +1,4 @@
-export interface UserProfileType{
+export type UserProfileType = {
     photo: File | string;
     name: string;
     surname: string;
