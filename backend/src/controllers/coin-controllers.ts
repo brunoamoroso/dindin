@@ -16,11 +16,12 @@ export const getUserSelectedCoins = async (req: Request, res: Response) => {
 
         const {rows: userCoins} = await db.query(queryUserSelectedCoins, valuesUserSelectedCoins);
 
+        
         const userCoinsWithImages = await Promise.all(userCoins.map(async (coin: any) => {
             coin.img = await getCoinCoversURL(coin.img);
             return coin;
         }));
-
+        
         res.status(200).json(userCoinsWithImages);
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });

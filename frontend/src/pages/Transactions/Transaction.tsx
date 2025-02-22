@@ -11,7 +11,6 @@ import GainTransaction from "./GainTransaction";
 import ExpenseTransaction from "./ExpenseTransaction";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import api from "../../api/api";
 import {
   TransactionDataType,
   TransactionsContextType,
@@ -23,7 +22,7 @@ import {
   useParams,
 } from "react-router-dom";
 import { CircleCheck, CircleX } from "lucide-react";
-import * as Types from "@/types/TransactionTypes";
+import { addTransaction, getAllInstallmentsTransaction, getOneTransaction, updateAllInstallmentsTransaction, updateTransaction } from "@/api/transactionService";
 
 export default function Transaction({ mode }: { mode: "create" | "edit" }) {
   const navigate = useNavigate();
@@ -45,12 +44,12 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
   }
 
 
-  const { data } = useQuery<Types.TransactionType>({
+  const { data } = useQuery({
     queryKey: ["transaction-edit", paramId],
     queryFn: () =>
       transactionScope !== "all-installments"
-        ? api.getOneTransaction(paramId!)
-        : api.getAllInstallmentsTransaction(paramId!),
+        ? getOneTransaction(paramId!)
+        : getAllInstallmentsTransaction(paramId!),
     enabled: mode === "edit" && !!paramId,
   });
 
@@ -146,19 +145,19 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
 
   const mutationAdd = useMutation({
     mutationFn: (data: TransactionDataType) => {
-      return api.addTransaction(data);
+      return addTransaction(data);
     },
   });
 
   const mutationUpdate = useMutation({
     mutationFn: (data: TransactionDataType) => {
-      return api.updateTransaction(id!, data);
+      return updateTransaction(id!, data);
     },
   });
 
   const mutationUpdateAllInstallments = useMutation({
     mutationFn: (data: TransactionDataType) => {
-      return api.updateAllInstallmentsTransaction(id!, data);
+      return updateAllInstallmentsTransaction(id!, data);
     },
   });
 

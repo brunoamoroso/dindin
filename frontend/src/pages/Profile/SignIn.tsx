@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import TextField from "@/components/ui/textfield";
 import { useToast } from "@/components/ui/use-toast";
 import { ChangeEvent, FormEvent, useState } from "react";
-import api from "@/api/api";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
 import { CircleX, LoaderCircle } from "lucide-react";
+import { signIn } from "@/api/profileService";
 
 export default function SignIn() {
   const [userData, setUserData] = useState({ username: "", password: "" });
@@ -50,7 +50,7 @@ export default function SignIn() {
       const userAuthenticated: { message: string; token: string } =
         await queryClient.fetchQuery({
           queryKey: ["signIn"],
-          queryFn: () => api.signIn(userData),
+          queryFn: () => signIn(userData),
         });
 
       if (userAuthenticated.token) {

@@ -8,11 +8,11 @@ import {
   useOutletContext,
   useParams,
 } from "react-router-dom";
-import api from "@/api/api";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { TransactionsContextType } from "@/context/TransactionsContext";
+import { getCategories, getSearchCategories } from "@/api/categoriesService";
 
 export default function Categories() {
   const { type } = useParams();
@@ -49,7 +49,7 @@ export default function Categories() {
     isLoading,
   } = useQuery<CategoryType[]>({
     queryKey: ["allCategories", type],
-    queryFn: () => api.getCategories(type),
+    queryFn: () => getCategories(type),
   });
 
   const {
@@ -58,7 +58,7 @@ export default function Categories() {
     isError: errorSearch,
   } = useQuery<SearchQueryType[]>({
     queryKey: ["searchedCategories", type, searchQuery],
-    queryFn: () => api.getSearchCategories(type, searchQuery),
+    queryFn: () => getSearchCategories(type, searchQuery),
     enabled: !!searchQuery,
   });
 

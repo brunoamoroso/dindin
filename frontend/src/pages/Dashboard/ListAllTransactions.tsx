@@ -1,7 +1,5 @@
 import AppBar from "@/components/AppBar";
 import { useQuery } from "@tanstack/react-query";
-import * as Types from "@/types/TransactionTypes";
-import api from "@/api/api";
 import getCategoryIcon from "@/utils/get-category-icon";
 import { currencyFormat } from "@/utils/currency-format";
 import { Separator } from "@/components/ui/separator";
@@ -11,6 +9,7 @@ import { useEffect } from "react";
 import { DashboardContextType } from "@/context/DashboardContext";
 import { MonthPicker } from "../MonthPicker";
 import { CoinSelector } from "@/components/CoinSelector";
+import { getAllTransactionsByMonth } from "@/api/transactionService";
 
 export function ListAllTransactions() {
   const { selectedDate, setSelectedDate } = useOutletContext<DashboardContextType>();
@@ -23,9 +22,9 @@ export function ListAllTransactions() {
     }
   }, [dateParams, setSelectedDate]);
 
-  const { data } = useQuery<Types.DataAllTransactionsType>({
+  const { data } = useQuery({
     queryKey: ["listalltransactions-data", selectedDate],
-    queryFn: () => api.getAllTransactionsByMonth(selectedDate.toISOString()),
+    queryFn: () => getAllTransactionsByMonth(selectedDate.toISOString()),
   });
 
   return (

@@ -1,4 +1,4 @@
-import {getCoins, setDefaultUserCoin } from "@/api/coinService";
+import {getCoins, addNewUserSelectedCoin } from "@/api/coinService";
 import AppBar from "@/components/AppBar";
 import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
@@ -18,7 +18,7 @@ export function ProfileCreationDefaultCoin(){
     });
 
     const mutation = useMutation({
-        mutationFn: (data: {coinId: string}) => setDefaultUserCoin(data),
+        mutationFn: (data: {coinId: string}) => addNewUserSelectedCoin(data),
         onSuccess: () => {
             navigate('/dashboard');
         }

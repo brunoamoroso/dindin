@@ -1,11 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import api from "@/api/api";
 import { currencyFormat } from "@/utils/currency-format";
 import BottomNav from "@/components/BottomNav";
 import LastTransactions from "./LastTransactions";
 import ExpenseByCatChart from "./ExpenseByCatChart";
-import * as Types from "@/types/TransactionTypes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@radix-ui/react-separator";
 import { useOutletContext } from "react-router-dom";
@@ -13,13 +11,14 @@ import { MonthPicker } from "../MonthPicker";
 import { AvatarDashboard } from "@/components/AvatarDashboard";
 import { CoinSelector } from "@/components/CoinSelector";
 import { DashboardContextType } from "@/context/DashboardContext";
+import { getAllTransactionsByMonth } from "@/api/transactionService";
 
 export default function Dashboard() {
   const { selectedDate, userDefaultCoin } = useOutletContext<DashboardContextType>();
 
-  const { data, isLoading, isError } = useQuery<Types.DataAllTransactionsType>({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["dashboard-data", selectedDate],
-    queryFn: () => api.getAllTransactionsByMonth(selectedDate.toISOString()),
+    queryFn: () => getAllTransactionsByMonth(selectedDate.toISOString()),
   });
 
   return (

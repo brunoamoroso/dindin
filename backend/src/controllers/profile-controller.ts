@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { db } from "../db/conn";
 import { createUserToken } from "../utils/create-user-token";
 import bcrypt from "bcrypt";
-import fs from "fs";
 import { supabaseClient } from "../utils/supabaseClient";
 import { uploadToSupabase } from "../utils/upload-to-supabase";
 import dotenv from "dotenv";
@@ -127,6 +126,18 @@ export const getUserProfile = async (req: Request, res: Response) => {
     const valuesGetUserProfile = [user];
 
     const {rows: profile} = await db.query(queryGetUserProfile, valuesGetUserProfile);
+
+    if(profile[0].photo !== ""){
+      const supabase = supabaseClient();
+  
+      const {data, error} = await supabase.storage.from(process.env.SUPABASE_BUCKET!).createSignedUrl(`/assets/uploads/${profile[0].photo}`, 60);
+  
+      if(error){
+        throw error;
+      }
+
+      profile[0].photo = data.signedUrl;
+    }
 
     return res.status(200).json(profile[0]);
   } catch (err) {
