@@ -4,13 +4,17 @@ import { createUserToken } from "../utils/create-user-token";
 import bcrypt from "bcrypt";
 import fs from "fs";
 import { supabaseClient } from "../utils/supabaseClient";
+import { uploadToSupabase } from "../utils/upload-to-supabase";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
 
 export const CreateProfile = async (req: Request, res: Response) => {
   const { name, surname, email, password, username } = req.body;
-  let photo = req.file?.filename;
+  let photo = "";
 
-  if (photo === undefined) {
-    photo = "";
+  if (req.file) {
+    photo = await uploadToSupabase(req.file);
   }
 
   try {
@@ -98,7 +102,7 @@ export const getAvatar = async (req: Request, res: Response) => {
 
     const supabase = supabaseClient();
 
-    const {data, error} = await supabase.storage.from("dindin-bucket").createSignedUrl(`/assets/uploads/${avatar[0].photo}`, 60);
+    const {data, error} = await supabase.storage.from(process.env.SUPABASE_BUCKET!).createSignedUrl(`/assets/uploads/${avatar[0].photo}`, 60);
 
     if(error){
       throw error;
@@ -132,9 +136,10 @@ export const EditUserProfile = async (req: Request, res: Response) => {
   const user = req.user;
   const { name, surname, username, email } = req.body;
   let photo = "";
-
+  
+  
   if (req.file) {
-    photo = req.file.filename;
+    photo = await uploadToSupabase(req.file);
   }
 
   try {
@@ -158,19 +163,25 @@ export const EditUserProfile = async (req: Request, res: Response) => {
     const valuesOldPhotoName = [user];
     const {rows: oldPhotoName} = await db.query(queryOldPhotName, valuesOldPhotoName);
 
-    const deleteOldPhoto = (oldPhotoFilename: string) => {
+    const deleteOldPhoto = async (oldPhotoFilename: string) => {
       if (oldPhotoFilename !== "") {
-        const path = `src/assets/uploads/${oldPhotoFilename}`;
-        fs.unlink(path, (err) => {
-          if (err) {
-            console.error(err);
+        try{
+          const supabase = supabaseClient();
+          const {error} = await supabase.storage.from(process.env.SUPABASE_BUCKET!).remove([`assets/uploads/${oldPhotoFilename}`]);
+
+          if(error){
+            throw error;
           }
-        });
+
+        }catch(err){
+          console.error(err);
+          return "";
+        }
       }
     }
 
     const fieldsToUpdate = {
-      photo: photo !== "" ? photo: undefined,
+      photo: photo !== "" ? photo : undefined,
       name: name ? name : undefined,
       surname: surname ? surname : undefined,
       email: email ? email : undefined,
