@@ -6,11 +6,12 @@ import PasswordValidator from "@/components/ui/passwordvalidator";
 import { Progress } from "@/components/ui/progress";
 import TextField from "@/components/ui/textfield";
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 import { UserProfileType } from "@/types/UserProfileType";
 import { passwordCheck } from "@/utils/password-check";
 import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
-import { Camera } from "lucide-react";
+import { Camera, LoaderPinwheel } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -176,9 +177,14 @@ export default function CreateProfile() {
             <Button
               size={"lg"}
               type="submit"
-              className="w-full"
+              className={cn("w-full", `${mutation.isPending && "opacity-50 cursor-not-allowed pointer-events-none"}`)} 
             >
-              Continuar
+              {mutation.isPending ? (
+                <div className="flex items-center gap-3">
+                  <LoaderPinwheel size={16} className="animate-spin"/>
+                  Carregando
+                </div>
+              ) : ("Continuar") }
             </Button>
           </form>
       </div>
