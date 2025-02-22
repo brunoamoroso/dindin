@@ -3,17 +3,21 @@ import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
 import TextField from "@/components/ui/textfield";
 import { useToast } from "@/components/ui/use-toast";
+import { TransactionsContextType } from "@/context/TransactionsContext";
 import { useMutation } from "@tanstack/react-query";
 import { CircleCheck } from "lucide-react";
 import { useState } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
 export function CreateAccount(){
+    const {setContextTransactionData} = useOutletContext<TransactionsContextType>();
     const [description, setDescription] = useState("");
     const {toast} = useToast();
+    const navigate = useNavigate();
 
     const mutate = useMutation({
         mutationFn: (description: string) => createAccount({description}),
-        onSuccess: () => {
+        onSuccess: (data: {id: string, description: string}) => {
             toast({
                 title: (
                     <div className="flex gap-3 items-center">
@@ -23,7 +27,13 @@ export function CreateAccount(){
                 ),
                 variant: "positive",
                 duration: 2000,
-            })
+            });
+            setContextTransactionData((prevTransaction) => ({
+                ...prevTransaction,
+                account_id: data.id,
+                account: data.description,
+            }));
+            navigate("/transaction");
         }
     });
 

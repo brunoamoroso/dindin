@@ -7,7 +7,8 @@ import { passwordCheck } from "@/utils/password-check";
 import { useMutation } from "@tanstack/react-query";
 import { ChangeEvent, FormEvent, useState } from "react";
 import api from "@/api/api";
-import { CircleCheck, CircleX } from "lucide-react";
+import { CircleCheck, CircleX, LoaderCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const rules = ["Maiúscula", "Minúscula", "Número", "8 Dígitos", "Símbolo"];
 
@@ -136,8 +137,13 @@ export function ChangePassword() {
             </div>
           </div>
 
-          <Button size={"lg"} type="submit" className="w-full">
-            Salvar
+          <Button size={"lg"} type="submit" className={cn("w-full", `${mutation.isPending && "opacity-50 cursor-not-allowed pointer-events-none"}`)}>
+            {mutation.isPending ? (
+              <div className="flex items-center gap-2">
+                <LoaderCircle size={16} className="animate-spin" />
+                Carregando
+              </div>
+            ) : ("Salvar")}
           </Button>
         </form>
       </div>

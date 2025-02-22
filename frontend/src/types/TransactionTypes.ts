@@ -1,4 +1,4 @@
-export interface TransactionType {
+export type TransactionType = {
     id?: string;
     type: "gain" | "expense";
     description: string;
@@ -17,7 +17,7 @@ export interface TransactionType {
 }
 
 
-export interface DataAllTransactionsType {
+export type DataAllTransactionsType = {
     allTransactionsByMonth: TransactionType[];
     sumAllAmountGained: number;
     sumAllAmountExpend: number;

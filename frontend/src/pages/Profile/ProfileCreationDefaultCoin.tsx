@@ -9,11 +9,10 @@ import { useNavigate } from "react-router-dom";
 
 export function ProfileCreationDefaultCoin(){
     const navigate = useNavigate();
-    type CoinWithUserSelection = CoinType & {userHas: number};
     const [searchCoin, setSearchCoin] = useState("");
-    const [filteredCoins, setFilteredCoins] = useState<CoinWithUserSelection[]>([]);
+    const [filteredCoins, setFilteredCoins] = useState<CoinType[]>([]);
 
-    const {data} = useQuery<CoinWithUserSelection[]>({
+    const {data} = useQuery<CoinType[]>({
         queryKey: ["profileCreationGetCoins"],
         queryFn: () => getCoins()
     });
@@ -72,14 +71,11 @@ export function ProfileCreationDefaultCoin(){
                             dataId={item.id}
                             value={item.code}
                             trailingIcon={false}
-                            disabled={Boolean(item.userHas)}
                             onClick={handleCoinClick}
                         >
                         <div className="flex gap-4 items-center">
                             <img
-                                src={`${
-                                    import.meta.env.VITE_BACKEND_URL
-                                }/assets/coin-covers/${item.img}.png`}
+                                src={item.img}
                                 alt="coin"
                                 className="w-7 h-7 object-cover rounded-full">
                                 

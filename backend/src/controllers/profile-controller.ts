@@ -100,19 +100,21 @@ export const getAvatar = async (req: Request, res: Response) => {
 
     const {rows: avatar} = await db.query(queryAvatar, valuesAvatar);
 
-    const supabase = supabaseClient();
+    if(avatar[0].photo !== ""){
+      const supabase = supabaseClient();
+  
+      const {data, error} = await supabase.storage.from(process.env.SUPABASE_BUCKET!).createSignedUrl(`/assets/uploads/${avatar[0].photo}`, 60);
+  
+      if(error){
+        throw error;
+      }
 
-    const {data, error} = await supabase.storage.from(process.env.SUPABASE_BUCKET!).createSignedUrl(`/assets/uploads/${avatar[0].photo}`, 60);
-
-    if(error){
-      throw error;
+      avatar[0].photo = data.signedUrl;
     }
-
-    avatar[0].photo = data.signedUrl;
-
     return res.status(200).json(avatar[0]);
   } catch (err) {
     console.log(err);
+    return res.status(500).json({ message: "Erro ao buscar avatar" });
   }
 };
 
