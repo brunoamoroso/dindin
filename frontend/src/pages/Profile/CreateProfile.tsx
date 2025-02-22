@@ -11,7 +11,7 @@ import { UserProfileType } from "@/types/UserProfileType";
 import { passwordCheck } from "@/utils/password-check";
 import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
-import { Camera, LoaderPinwheel } from "lucide-react";
+import { Camera, LoaderCircle } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -181,7 +181,7 @@ export default function CreateProfile() {
             >
               {mutation.isPending ? (
                 <div className="flex items-center gap-3">
-                  <LoaderPinwheel size={16} className="animate-spin"/>
+                  <LoaderCircle size={16} className="animate-spin"/>
                   Carregando
                 </div>
               ) : ("Continuar") }
