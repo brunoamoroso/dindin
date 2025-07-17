@@ -18,9 +18,10 @@ This project represents a full-stack effort, where I worked on everything from p
 -   Provided users with valuable insights into their financial habits, helping them take actionable steps toward better money management.
 
 ### Learning Milestones
--   Learned how to use **EdgeDB** which is a database development upon PostgreSQL with a touch of GraphQL for writing queries. It also let create a more strictly-typed queries when used with typescript.
--   Deepened my expertise in **TypeScript**, **TailwindCSS**, and the **shadcn** component library.
--   Developed a robust product roadmap aligned with user needs and future trends in personal finance.
+-   Learned how to use **EdgeDB** which is a database development upon PostgreSQL with a touch of GraphQL for writing queries. It also let create a more strictly-typed queries when used with typescript;
+-   Decided to move from **EdgeDB** to **PostgreSQL** which led me to do a whole DB migration;
+-   Deepened my expertise in **TypeScript**, **TailwindCSS**, and the **shadcn** component library;
+-   Developed a robust product roadmap aligned with user needs and future trends in personal finance;
 
 ## 🚀Features
 ### Current Features (MVP):
