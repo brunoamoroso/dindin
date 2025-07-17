@@ -1,6 +1,6 @@
 
-# CreadAluga - Landing Page
-![Image:CredAluga Shots](https://i.postimg.cc/85Q1VJ3r/Dindin-Mock.png)
+# DinDin - Financial Tracker App
+![Image:Financial Tracker App](https://i.postimg.cc/85Q1VJ3r/Dindin-Mock.png)
  [![Author: Bruno Amoroso](https://img.shields.io/badge/Bruno%20Amoroso-14b8a6?label=Author&style=for-the-badge)](https://www.linkedin.com/in/amorosobruno) ![Language: Typescript](https://img.shields.io/badge/TYPESCRIPT-3178C6?label=LANGUAGE&style=for-the-badge&logo=typescript&logoColor=ffffff)
 ![PWA: PWA](https://img.shields.io/badge/PROGRESSIVE%20WEB%20APP-5A0FC8?label=&style=for-the-badge&logo=pwa) ![Framework:Tailwind](https://img.shields.io/badge/TAILWIND-06B6D4?label=FRAMEWORK&style=for-the-badge&logo=tailwindcss) ![UIKIT:Shadcn](https://img.shields.io/badge/SHADCN%20UI-000000?label=UI%20KIT&style=for-the-badge&logo=shadcnui) ![Environment: NodeJS](https://img.shields.io/badge/NODEJS-5FA04E?label=environment&style=for-the-badge&logo=nodedotjs) ![Framework: Express](https://img.shields.io/badge/Express-000000?label=FRAMEWORK&style=for-the-badge&logo=express)    ![Database: EdgeDB](https://img.shields.io/badge/EDGE%20DB-8280ff?label=DATABASE&style=for-the-badge)  
 
