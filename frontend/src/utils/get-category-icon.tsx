@@ -1,4 +1,4 @@
-import { ArrowRightLeft, Backpack, BadgePercent, Banknote, Car, Coins, Cross, DiamondPercent, Dumbbell, Gift, GraduationCap, HandCoins, Heart, House, Package, PartyPopper, PawPrint, PiggyBank, Pizza, Shirt, ShoppingCart, TvMinimalPlay } from "lucide-react";
+import { ArrowRightLeft, Backpack, BadgePercent, Banknote, Car, Coins, Cross, DiamondPercent, Dumbbell, Gift, GraduationCap, HandCoins, Heart, HeartHandshake, House, Package, PartyPopper, PawPrint, PiggyBank, Pizza, Shirt, ShoppingCart, TvMinimalPlay } from "lucide-react";
 
 export default function getCategoryIcon(category: string): {dataVizColor: string, dataVizBorderColor: string, icon: JSX.Element}{
     const icons: Record<string, {dataVizColor: string, dataVizBorderColor: string, icon: JSX.Element}> = {
@@ -87,6 +87,11 @@ export default function getCategoryIcon(category: string): {dataVizColor: string
             dataVizColor: "#24cc70",
             dataVizBorderColor: "#4fe187",
             icon: <PawPrint />
+        },
+        doação:{
+            dataVizColor: "#c2410c",
+            dataVizBorderColor: "#f97316",
+            icon: <HeartHandshake />
         },
         
         //gain icons
