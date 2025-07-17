@@ -69,20 +69,23 @@ export default function Accounts() {
         )}
 
         {!isLoading &&
-          data !== undefined &&
-          data.map((account, index, arr) => (
-            <MenuListItem
-              size="lg"
-              trailingIcon={false}
-              key={index}
-              dataId={account.id}
-              value={account.description}
-              onClick={handleClick}
-              separator={arr.length - 1 !== index}
-            >
-              {account.description}
-            </MenuListItem>
-          ))}
+          data !== undefined && (
+            <div className="flex flex-col">
+              {data.map((account, index, arr) => (
+                <MenuListItem
+                  size="lg"
+                  trailingIcon={false}
+                  key={index}
+                  dataId={account.id}
+                  value={account.description}
+                  onClick={handleClick}
+                  separator={arr.length - 1 !== index}
+                >
+                  {account.description}
+                </MenuListItem>
+              ))}
+            </div>
+          )}
 
         {!isLoading && data?.length === 0 && (
           <h1 className="title-large text-title">
