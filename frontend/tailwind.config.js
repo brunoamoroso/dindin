@@ -1,15 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
-  content: [
-  {
-    files: ['./src/**/*.{js,ts,jsx,tsx}'],
-  }
-  ],
+  content: ['./src/**/*.{js,ts,jsx,tsx}'], // ✅ simplified for Tailwind v4
   prefix: "",
   theme: {
-    fontFamily:{
-      'sans':['Satoshi', 'ui-sans-serif']
+    fontFamily: {
+      'sans': ['Satoshi', 'ui-sans-serif']
     },
     container: {
       center: true,
@@ -20,7 +16,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        green:{
+        green: {
           50: '#DEFFE6',
           100: '#B1F8C5',
           200: '#79F0A0',
@@ -33,7 +29,7 @@ module.exports = {
           900: '#033217',
           950: '#01200C'
         },
-        red:{
+        red: {
           50: '#FFEEF1',
           100: '#FDDDDF',
           200: '#FDBDB9',
@@ -46,12 +42,12 @@ module.exports = {
           900: '#51010C',
           950: '#300206',
         },
-        neutral:{
+        neutral: {
           50: '#EFF6FB',
           100: '#E2EBF3',
           200: '#D1DAE2',
           300: '#BCC5CD',
-          400:  '#96A2AC',
+          400: '#96A2AC',
           500: '#74808C',
           600: '#55626D',
           700: '#3B4853',
@@ -59,7 +55,7 @@ module.exports = {
           900: '#0E1A23',
           950: '#080E12'
         },
-        outline:"oklch(var(--outline))",
+        outline: "oklch(var(--outline))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -97,24 +93,31 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        disabled:{
+        disabled: {
           DEFAULT: "oklch(var(--disabled))",
           "on-disabled": "oklch(var(--on-disabled))",
         },
-        
         title: "var(--text-title)",
         body: "var(--text-body)",
         container2: "oklch(var(--container2))",
         container1: "oklch(var(--container1))",
         container0: "oklch(var(--container0))",
-        surface:"oklch(var(--surface-bg))",
+        surface: "oklch(var(--surface-bg))",
         subtle: "oklch(var(--text-subtle))",
         positive: "oklch(var(--text-green))",
         negative: "oklch(var(--text-red))",
       },
       boxShadow: {
-        'button':['inset 0px 0px 0px 2px rgba(255,255,255,0.45)', 'inset 0px 1px 0px 1px rgba(255,255,255,0.75)', '0px 4px 4px 2px rgba(0,0,0,0.25)','0px 2px 2px 1px rgba(0,0,0,0.25)'],
-        'button-pressed': ['inset 0px 0px 0px 2px rgba(0,0,0,0.35)', 'inset 0px 2px 0px 2px rgba(0,0,0,0.5)'],
+        'button': [
+          'inset 0px 0px 0px 2px rgba(255,255,255,0.45)',
+          'inset 0px 1px 0px 1px rgba(255,255,255,0.75)',
+          '0px 4px 4px 2px rgba(0,0,0,0.25)',
+          '0px 2px 2px 1px rgba(0,0,0,0.25)'
+        ],
+        'button-pressed': [
+          'inset 0px 0px 0px 2px rgba(0,0,0,0.35)',
+          'inset 0px 2px 0px 2px rgba(0,0,0,0.5)'
+        ],
       },
       borderRadius: {
         sm: "calc(var(--radius) - 8px)",
