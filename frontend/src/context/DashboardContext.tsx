@@ -1,23 +1,27 @@
-import { useUserDefaultCoin } from "@/hooks/useUserDefaultCoin";
-import { CoinType } from "@/types/CoinTypes";
 import { SetStateAction, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useOutletContext } from "react-router-dom";
 
 export interface DashboardContextType {
   selectedDate: Date;
   setSelectedDate: React.Dispatch<SetStateAction<Date>>;
-  userDefaultCoin: CoinType;
-  isErrorDefaultCoin: boolean;
-  isLoadingDefaultCoin: boolean;
+  coinSelected: "global" | string;
+  setCoinSelected: React.Dispatch<SetStateAction<"global" | string>>;
 }
 
 export function DashboardContext() {
-  const {data: userDefaultCoin, isError: isErrorDefaultCoin, isLoading: isLoadingDefaultCoin} = useUserDefaultCoin();
-
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [coinSelected, setCoinSelected] = useState<"global" | string>("global");
   return (
     <>
-      <Outlet context={{ selectedDate, setSelectedDate, userDefaultCoin, isErrorDefaultCoin, isLoadingDefaultCoin }} />
+      <Outlet context={{ selectedDate, setSelectedDate, coinSelected, setCoinSelected }} />
     </>
   );
+}
+
+export function useDashboardContext(): DashboardContextType {
+  const context = useOutletContext<DashboardContextType>();
+  if (!context) {
+    throw new Error("useDashboardContext must be used within a DashboardContext");
+  }
+  return context;
 }

@@ -13,6 +13,7 @@ import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
 import { TransactionsContextType } from "@/context/TransactionsContext";
 import { currencyFormat } from "@/utils/currency-format";
+import { getCurrencySymbol } from "@/utils/get-currency-symbol";
 import splitInstallmentsDisplay from "@/utils/get-split-installments";
 import { Landmark, LoaderCircle, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
@@ -55,8 +56,8 @@ export default function ExpenseTransaction({
 
   const handlePaymentChips = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const target = e.target as HTMLButtonElement;
-
+    const target = e.currentTarget;
+    
     if (
       target.value === "single" &&
       contextTransactionData.installments !== "0"
@@ -121,7 +122,7 @@ export default function ExpenseTransaction({
           <span className="label-medium text-content-subtle">Valor Gasto</span>
           <div className="flex gap-1">
             <span className="headline-small text-content-primary">
-              {contextTransactionData.coin}
+              {getCurrencySymbol(contextTransactionData.coin)}
             </span>
             <span
               id="amount_placeholder"
@@ -138,7 +139,7 @@ export default function ExpenseTransaction({
               pattern="[0-9]"
               id="amount_input"
               type="text"
-              className="hidden text-critical"
+              className="hidden text-critical bg-transparent focus-visible:ring-0"
               placeholder="0.00"
               onChange={handleAmountChange}
               value={currencyFormat(contextTransactionData.amount)}

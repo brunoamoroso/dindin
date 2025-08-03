@@ -43,7 +43,6 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     transactionScope = paramTransactionScope ?? location.state.transactionScope;
   }
 
-
   const { data } = useQuery({
     queryKey: ["transaction-edit", paramId],
     queryFn: () =>
@@ -62,8 +61,11 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
         amount: data.amount,
         description: data.description,
         category: data.category,
+        category_id: data.category_id,
         subcategory: data.subcategory,
-        account: data.account,  
+        subcategory_id: data.subcategory_id,
+        account: data.account,
+        account_id: data.account_id,
         date: {
           chip: "otherDate",
           value: new Date(data.date),
@@ -76,6 +78,8 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       }));
     }
   }, [data, setContextTransactionData]);
+
+
 
   const handleDate = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -325,12 +329,6 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
         <InlineTabsList>
           <InlineTabsTrigger
             value="gain"
-            className={`${
-              contextTransactionData.type === "expense" &&
-              contextTransactionData.paymentCondition === "multi"
-                ? "hidden"
-                : ""
-            }`}
           >
             Ganho
           </InlineTabsTrigger>

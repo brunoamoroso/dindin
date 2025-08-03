@@ -14,6 +14,7 @@ export type TransactionType = {
     installments: number;
     install_number: number;
     payment_condition: "none" | "single" | "multi";
+    code: string;
 }
 
 

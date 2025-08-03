@@ -5,31 +5,32 @@ import BottomNav from "@/components/BottomNav";
 import LastTransactions from "./LastTransactions";
 import ExpenseByCatChart from "./ExpenseByCatChart";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@radix-ui/react-separator";
-import { useOutletContext } from "react-router-dom";
 import { MonthPicker } from "../MonthPicker";
 import { AvatarDashboard } from "@/components/AvatarDashboard";
 import { CoinSelector } from "@/components/CoinSelector";
-import { DashboardContextType } from "@/context/DashboardContext";
+import { useDashboardContext } from "@/context/DashboardContext";
 import { getAllTransactionsByMonth } from "@/api/transactionService";
+import { Separator } from "@/components/ui/separator";
 
 export default function Dashboard() {
-  const { selectedDate, userDefaultCoin } = useOutletContext<DashboardContextType>();
-
+  const { selectedDate, coinSelected } = useDashboardContext();
+  
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["dashboard-data", selectedDate],
-    queryFn: () => getAllTransactionsByMonth(selectedDate.toISOString()),
+    queryKey: ["dashboard-data", selectedDate, coinSelected],
+    queryFn: () => getAllTransactionsByMonth(selectedDate.toISOString(), coinSelected),
   });
 
   return (
     <div className="min-h-dvh bg-surface flex flex-col text-content-secondary">
-      <div className="flex flex-1 flex-col gap-6 pb-32 mx-6">
-        <div className="relative flex items-center justify-between py-6">
-          <CoinSelector />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <MonthPicker />
-          </div>
+      <div className="flex flex-1 flex-col gap-5 pb-40">
+        <div className="flex items-center justify-start py-6 mx-6">
           <AvatarDashboard />
+        </div>
+
+        <CoinSelector />
+
+        <div className="flex justify-center mx-6">
+          <MonthPicker />
         </div>
         {isError && (
           <>
@@ -42,28 +43,30 @@ export default function Dashboard() {
             </span>
           </>
         )}
-        {!isError && (
-          <div className="flex gap-6">
-            <div className="flex flex-col flex-1 bg-layer-tertiary p-6 rounded-lg">
-              <span className="label-small text-content-primary">Você ganhou</span>
+        {!isError && coinSelected !== "global" && (
+          <div className="flex gap-6 mx-6 mt-2">
+            <div className="flex flex-col flex-1">
+              <span className="label-small text-content-primary">Recebeu</span>
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-positive">
-                  {currencyFormat(data.sumAllAmountGained, userDefaultCoin?.code)}
+                  {currencyFormat(data.sumAllAmountGained, data.allTransactionsByMonth[0]?.code)}
                 </span>
               )}
             </div>
-            <div className="flex flex-col flex-1 bg-layer-tertiary p-6 rounded-lg">
-              <span className="label-small text-content-primary">Você gastou</span>
+            <div className="flex flex-col flex-1 text-right">
+              <span className="label-small text-content-primary">Gastou</span>
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-critical">
-                  {currencyFormat(data.sumAllAmountExpend, userDefaultCoin?.code)}
+                  {currencyFormat(data.sumAllAmountExpend, data.allTransactionsByMonth[0]?.code)}
                 </span>
               )}
             </div>
           </div>
         )}
+
+        {!isError && coinSelected !== "global" && <Separator />}
 
         {!isLoading && data && !isError && (
           <LastTransactions data={data.allTransactionsByMonth} />
@@ -91,12 +94,13 @@ export default function Dashboard() {
           </div>
         )}
 
-        {!isLoading && data && !isError && (
+        {!isError && coinSelected !== "global" && <Separator />}
+
+        {!isLoading && data && !isError && coinSelected !== "global" && (
           <ExpenseByCatChart data={data.allTransactionsByMonth} />
         )}
         {isLoading && (
           <div className="bg-layer-tertiary rounded-lg py-4">
-            <h1 className="title-small text-content-primary px-6">Gasto por Categoria</h1>
             <div className="px-6 pt-4">
               <Skeleton className="w-full rounded-lg h-56 mb-10" />
               <div className="flex flex-col gap-6">

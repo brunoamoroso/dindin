@@ -1,8 +1,11 @@
 import { Link, NavLink } from "react-router-dom";
 import { IconButton } from "./ui/icon-button";
 import { Goal, LayoutGrid, Plus } from "lucide-react";
+import { useDashboardContext } from "@/context/DashboardContext";
 
 export default function BottomNav(){
+    const {coinSelected} = useDashboardContext();
+
     const navButtons = [
         {
             link: "/dashboard",
@@ -25,6 +28,7 @@ export default function BottomNav(){
         <div className="flex flex-1 fixed bottom-10 items-center w-dvw">
             <div className="flex justify-between items-center px-8 w-full mx-6 bg-neutral-950/75 border border-outline rounded-full backdrop-blur-lg">
                 {navButtons.map((obj, i) => {
+                    if( i === 1 && coinSelected === "global" ) return;
                     if(i === 1){
                         return(
                         <Link to={obj.link} key={i}>

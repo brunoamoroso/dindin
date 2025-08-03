@@ -1,7 +1,6 @@
-import { useUserDefaultCoin } from "@/hooks/useUserDefaultCoin";
-import { getCurrencySymbol } from "@/utils/get-currency-symbol";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
+import { useDashboardContext } from "./DashboardContext";
 
 export interface TransactionDataType {
   coin: string;
@@ -32,8 +31,8 @@ export interface TransactionsContextType {
 }
 
 function CoinTransaction(): string{
-  const {data} = useUserDefaultCoin();
-  return getCurrencySymbol(data!.code);
+  const {coinSelected} = useDashboardContext();
+  return coinSelected;
 }
 
 export function TransactionsContext(){
