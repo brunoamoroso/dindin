@@ -28,7 +28,7 @@ export function ListAllTransactions() {
   });
 
   return (
-    <div className="min-h-dvh bg-surface flex flex-col text-body gap-6">
+    <div className="min-h-dvh bg-surface flex flex-col text-content-secondary gap-6">
       <AppBar title="Todas as Transações" pageBack="dashboard" />
 
       <div className="container flex gap-6 items-center justify-between">
@@ -36,7 +36,7 @@ export function ListAllTransactions() {
         <MonthPicker  />
       </div>
 
-      <div className="container flex flex-col flex-1 bg-container2 rounded-t-lg py-10">
+      <div className="container flex flex-col flex-1 bg-layer-tertiary rounded-t-lg py-10">
         {data?.allTransactionsByMonth.length === 0 && (
           <span className="body-large">Não houveram transações neste mês.</span>
         )}
@@ -49,8 +49,8 @@ export function ListAllTransactions() {
               <div className="flex flex-1 gap-4 items-center">
                 <div>{getCategoryIcon(d.category).icon}</div>
                 <div className="flex flex-col">
-                  <span className="label-large text-title">{d.category}</span>
-                  <span className="body-medium text-subtle">
+                  <span className="label-large text-content-primary">{d.category}</span>
+                  <span className="body-medium text-content-subtle">
                     {new Date(d.date).toLocaleDateString()}
                     {d.install_number && " - " + d.install_number + " / " + d.installments}
                   </span>
@@ -59,12 +59,12 @@ export function ListAllTransactions() {
               <div className="flex flex-col items-end">
                 <span
                   className={`label-medium ${
-                    d.type === "gain" ? "text-positive" : "text-negative"
+                    d.type === "gain" ? "text-positive" : "text-critical"
                   }`}
                 >
                   {currencyFormat(d.amount)}
                 </span>
-                <span className="body-small text-subtle">{d.account}</span>
+                <span className="body-small text-content-subtle">{d.account}</span>
               </div>
               <ActionsTransaction
                 id={d.id!}

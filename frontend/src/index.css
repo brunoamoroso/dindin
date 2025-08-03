@@ -1,6 +1,178 @@
-@tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@import "tailwindcss";
+
+
+@theme inline {
+
+  --font-sans: "Satoshi", ui-sans-serif;
+
+  --radius-sm: calc(var(--radius) - 8px);
+  --radius: var(--radius);
+  --radius-md: calc(var(--radius) + 12px);
+  --radius-lg: calc(var(--radius) + 20px);
+  --radius-xl: calc(var(--radius) + 52px);
+
+  --shadow-button: 
+  inset 0px 0px 0px 2px rgba(255,255,255,0.45),
+  inset 0px 1px 0px 1px rgba(255,255,255,0.75),
+  0px 4px 4px 2px rgba(0,0,0,0.25),
+  0px 2px 2px 1px rgba(0,0,0,0.25);
+
+  --shadow-button-pressed: 
+    inset 0px 0px 0px 2px rgba(0,0,0,0.35),
+    inset 0px 2px 0px 2px rgba(0,0,0,0.5);
+
+  --color-green-50: oklch(96.97% 0.048 152.74);
+  --color-green-100: oklch(91.88% 0.099 152.95);
+  --color-green-300: oklch(81.04% 0.178 152.63);
+  --color-green-400: oklch(74.42% 0.184 152.62);
+  --color-green-500: oklch(68.42% 0.175 152.45);
+  --color-green-600: oklch(57.43% 0.145 152.49);
+  --color-green-700: oklch(44.87% 0.105 152.58);
+  --color-green-800: oklch(34% 0.085 152.65);
+  --color-green-900: oklch(27.92% 0.069 152.65);
+  --color-green-950: oklch(21.41% 0.054 152.25);
+
+  --color-cyan-50: oklch(94.8% 0.049 191.65);  
+  --color-cyan-100: oklch(91.89% 0.085 190.29);
+  --color-cyan-200: oklch(85.37% 0.11 190.95);
+  --color-cyan-300: oklch(80.55% 0.12 190.33);
+  --color-cyan-400: oklch(75.07% 0.126 190.23);
+  --color-cyan-500: oklch(68.15% 0.115 190.41);
+  --color-cyan-600: oklch(59.04% 0.1 190.43);
+  --color-cyan-700: oklch(49.46% 0.08 190.32);
+  --color-cyan-800: oklch(40.94% 0.07 190.66);
+  --color-cyan-900: oklch(34.04% 0.055 189.42);
+  --color-cyan-950: oklch(26.08% 0.045 189.99);
+
+  --color-blue-50: oklch(95.19% 0.021 232.13);
+  --color-blue-100: oklch(91.73% 0.048 232.89);
+  --color-blue-200: oklch(86.3% 0.082 232.48);
+  --color-blue-300: oklch(80.65% 0.11 232.88);
+  --color-blue-400: oklch(73.67% 0.12 233.29);
+  --color-blue-500: oklch(67.42% 0.14 233.96);
+  --color-blue-600: oklch(60.65% 0.12 233.25);
+  --color-blue-700: oklch(50.43% 0.1 233.42);
+  --color-blue-800: oklch(40.98% 0.085 233.8);
+  --color-blue-900: oklch(34.47% 0.075 237);
+  --color-blue-950: oklch(24.98% 0.05 234.6);
+
+  --color-purple-50: oklch(95.21% 0.017 282.54);
+  --color-purple-100: oklch(90.76% 0.041 281.02);
+  --color-purple-200: oklch(84.45% 0.077 280.56);
+  --color-purple-300: oklch(77.09% 0.111 281.19);
+  --color-purple-400: oklch(71.52% 0.15 280.65);
+  --color-purple-500: oklch(64.69% 0.179 280.53);
+  --color-purple-600: oklch(57.53% 0.195 280.7);
+  --color-purple-700: oklch(47.9% 0.195 280.55);
+  --color-purple-800: oklch(40.51% 0.185 280.85);
+  --color-purple-900: oklch(32.52% 0.175 280.51);
+  --color-purple-950: oklch(20.99% 0.126 280.64);
+
+  --color-pink-50: oklch(95.69% 0.03 315.91);
+  --color-pink-100: oklch(91.71% 0.06 316.47);
+  --color-pink-200: oklch(85.74% 0.1 316.96);
+  --color-pink-300: oklch(80.71% 0.13 317.22);
+  --color-pink-400: oklch(76.2% 0.178 316.68);
+  --color-pink-500: oklch(70.7% 0.211 316.64);
+  --color-pink-600: oklch(62.61% 0.22 316.46);
+  --color-pink-700: oklch(52.75% 0.219 316.31);
+  --color-pink-800: oklch(46.19% 0.199 316.62);
+  --color-pink-900: oklch(32.6% 0.16 316.13);
+  --color-pink-950: oklch(24.62% 0.12 317);
+
+  --color-yellow-50: oklch(95.4% 0.038 76.2);
+  --color-yellow-100: oklch(92.1% 0.065 76.67);
+  --color-yellow-200: oklch(87.6% 0.09 77.05);
+  --color-yellow-300: oklch(81.99% 0.105 76.23);
+  --color-yellow-400: oklch(79.56% 0.13 76.03);
+  --color-yellow-500: oklch(74.94% 0.145 75.61);
+  --color-yellow-600: oklch(68.6% 0.14 75.86);
+  --color-yellow-700: oklch(55.97% 0.115 75.31);
+  --color-yellow-800: oklch(45.94% 0.095 75.52);
+  --color-yellow-900: oklch(37.44% 0.075 74.59);
+  --color-yellow-950: oklch(27.06% 0.055 74.8);
+
+  --color-orange-50: oklch(94.27% 0.028 48.4);
+  --color-orange-100: oklch(90.27% 0.054 47.5);
+  --color-orange-200: oklch(85.33% 0.084 48.47);
+  --color-orange-300: oklch(76.86% 0.138 48.77);
+  --color-orange-400: oklch(71.9% 0.158 49.04);
+  --color-orange-500: oklch(65.33% 0.164 48.41);
+  --color-orange-600: oklch(57.8% 0.153 48.45);
+  --color-orange-700: oklch(47.74% 0.128 48.36);
+  --color-orange-800: oklch(42.15% 0.109 48.14);
+  --color-orange-900: oklch(32.36% 0.082 48.88);
+  --color-orange-950: oklch(25.49% 0.069 48.58);
+
+  --color-red-50: oklch(96.34% 0.019 5.29);
+  --color-red-100: oklch(92.45% 0.036 13.52);
+  --color-red-200: oklch(85.56% 0.075 22.81);
+  --color-red-300: oklch(77.56% 0.13 22.19);
+  --color-red-400: oklch(69% 0.195 22.03);
+  --color-red-500: oklch(62.97% 0.22 22.22);
+  --color-red-600: oklch(54.94% 0.194 22.13);
+  --color-red-700: oklch(543.4% 0.165 22.05);
+  --color-red-800: oklch(34.53% 0.135 21.9);
+  --color-red-900: oklch(27.56% 0.11 22.19);
+  --color-red-950: oklch(19.92% 0.075 21.36);
+
+  --color-neutral-50: oklch(96.93% 0.01 238.51);
+  --color-neutral-100: oklch(93.56% 0.015 244.72);
+  --color-neutral-200: oklch(88.39% 0.015 244.74);
+  --color-neutral-300: oklch(81.89% 0.015 244.76);
+  --color-neutral-400: oklch(70.59% 0.02 243.08);
+  --color-neutral-500: oklch(59.41% 0.023 248.22);
+  --color-neutral-600: oklch(48.91% 0.024 243.78);
+  --color-neutral-700: oklch(39.46% 0.025 243.99);
+  --color-neutral-800: oklch(29.99% 0.025 248.67);
+  --color-neutral-900: oklch(21.11% 0.025 241.78);
+  --color-neutral-950: oklch(15.93% 0.013 237.23);
+
+  --color-primary: var(--color-green-500);
+  --color-on-primary: var(--color-green-950);
+  --color-primary-outline: var(--color-green-700);
+  --color-primary-focus: var(--color-green-300);
+
+  --color-secondary: oklch(from var(--color-neutral-50) l c h / 0.01);
+  --color-on-secondary: var(--color-neutral-50);
+  --color-secondary-outline: var(--color-neutral-700);
+
+  --color-destructive: var(--color-red-500);
+  --color-on-destructive: var(--color-red-50);
+  --color-destructive-outline: var(--color-red-700);
+  --color-destructive-focus: var(--color-red-300);
+
+  
+  --color-state-hover: oklch(from white l c h / 0.15);
+  --color-state-pressed: oklch(from black l c h / 0.6);
+  
+  --color-disabled: var(--color-neutral-300);
+  --color-on-disabled: var(--color-neutral-700);
+
+  --color-control: oklch(from white l c h / 0.15);
+
+  --color-content-primary: var(--color-neutral-50);
+  --color-content-secondary: var(--color-neutral-100);
+  --color-content-subtle: var(--color-neutral-400);
+  --color-content-inverted: var(--color-neutral-950);
+
+  --color-surface: var(--color-neutral-950);
+
+  --color-layer-primary: var(--color-neutral-700);
+  --color-layer-secondary: var(--color-neutral-800);
+  --color-layer-tertiary: var(--color-neutral-900);
+
+  --color-outline: var(--color-neutral-600);
+
+  --color-positive: var(--color-green-400);
+  --color-positive-subtle: var(--color-green-100);
+  --color-positive-on-subtle: var(--color-green-700);
+
+  --color-critical: var(--color-red-400);
+  --color-critical-subtle: var(--color-red-500);
+  --color-critical-on-subtle: var(--color-red-100)
+
+}
 
   @layer base {
     :root {
@@ -36,22 +208,7 @@
       --input: 214.3 31.8% 91.4%;
       --ring: 222.2 84% 4.9%;
 
-      --outline: 81.89% 0.015 244.76; /*oklch*/
-
       --radius: 12px;
-
-      --disabled: 81.89% 0.015 244.76;
-      --on-disabled: 48.91% 0.024 243.78;
-      
-      --surface-bg: 15.93% 0.013 237.23;
-      --text-title: #EFF6FB;
-      --text-body: #E2EBF3;
-      --text-red: 69% 0.195 22.03;
-      --text-subtle: 81.89% 0.015 244.76;
-      --text-green: 74.42% 0.184 152.62;
-      --container2: 21.11% 0.025 241.78;
-      --container1: 29.99% 0.025 248.67;
-      --container0: 39.46% 0.025 243.99;
     }
 
     .dark {
@@ -111,7 +268,7 @@
     }
 
     .title-small{
-      @apply text-xl font-bold !important;
+      @apply text-xl font-bold;
     }
 
     .label-large{
@@ -136,11 +293,11 @@
 
     .body-small{
       @apply text-xs font-medium;
-    }
+    }    
 
     /* React Date Picker Customization */
     .react-datepicker{
-      @apply shadow-2xl rounded-md border bg-container0 border-outline font-sans p-5;
+      @apply shadow-2xl rounded-md border bg-layer-primary border-outline font-sans p-5;
     }
 
     .react-datepicker .react-datepicker__aria-live{
@@ -156,11 +313,10 @@
     }
 
     .react-datepicker .react-datepicker__month-container .react-datepicker__month .react-datepicker__month-wrapper .react-datepicker__month-text{
-      @apply flex w-4/12 justify-center text-sm text-body py-1 px-3;
+      @apply flex w-4/12 justify-center text-sm text-content-secondary py-1 px-3;
     }
 
     .react-datepicker .react-datepicker__month-container .react-datepicker__month .react-datepicker__month-wrapper .react-datepicker__month-text--selected{
-      @apply bg-primary text-body rounded-full;
+      @apply bg-primary text-content-secondary rounded-full;
     }
-    
   }

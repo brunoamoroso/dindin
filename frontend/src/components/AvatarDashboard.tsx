@@ -21,12 +21,12 @@ export function AvatarDashboard() {
           <img
             src={avatar.photo}
             alt="avatar"
-            className="w-8 h-8 rounded-full object-cover border-2 border-container0"
+            className="w-8 h-8 rounded-full object-cover border-2 border-layer-primary"
           />
         </div>
       )}
       {!isLoading && avatar && avatar.photo === "" && (
-        <div className="w-8 h-8 rounded-full bg-container1 border-2 border-container0 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full bg-layer-secondary border-2 border-layer-primary flex items-center justify-center">
           <span className="label-small">
             {avatar.name[0]}
             {avatar.surname[0]}

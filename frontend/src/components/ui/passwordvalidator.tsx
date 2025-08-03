@@ -9,8 +9,8 @@ function PasswordValidator({validations, rules}: IPasswordValidator){
         <div className="flex gap-3">
             {Object.values(validations).map((valid, index) => (
                 <div key={index} className="flex flex-1 flex-col gap-1 items-center">
-                    <div className={`flex h-1.5 w-full rounded-full ${valid ? "bg-primary" : "bg-container0"}`}></div>
-                    <div className="flex text-body label-small">{rules[index]}</div>
+                    <div className={`flex h-1.5 w-full rounded-full ${valid ? "bg-primary" : "bg-layer-primary"}`}></div>
+                    <div className="flex text-content-secondary label-small">{rules[index]}</div>
                 </div>
             ))}
         </div>

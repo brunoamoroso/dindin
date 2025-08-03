@@ -5,7 +5,7 @@ export function Goals(){
         <div className="bg-surface min-h-dvh flex flex-col">
             <AppBar title="Objetivos" />
             <div className="container flex flex-col flex-1 justify-center items-center">
-                <h1 className="title-large text-title text-center">
+                <h1 className="title-large text-content-primary text-center">
                     Funcionalidade em construção
                 </h1>
             </div>

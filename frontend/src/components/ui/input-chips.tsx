@@ -1,13 +1,13 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 import React from 'react';
 
-const inputChipsVariants = cva("rounded shadow-button text-title label-medium py-1.5 px-3 flex gap-1 items-center disabled:text-disabled disabled:opacity-50", {
+const inputChipsVariants = cva("relative rounded shadow-button text-content-primary label-medium py-1.5 px-3 flex items-center disabled:text-disabled disabled:opacity-50", {
     variants: {
         variant: {
             default: "",
-            pressed: "shadow-button-pressed border border-primary bg-primary-pressed text-primary-on-pressed pe-2.5"
+            pressed: "shadow-button-pressed border border-primary bg-primary text-primary pe-2.5"
         }
     },
     defaultVariants: {
@@ -22,8 +22,13 @@ interface InputChipProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, 
 const InputChips = React.forwardRef<HTMLButtonElement, InputChipProps>(({ className, variant, pressed = false, children, ...props }, ref) => {
     return (
         <button ref={ref} type="button" className={cn(inputChipsVariants({ variant }), className)} {...props}>
-            {children}
-            {pressed && (<X size={20} />)}
+            {variant === "pressed" &&
+            <span className='absolute inset-0 rounded bg-state-pressed' />
+            }
+            <span className='inline-flex gap-1 z-20'>
+                {children}
+                {pressed && (<X size={20} />)}
+            </span>
         </button>
     );
 });

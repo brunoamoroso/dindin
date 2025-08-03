@@ -74,7 +74,7 @@ export function MonthPicker() {
                 <IconButton variant={"ghost"} onClick={decreaseYear}>
                   <ChevronLeft />
                 </IconButton>
-                <span className="label-large text-title">
+                <span className="label-large text-content-primary">
                   {date.getFullYear()}
                 </span>
                 <IconButton variant={"ghost"} onClick={increaseYear}>

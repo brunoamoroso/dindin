@@ -112,7 +112,7 @@ export default function EditUserData() {
       <AppBar title="Editar Dados Cadastrais" />
       {isError && (
         <div className="container flex flex-1">
-          <h1 className="headline-medium text-title">
+          <h1 className="headline-medium text-content-primary">
             Tivemos um problema ao carregar seus dados, tente novamente mais
             tarde.
           </h1>

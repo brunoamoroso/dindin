@@ -45,7 +45,7 @@ export function CreateAccount(){
     return (
         <div className="bg-surface min-h-dvh flex flex-col">
             <AppBar title="Criar conta" />
-            <div className="container flex flex-col flex-1 bg-container2 rounded-t-lg py-10">
+            <div className="container flex flex-col flex-1 bg-layer-tertiary rounded-t-lg py-10">
                 <form className="flex flex-col flex-1 justify-between" onSubmit={handleSubmit}>
                     <TextField
                         id="description"

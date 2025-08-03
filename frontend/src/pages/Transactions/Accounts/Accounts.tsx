@@ -50,9 +50,9 @@ export default function Accounts() {
   return (
     <div className="bg-surface h-dvh flex flex-col">
       <AppBar title="Escolha uma conta" />
-      <div className="container flex flex-1 flex-col rounded-t-lg bg-container2 py-10 justify-between">
+      <div className="px-6 flex flex-1 flex-col rounded-t-lg bg-layer-tertiary py-10 justify-between">
         {isError && (
-          <h1 className="title-large text-title">
+          <h1 className="title-large text-content-primary">
             Tivemos um problema ao tentar carregar suas contas.
           </h1>
         )}
@@ -88,7 +88,7 @@ export default function Accounts() {
           )}
 
         {!isLoading && data?.length === 0 && (
-          <h1 className="title-large text-title">
+          <h1 className="title-large text-content-primary">
             Não há nenhuma conta cadastrada ainda.
           </h1>
         )}

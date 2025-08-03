@@ -108,7 +108,7 @@ export default function Categories() {
   return (
     <div className="bg-surface h-dvh flex flex-col">
       <AppBar title="Escolha uma categoria" />
-      <div className="container flex flex-1 flex-col bg-container2 rounded-t-lg py-10 gap-6">
+      <div className="px-6 flex flex-1 flex-col bg-layer-tertiary rounded-t-lg py-10 gap-6">
         <TextField
           label="Buscar"
           placeholder="Busque por uma categoria ou subcategoria"
@@ -117,7 +117,7 @@ export default function Categories() {
 
         {isError ||
           (errorSearch && (
-            <span className="title-medium text-title">
+            <span className="title-medium text-content-primary">
               Tivemos um problema ao carregar as categorias
             </span>
           ))}
@@ -166,7 +166,7 @@ export default function Categories() {
             <div className="flex flex-col gap-10">
               {searchedCategories.find((i) => i.isCategory) && (
                 <div className="flex flex-col gap-2">
-                  <h1 className="title-small text-title">Categorias</h1>
+                  <h1 className="title-small text-content-primary">Categorias</h1>
                   <div className="flex flex-col">
                     {searchedCategories
                       .filter((item) => item.isCategory)
@@ -190,7 +190,7 @@ export default function Categories() {
 
               {searchedCategories.find((i) => !i.isCategory) && (
                 <div className="flex flex-col gap-2">
-                  <h1 className="title-small text-title">SubCategorias</h1>
+                  <h1 className="title-small text-content-primary">SubCategorias</h1>
                   <div className="flex flex-col">
                     {searchedCategories
                       .filter((item) => !item.isCategory)
@@ -217,7 +217,7 @@ export default function Categories() {
                               >
                                 <div className="flex flex-col gap-0.5">
                                   {item.category_description}
-                                  <span className="body-medium text-subtle">
+                                  <span className="body-medium text-content-subtle">
                                     {item.description}
                                   </span>
                                 </div>
