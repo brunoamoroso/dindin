@@ -5,13 +5,13 @@ import BottomNav from "@/components/BottomNav";
 import LastTransactions from "./LastTransactions";
 import ExpenseByCatChart from "./ExpenseByCatChart";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@radix-ui/react-separator";
 import { useOutletContext } from "react-router-dom";
 import { MonthPicker } from "../MonthPicker";
 import { AvatarDashboard } from "@/components/AvatarDashboard";
 import { CoinSelector } from "@/components/CoinSelector";
 import { DashboardContextType } from "@/context/DashboardContext";
 import { getAllTransactionsByMonth } from "@/api/transactionService";
+import { Separator } from "@/components/ui/separator";
 
 export default function Dashboard() {
   const { selectedDate, userDefaultCoin } = useOutletContext<DashboardContextType>();
@@ -23,13 +23,13 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-dvh bg-surface flex flex-col text-content-secondary">
-      <div className="flex flex-1 flex-col gap-6 pb-32 mx-6">
-        <div className="relative flex items-center justify-between py-6">
-          <CoinSelector />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <MonthPicker />
-          </div>
+      <div className="flex flex-1 flex-col gap-5 pb-32">
+        <div className="relative flex items-center justify-start py-6 mx-6">
+          {/* <CoinSelector /> */}
           <AvatarDashboard />
+        </div>
+        <div className="flex flex-1 justify-center mx-6">
+          <MonthPicker />
         </div>
         {isError && (
           <>
@@ -43,9 +43,9 @@ export default function Dashboard() {
           </>
         )}
         {!isError && (
-          <div className="flex gap-6">
-            <div className="flex flex-col flex-1 bg-layer-tertiary p-6 rounded-lg">
-              <span className="label-small text-content-primary">Você ganhou</span>
+          <div className="flex gap-6 mx-6 mt-2">
+            <div className="flex flex-col flex-1">
+              <span className="label-small text-content-primary">Recebeu</span>
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-positive">
@@ -53,8 +53,8 @@ export default function Dashboard() {
                 </span>
               )}
             </div>
-            <div className="flex flex-col flex-1 bg-layer-tertiary p-6 rounded-lg">
-              <span className="label-small text-content-primary">Você gastou</span>
+            <div className="flex flex-col flex-1 text-right">
+              <span className="label-small text-content-primary">Gastou</span>
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-critical">
@@ -64,7 +64,9 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-
+        
+        <Separator />
+        
         {!isLoading && data && !isError && (
           <LastTransactions data={data.allTransactionsByMonth} />
         )}

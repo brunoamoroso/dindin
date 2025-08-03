@@ -10,7 +10,7 @@ const IconButtonVariants = cva(
     variants: {
       variant: {
         default: "rounded-full bg-primary text-on-primary hover:bg-primary/400 border-green-700 shadow-button",
-        ghost: "rounded-full bg-transparent text-content-primary",
+        ghost: "rounded-full bg-transparent text-primary",
       },
       size: {
         default: "h-10 w-14 px-4 py-2",
