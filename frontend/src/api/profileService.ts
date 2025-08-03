@@ -8,10 +8,6 @@ export function signIn<T>(body: {username: string; password: string;}): Promise<
     return api.post<T>("/profile/signin", body);
 }
 
-export function getAvatar<T>(): Promise<T>{
-    return api.get<T>("/profile/avatar");
-}
-
 export function getUserProfileData<T>(): Promise<T>{
     return api.get<T>("/profile/user/data");
 }
