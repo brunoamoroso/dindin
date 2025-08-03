@@ -22,13 +22,13 @@ interface InputChipProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, 
 const InputChips = React.forwardRef<HTMLButtonElement, InputChipProps>(({ className, variant, pressed = false, children, ...props }, ref) => {
     return (
         <button ref={ref} type="button" className={cn(inputChipsVariants({ variant }), className)} {...props}>
-            {variant === "pressed" &&
-            <span className='absolute inset-0 rounded bg-state-pressed' />
-            }
             <span className='inline-flex gap-1 z-20'>
                 {children}
                 {pressed && (<X size={20} />)}
             </span>
+            {variant === "pressed" &&
+            <span className='absolute inset-0 rounded bg-state-pressed' />
+            }
         </button>
     );
 });

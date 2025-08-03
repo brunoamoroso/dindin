@@ -84,7 +84,7 @@ export default function ExpenseByCatChart({data} : {data: Types.TransactionType[
             const percentage = Math.round((totalCatAmount / totalAllAmount) * 100);
             const badge = getCategoryIcon(description);
             el.push(
-                <div className='flex flex-col px-6' key={i}>
+                <div className='flex flex-col' key={i}>
                     <div className='flex items-center py-3.5 gap-4 justify-between'>
                         <div className='flex flex-1 items-center gap-4'>
                             <div className={'p-2 rounded text-content-primary'} style={{
@@ -114,8 +114,8 @@ export default function ExpenseByCatChart({data} : {data: Types.TransactionType[
 
 
     return(
-        <div className="bg-layer-tertiary rounded-lg py-4">
-            <h1 className="title-small text-content-primary px-6">Gasto por Categoria</h1>
+        <div className="mx-6">
+            <h1 className="title-small text-content-primary">Gasto por Categoria</h1>
             {data.length === 0 && (
                 <span className="flex px-6 py-4 text-content-subtle body-large">Sem transções neste mês.</span>
             )}

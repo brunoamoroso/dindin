@@ -55,8 +55,9 @@ export default function ExpenseTransaction({
 
   const handlePaymentChips = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const target = e.target as HTMLButtonElement;
+    const target = e.currentTarget;
 
+    console.log(e);
     if (
       target.value === "single" &&
       contextTransactionData.installments !== "0"

@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
-
 @theme inline {
-
   --font-sans: "Satoshi", ui-sans-serif;
 
   --radius-sm: calc(var(--radius) - 8px);
@@ -11,15 +9,12 @@
   --radius-lg: calc(var(--radius) + 20px);
   --radius-xl: calc(var(--radius) + 52px);
 
-  --shadow-button: 
-  inset 0px 0px 0px 2px rgba(255,255,255,0.45),
-  inset 0px 1px 0px 1px rgba(255,255,255,0.75),
-  0px 4px 4px 2px rgba(0,0,0,0.25),
-  0px 2px 2px 1px rgba(0,0,0,0.25);
+  --shadow-button: inset 0px 0px 0px 2px rgba(255, 255, 255, 0.45),
+    inset 0px 1px 0px 1px rgba(255, 255, 255, 0.75),
+    0px 4px 4px 2px rgba(0, 0, 0, 0.25), 0px 2px 2px 1px rgba(0, 0, 0, 0.25);
 
-  --shadow-button-pressed: 
-    inset 0px 0px 0px 2px rgba(0,0,0,0.35),
-    inset 0px 2px 0px 2px rgba(0,0,0,0.5);
+  --shadow-button-pressed: inset 0px 0px 0px 2px rgba(0, 0, 0, 0.35),
+    inset 0px 2px 0px 2px rgba(0, 0, 0, 0.5);
 
   --color-green-50: oklch(96.97% 0.048 152.74);
   --color-green-100: oklch(91.88% 0.099 152.95);
@@ -32,7 +27,7 @@
   --color-green-900: oklch(27.92% 0.069 152.65);
   --color-green-950: oklch(21.41% 0.054 152.25);
 
-  --color-cyan-50: oklch(94.8% 0.049 191.65);  
+  --color-cyan-50: oklch(94.8% 0.049 191.65);
   --color-cyan-100: oklch(91.89% 0.085 190.29);
   --color-cyan-200: oklch(85.37% 0.11 190.95);
   --color-cyan-300: oklch(80.55% 0.12 190.33);
@@ -142,10 +137,9 @@
   --color-destructive-outline: var(--color-red-700);
   --color-destructive-focus: var(--color-red-300);
 
-  
   --color-state-hover: oklch(from white l c h / 0.15);
   --color-state-pressed: oklch(from black l c h / 0.6);
-  
+
   --color-disabled: var(--color-neutral-300);
   --color-on-disabled: var(--color-neutral-700);
 
@@ -170,153 +164,173 @@
 
   --color-critical: var(--color-red-400);
   --color-critical-subtle: var(--color-red-500);
-  --color-critical-on-subtle: var(--color-red-100)
-
+  --color-critical-on-subtle: var(--color-red-100);
 }
 
-  @layer base {
-    :root {
-      --background: 0 0% 100%;
-      --foreground: 222.2 84% 4.9%;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
-      --card: 0 0% 100%;
-      --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
 
-      --popover: 0 0% 100%;
-      --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-      --primary: #11B761;
-      --primary-foreground: #01200C;
-      --primary-pressed:  34% 0.085 152.65;
-      --primary-on-pressed: 74.42% 0.184 152.62;
+    --primary: #11b761;
+    --primary-foreground: #01200c;
+    --primary-pressed: 34% 0.085 152.65;
+    --primary-on-pressed: 74.42% 0.184 152.62;
 
-      --secondary: 96.93% 0.01 238.51 / 0.01;
-      --secondary-foreground: 96.93% 0.01 238.51;
+    --secondary: 96.93% 0.01 238.51 / 0.01;
+    --secondary-foreground: 96.93% 0.01 238.51;
 
-      --muted: 210 40% 96.1%;
-      --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-      --accent: 210 40% 96.1%;
-      --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-      --destructive: 62.97% 0.22 22.22;
-      --destructive-foreground: 96.34% 0.019 5.29;
-      --destructive-border: 34.53% 0.135 21.9;
-      --destructive-hover: 69% 0.195 22.03;
+    --destructive: 62.97% 0.22 22.22;
+    --destructive-foreground: 96.34% 0.019 5.29;
+    --destructive-border: 34.53% 0.135 21.9;
+    --destructive-hover: 69% 0.195 22.03;
 
-      --border: 214.3 31.8% 91.4%;
-      --input: 214.3 31.8% 91.4%;
-      --ring: 222.2 84% 4.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
 
-      --radius: 12px;
-    }
-
-    .dark {
-      --background: 222.2 84% 4.9%;
-      --foreground: 210 40% 98%;
-
-      --card: 222.2 84% 4.9%;
-      --card-foreground: 210 40% 98%;
-
-      --popover: 222.2 84% 4.9%;
-      --popover-foreground: 210 40% 98%;
-
-      --primary: 210 40% 98%;
-      --primary-foreground: 222.2 47.4% 11.2%;
-
-      --secondary: 217.2 32.6% 17.5%;
-      --secondary-foreground: 210 40% 98%;
-
-      --muted: 217.2 32.6% 17.5%;
-      --muted-foreground: 215 20.2% 65.1%;
-
-      --accent: 217.2 32.6% 17.5%;
-      --accent-foreground: 210 40% 98%;
-
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 210 40% 98%;
-
-      --border: 217.2 32.6% 17.5%;
-      --input: 217.2 32.6% 17.5%;
-      --ring: 212.7 26.8% 83.9%;
-    }
+    --radius: 12px;
   }
 
-  @layer base {
-    * {
-      @apply font-sans;
-    }
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-    .headline-large{
-      @apply text-6xl font-black;
-    }
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-    .headline-medium{
-      @apply text-5xl font-black;
-    }
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
-    .headline-small{
-      @apply text-4xl font-black;
-    }
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
-    .title-large{
-      @apply text-3xl font-bold;
-    }
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-    .title-medium{
-      @apply text-2xl font-bold;
-    }
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    .title-small{
-      @apply text-xl font-bold;
-    }
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
 
-    .label-large{
-      @apply text-base font-bold;
-    }
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
-    .label-medium{
-      @apply text-sm font-bold;
-    }
-
-    .label-small{
-      @apply text-xs font-bold;
-    }
-
-    .body-large{
-      @apply text-base font-medium;
-    }
-
-    .body-medium{
-      @apply text-sm font-medium;
-    }
-
-    .body-small{
-      @apply text-xs font-medium;
-    }    
-
-    /* React Date Picker Customization */
-    .react-datepicker{
-      @apply shadow-2xl rounded-md border bg-layer-primary border-outline font-sans p-5;
-    }
-
-    .react-datepicker .react-datepicker__aria-live{
-      @apply hidden;
-    }
-
-    .react-datepicker .react-datepicker__month-container .react-datepicker__month{
-      @apply flex flex-col;
-    }
-
-    .react-datepicker .react-datepicker__month-container .react-datepicker__month .react-datepicker__month-wrapper{
-      @apply flex gap-6 pt-4;
-    }
-
-    .react-datepicker .react-datepicker__month-container .react-datepicker__month .react-datepicker__month-wrapper .react-datepicker__month-text{
-      @apply flex w-4/12 justify-center text-sm text-content-secondary py-1 px-3;
-    }
-
-    .react-datepicker .react-datepicker__month-container .react-datepicker__month .react-datepicker__month-wrapper .react-datepicker__month-text--selected{
-      @apply bg-primary text-content-secondary rounded-full;
-    }
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
+}
+
+@layer base {
+  * {
+    @apply font-sans;
+  }
+
+  .headline-large {
+    @apply text-6xl font-black;
+  }
+
+  .headline-medium {
+    @apply text-5xl font-black;
+  }
+
+  .headline-small {
+    @apply text-4xl font-black;
+  }
+
+  .title-large {
+    @apply text-3xl font-bold;
+  }
+
+  .title-medium {
+    @apply text-2xl font-bold;
+  }
+
+  .title-small {
+    @apply text-xl font-bold;
+  }
+
+  .label-large {
+    @apply text-base font-bold;
+  }
+
+  .label-medium {
+    @apply text-sm font-bold;
+  }
+
+  .label-small {
+    @apply text-xs font-bold;
+  }
+
+  .body-large {
+    @apply text-base font-medium;
+  }
+
+  .body-medium {
+    @apply text-sm font-medium;
+  }
+
+  .body-small {
+    @apply text-xs font-medium;
+  }
+
+  /* React Date Picker Customization */
+  .react-datepicker {
+    @apply shadow-2xl rounded-md border bg-layer-primary border-outline font-sans p-5;
+  }
+
+  .react-datepicker .react-datepicker__aria-live {
+    @apply hidden;
+  }
+
+  .react-datepicker
+    .react-datepicker__month-container
+    .react-datepicker__month {
+    @apply flex flex-col;
+  }
+
+  .react-datepicker
+    .react-datepicker__month-container
+    .react-datepicker__month
+    .react-datepicker__month-wrapper {
+    @apply flex gap-6 pt-4;
+  }
+
+  .react-datepicker
+    .react-datepicker__month-container
+    .react-datepicker__month
+    .react-datepicker__month-wrapper
+    .react-datepicker__month-text {
+    @apply flex w-4/12 justify-center text-sm text-content-secondary py-1 px-3;
+  }
+
+  .react-datepicker
+    .react-datepicker__month-container
+    .react-datepicker__month
+    .react-datepicker__month-wrapper
+    .react-datepicker__month-text--selected {
+    @apply bg-primary text-content-secondary rounded-full;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+}

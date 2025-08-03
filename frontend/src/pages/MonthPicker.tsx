@@ -46,7 +46,7 @@ export function MonthPicker() {
   registerLocale("ptBR", ptBR);
 
   return (
-    <div className="flex gap-6">
+    <div className="flex gap-6 items-center">
       <IconButton variant={"ghost"} onClick={handleDecreaseMonth}><ChevronLeft /></IconButton>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>

@@ -325,12 +325,6 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
         <InlineTabsList>
           <InlineTabsTrigger
             value="gain"
-            className={`${
-              contextTransactionData.type === "expense" &&
-              contextTransactionData.paymentCondition === "multi"
-                ? "hidden"
-                : ""
-            }`}
           >
             Ganho
           </InlineTabsTrigger>

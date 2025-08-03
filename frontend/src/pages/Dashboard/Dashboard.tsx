@@ -14,7 +14,7 @@ import { getAllTransactionsByMonth } from "@/api/transactionService";
 import { Separator } from "@/components/ui/separator";
 
 export default function Dashboard() {
-  const { selectedDate, userDefaultCoin } = useOutletContext<DashboardContextType>();
+  const { selectedDate, coinSelected } = useOutletContext<DashboardContextType>();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["dashboard-data", selectedDate],
@@ -23,12 +23,14 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-dvh bg-surface flex flex-col text-content-secondary">
-      <div className="flex flex-1 flex-col gap-5 pb-32">
-        <div className="relative flex items-center justify-start py-6 mx-6">
-          {/* <CoinSelector /> */}
+      <div className="flex flex-1 flex-col gap-5 pb-40">
+        <div className="flex items-center justify-start py-6 mx-6">
           <AvatarDashboard />
         </div>
-        <div className="flex flex-1 justify-center mx-6">
+
+          <CoinSelector />
+
+        <div className="flex justify-center mx-6">
           <MonthPicker />
         </div>
         {isError && (
@@ -42,14 +44,14 @@ export default function Dashboard() {
             </span>
           </>
         )}
-        {!isError && (
+        {!isError && coinSelected !== "global" && (
           <div className="flex gap-6 mx-6 mt-2">
             <div className="flex flex-col flex-1">
               <span className="label-small text-content-primary">Recebeu</span>
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-positive">
-                  {currencyFormat(data.sumAllAmountGained, userDefaultCoin?.code)}
+                  {currencyFormat(data.sumAllAmountGained, coinSelected?.code)}
                 </span>
               )}
             </div>
@@ -58,14 +60,16 @@ export default function Dashboard() {
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-critical">
-                  {currencyFormat(data.sumAllAmountExpend, userDefaultCoin?.code)}
+                  {currencyFormat(data.sumAllAmountExpend, coinSelected?.code)}
                 </span>
               )}
             </div>
           </div>
         )}
         
-        <Separator />
+        {!isError && coinSelected !== "global" && (
+          <Separator />
+        )}
         
         {!isLoading && data && !isError && (
           <LastTransactions data={data.allTransactionsByMonth} />
@@ -93,12 +97,16 @@ export default function Dashboard() {
           </div>
         )}
 
-        {!isLoading && data && !isError && (
+
+        {!isError && coinSelected !== "global" && (
+          <Separator />
+        )}
+
+        {!isLoading && data && !isError && coinSelected !== "global" && (
           <ExpenseByCatChart data={data.allTransactionsByMonth} />
         )}
         {isLoading && (
           <div className="bg-layer-tertiary rounded-lg py-4">
-            <h1 className="title-small text-content-primary px-6">Gasto por Categoria</h1>
             <div className="px-6 pt-4">
               <Skeleton className="w-full rounded-lg h-56 mb-10" />
               <div className="flex flex-col gap-6">

@@ -1,4 +1,3 @@
-import { useUserDefaultCoin } from "@/hooks/useUserDefaultCoin";
 import { CoinType } from "@/types/CoinTypes";
 import { SetStateAction, useState } from "react";
 import { Outlet } from "react-router-dom";
@@ -6,18 +5,17 @@ import { Outlet } from "react-router-dom";
 export interface DashboardContextType {
   selectedDate: Date;
   setSelectedDate: React.Dispatch<SetStateAction<Date>>;
-  userDefaultCoin: CoinType;
-  isErrorDefaultCoin: boolean;
-  isLoadingDefaultCoin: boolean;
+  coinSelected?: "global" | CoinType;
+  setCoinSelected?: React.Dispatch<SetStateAction<"global" | CoinType>>;
 }
 
 export function DashboardContext() {
-  const {data: userDefaultCoin, isError: isErrorDefaultCoin, isLoading: isLoadingDefaultCoin} = useUserDefaultCoin();
+  const [coinSelected, setCoinSelected] = useState<"global" | CoinType>("global");
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   return (
     <>
-      <Outlet context={{ selectedDate, setSelectedDate, userDefaultCoin, isErrorDefaultCoin, isLoadingDefaultCoin }} />
+      <Outlet context={{ selectedDate, setSelectedDate, coinSelected, setCoinSelected }} />
     </>
   );
 }

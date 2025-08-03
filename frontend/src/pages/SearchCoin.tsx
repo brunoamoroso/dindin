@@ -56,7 +56,7 @@ export function SearchCoin(){
     return (                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
         <div className="min-h-dvh bg-surface flex flex-1 flex-col">
             <AppBar title="Adicionar uma moeda"/>
-            <div className="container py-10 flex flex-1 flex-col bg-layer-tertiary rounded-lg">
+            <div className="container py-10 flex flex-1 flex-col bg-layer-tertiary rounded-lg px-6">
                 <TextField 
                     label="Buscar"
                     placeholder="Buscar moeda"
