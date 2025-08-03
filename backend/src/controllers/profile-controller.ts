@@ -89,34 +89,6 @@ export const SignIn = async (req: Request, res: Response) => {
   await createUserToken(user, req, res);
 };
 
-export const getAvatar = async (req: Request, res: Response) => {
-  const user = req.user;
-
-  try {
-    const queryAvatar = `SELECT name, surname, photo FROM users WHERE id = $1`;
-    
-    const valuesAvatar = [user];
-
-    const {rows: avatar} = await db.query(queryAvatar, valuesAvatar);
-
-    if(avatar[0].photo !== ""){
-      const supabase = supabaseClient();
-  
-      const {data, error} = await supabase.storage.from(process.env.SUPABASE_BUCKET!).createSignedUrl(`/assets/uploads/${avatar[0].photo}`, 60);
-  
-      if(error){
-        throw error;
-      }
-
-      avatar[0].photo = data.signedUrl;
-    }
-    return res.status(200).json(avatar[0]);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: "Erro ao buscar avatar" });
-  }
-};
-
 export const getUserProfile = async (req: Request, res: Response) => {
   const user = req.user;
 
