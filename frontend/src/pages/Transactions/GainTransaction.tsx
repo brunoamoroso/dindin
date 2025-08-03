@@ -14,6 +14,7 @@ import TextField from "@/components/ui/textfield";
 import { TransactionsContextType } from "@/context/TransactionsContext";
 import { cn } from "@/lib/utils";
 import { currencyFormat } from "@/utils/currency-format";
+import { getCurrencySymbol } from "@/utils/get-currency-symbol";
 import { Landmark, LoaderCircle, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
@@ -61,7 +62,7 @@ export default function GainTransaction({
           <span className="label-medium text-content-subtle">Valor Recebido</span>
           <div className="flex gap-1">
             <span className="headline-small text-content-primary">
-              {contextTransactionData.coin}
+              {getCurrencySymbol(contextTransactionData.coin)}
             </span>
             <span
               id="amount_placeholder"
@@ -78,7 +79,7 @@ export default function GainTransaction({
               pattern="[0-9]"
               id="amount_input"
               type="text"
-              className="hidden text-positive"
+              className="hidden text-positive bg-transparent focus-visible:ring-0"
               placeholder="0.00"
               onChange={handleAmountChange}
               value={currencyFormat(contextTransactionData.amount)}

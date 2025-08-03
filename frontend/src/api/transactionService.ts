@@ -17,8 +17,8 @@ export function getOneTransaction(id: string): Promise<TransactionType>{
     return api.get(`/transactions/${id}`);
 }
 
-export function getAllTransactionsByMonth(date: string): Promise<DataAllTransactionsType>{
-    return api.get(`/transactions/all-month/${date}`);
+export function getAllTransactionsByMonth(date: string, coinSelected: string): Promise<DataAllTransactionsType>{
+    return api.get(`/transactions/all-month/${date}/${coinSelected}`);
 }
 
 export function getAllInstallmentsTransaction(id: string): Promise<TransactionType>{
@@ -26,6 +26,7 @@ export function getAllInstallmentsTransaction(id: string): Promise<TransactionTy
 }
 
 export function updateAllInstallmentsTransaction<T>(id: string, body: unknown):Promise<T>{
+    console.log(body);
     return api.put<T>(`/transactions/update/all-installments/${id}`, body);
 }
 

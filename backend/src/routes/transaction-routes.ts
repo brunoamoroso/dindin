@@ -15,7 +15,7 @@ import { checkToken } from "../utils/check-token";
 const transactionRoutes = express.Router();
 
 transactionRoutes.get(
-  "/all-month/:selectedDate",
+  "/all-month/:selectedDate/:coinSelected",
   checkToken,
   getAllTransactionsByMonth
 );

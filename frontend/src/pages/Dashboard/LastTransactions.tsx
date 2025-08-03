@@ -45,6 +45,9 @@ export default function LastTransactions({
                 }`}
               >
                 {(d.type === "gain" ? "+ " : "- ") + currencyFormat(d.amount)}
+                <span className="text-content-secondary">
+                  {" " + d.code}
+                </span>
               </span>
               <span className="body-small text-content-subtle">
                 {d.account}

@@ -4,15 +4,14 @@ import getCategoryIcon from "@/utils/get-category-icon";
 import { currencyFormat } from "@/utils/currency-format";
 import { Separator } from "@/components/ui/separator";
 import ActionsTransaction from "@/components/ActionsTransaction";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { DashboardContextType } from "@/context/DashboardContext";
+import { useDashboardContext } from "@/context/DashboardContext";
 import { MonthPicker } from "../MonthPicker";
-import { CoinSelector } from "@/components/CoinSelector";
 import { getAllTransactionsByMonth } from "@/api/transactionService";
 
 export function ListAllTransactions() {
-  const { selectedDate, setSelectedDate } = useOutletContext<DashboardContextType>();
+  const { selectedDate, setSelectedDate, coinSelected } = useDashboardContext();
 
   const { dateParams } = useParams();
 
@@ -24,19 +23,18 @@ export function ListAllTransactions() {
 
   const { data } = useQuery({
     queryKey: ["listalltransactions-data", selectedDate],
-    queryFn: () => getAllTransactionsByMonth(selectedDate.toISOString()),
+    queryFn: () => getAllTransactionsByMonth(selectedDate.toISOString(), coinSelected),
   });
 
   return (
     <div className="min-h-dvh bg-surface flex flex-col text-content-secondary gap-6">
       <AppBar title="Todas as Transações" pageBack="dashboard" />
 
-      <div className="container flex gap-6 items-center justify-between">
-        <CoinSelector />
+      <div className="container flex gap-6 items-center justify-center">
         <MonthPicker  />
       </div>
 
-      <div className="container flex flex-col flex-1 bg-layer-tertiary rounded-t-lg py-10">
+      <div className="container flex flex-col flex-1 bg-layer-tertiary rounded-t-lg py-10 px-6">
         {data?.allTransactionsByMonth.length === 0 && (
           <span className="body-large">Não houveram transações neste mês.</span>
         )}
@@ -63,6 +61,7 @@ export function ListAllTransactions() {
                   }`}
                 >
                   {currencyFormat(d.amount)}
+                  <span className="text-content-secondary">{" " + d.code}</span>
                 </span>
                 <span className="body-small text-content-subtle">{d.account}</span>
               </div>

@@ -5,6 +5,7 @@ import splitInstallments from "../utils/split-installments";
 
 export const addTransaction = async (req: Request, res: Response) => {
   const {
+    coin,
     type,
     amount,
     description,
@@ -20,9 +21,9 @@ export const addTransaction = async (req: Request, res: Response) => {
   try {
     if (type === "gain") {
       const queryGainTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, date, created_by)
-      VALUES ((SELECT user_default_coin FROM users WHERE id = $1),
+      VALUES ((SELECT id FROM coins c WHERE c.code = $1),
       $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`;
-      const valuesGainTransaction = [req.user, type, description, amount, account_id, category_id, subcategory_id || null, localDate, req.user];
+      const valuesGainTransaction = [coin, type, description, amount, account_id, category_id, subcategory_id || null, localDate, req.user];
 
       const {rows: gainTransaction} = await db.query(queryGainTransaction, valuesGainTransaction);
       res.status(201).json(gainTransaction);
@@ -41,9 +42,9 @@ export const addTransaction = async (req: Request, res: Response) => {
 
     if (type === "expense" && paymentCondition === "single") {
       queryExpenseTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, date, payment_condition, created_by)
-      VALUES ((SELECT user_default_coin FROM users WHERE id = $1),$2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`;
+      VALUES ((SELECT id FROM coins c WHERE c.code = $1),$2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`;
 
-      expenseValues = [req.user, type, description, amount, account_id, category_id, subcategory_id || null, localDate, paymentCondition, req.user];
+      expenseValues = [coin, type, description, amount, account_id, category_id, subcategory_id || null, localDate, paymentCondition, req.user];
 
       const {rows: expenseTransaction} = await db.query(queryExpenseTransaction, expenseValues);
       return res.status(201).json(expenseTransaction);
@@ -72,7 +73,7 @@ export const addTransaction = async (req: Request, res: Response) => {
         }
 
         return {
-          coin: req.user, 
+          coin: coin, 
           type: "expense", 
           description: description, 
           amount: amountSplit[i],
@@ -110,7 +111,7 @@ export const addTransaction = async (req: Request, res: Response) => {
       VALUES `;
 
       const valuesPlaceholder = Array.from({length: bulkTransactions.length}, (_, i) => {
-        return `((SELECT user_default_coin FROM users WHERE id = $${i * 13 + 1}), $${i * 13 + 2}, $${i * 13 + 3}, $${i * 13 + 4}, $${i * 13 + 5}, $${i * 13 + 6}, $${i * 13 + 7}, $${i * 13 + 8}, $${i * 13 + 9}, $${i * 13 + 10}, $${i * 13 + 11}, $${i * 13 + 12}, $${i * 13 + 13})`;
+        return `((SELECT id FROM coins c WHERE c.code = $${i * 13 + 1}), $${i * 13 + 2}, $${i * 13 + 3}, $${i * 13 + 4}, $${i * 13 + 5}, $${i * 13 + 6}, $${i * 13 + 7}, $${i * 13 + 8}, $${i * 13 + 9}, $${i * 13 + 10}, $${i * 13 + 11}, $${i * 13 + 12}, $${i * 13 + 13})`;
       }).join(", ");
 
       queryExpenseTransaction += valuesPlaceholder + " RETURNING *";
@@ -128,7 +129,7 @@ export const getAllTransactionsByMonth = async (
   req: Request,
   res: Response
 ) => {
-  const { selectedDate } = req.params;
+  const { selectedDate, coinSelected } = req.params;
   const date = new Date(selectedDate);
   const createStartDate = toPostgresDate(new Date(date.getFullYear(), date.getMonth(), 1).toISOString());
   const createEndDate = toPostgresDate(new Date(
@@ -138,19 +139,25 @@ export const getAllTransactionsByMonth = async (
   ).toISOString());
 
   try {
-    const queryAllTransactionsByMonth = `SELECT t.id, t.type, t.description, t.amount, t.account_id, acc.description AS account, t.category_id, t.subcategory_id,
-    cat.description AS category, sub.description AS subcategory, t.installments, t.install_number, t.date
+    let queryAllTransactionsByMonth = `SELECT t.id, t.type, t.description, t.amount, t.account_id, acc.description AS account, t.category_id, t.subcategory_id,
+    cat.description AS category, sub.description AS subcategory, t.installments, t.install_number, c.code
     FROM transactions t
     JOIN users u ON t.created_by = u.id
-    JOIN coins c ON u.user_default_coin = c.id
+    JOIN coins c ON c.id = t.coin_id
     LEFT JOIN accounts acc ON t.account_id = acc.id
     LEFT JOIN categories cat ON t.category_id = cat.id
     LEFT JOIN subcategories sub ON t.subcategory_id = sub.id
-    WHERE t.created_by = $1 AND t.date BETWEEN $2 AND $3 AND u.user_default_coin = t.coin_id
-    ORDER BY t.date DESC
+    WHERE t.created_by = $1 AND t.date BETWEEN $2 AND $3
     `;
 
     const valuesAllTransactionsByMonth = [req.user, createStartDate, createEndDate];
+
+    if(coinSelected !== "global" && coinSelected !== undefined) {
+      queryAllTransactionsByMonth += ` AND c.code = $4`;
+      valuesAllTransactionsByMonth.push(coinSelected);
+    }
+
+    queryAllTransactionsByMonth += ` ORDER BY t.date DESC`;
 
     const {rows: allTransactionsByMonth} = await db.query(queryAllTransactionsByMonth, valuesAllTransactionsByMonth);
 
@@ -254,8 +261,11 @@ export const getAllInstallmentsTransaction = async (req: Request, res: Response)
       description: allInstallmentsTransaction[0].description,
       amount: allInstallmentsTransaction.reduce((totalAmount, transaction) => totalAmount + transaction.amount, 0),
       account: allInstallmentsTransaction[0].account,
+      account_id: allInstallmentsTransaction[0].account_id,
       category: allInstallmentsTransaction[0].category,
+      category_id: allInstallmentsTransaction[0].category_id,
       subcategory: allInstallmentsTransaction[0].subcategory,
+      subcategory_id: allInstallmentsTransaction[0].subcategory_id,
       date: allInstallmentsTransaction[0].date,
       installments: allInstallmentsTransaction[0].installments,  
       payment_condition: allInstallmentsTransaction[0].payment_condition,
@@ -275,20 +285,20 @@ export const updateTransaction = async (req: Request, res: Response) => {
     type,
     amount,
     description,
-    category,
-    subCategory,
-    account,
+    category_id,
+    subcategory_id,
+    account_id,
     date,
   } = req.body;
   const localDate = toPostgresDate(date.value);
-
+console.log(req.body);
   try {
       const queryUpdateTransaction = `UPDATE transactions
       SET type = $1, amount = $2, description = $3, account_id = $4, category_id = $5, subcategory_id = $6, date = $7
       WHERE id = $8
       RETURNING *`;
 
-      const queryValues = [type, amount, description, account.id, category.id, subCategory?.id || null, localDate, id];
+      const queryValues = [type, amount, description, account_id, category_id, subcategory_id || null, localDate, id];
       
       const {rows: responseUpdateTransaction} = await db.query(queryUpdateTransaction, queryValues);
       
@@ -303,12 +313,14 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
   const {
     amount,
     description,
-    category,
-    subCategory,
-    account,
+    category_id,
+    subcategory_id,
+    account_id,
     date,
   } = req.body;
   const newInstallments = parseInt(req.body.installments);
+
+  console.log(req.body);
 
   const {id} = req.params;
   let localDate = toPostgresDate(date.value);
@@ -355,9 +367,9 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
         type: "expense",
         description: description,
         amount: amountSplit[i],
-        account: account.id,
-        category: category.id,
-        subCategory: subCategory && subCategory.id ? subCategory.id : null,
+        account: account_id,
+        category: category_id,
+        subCategory: subcategory_id ? subcategory_id : null,
         date: localDate,
         payment_condition: "multi",
         install_number: i + 1,

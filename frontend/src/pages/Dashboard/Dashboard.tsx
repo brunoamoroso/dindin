@@ -5,20 +5,19 @@ import BottomNav from "@/components/BottomNav";
 import LastTransactions from "./LastTransactions";
 import ExpenseByCatChart from "./ExpenseByCatChart";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useOutletContext } from "react-router-dom";
 import { MonthPicker } from "../MonthPicker";
 import { AvatarDashboard } from "@/components/AvatarDashboard";
 import { CoinSelector } from "@/components/CoinSelector";
-import { DashboardContextType } from "@/context/DashboardContext";
+import { useDashboardContext } from "@/context/DashboardContext";
 import { getAllTransactionsByMonth } from "@/api/transactionService";
 import { Separator } from "@/components/ui/separator";
 
 export default function Dashboard() {
-  const { selectedDate, coinSelected } = useOutletContext<DashboardContextType>();
-
+  const { selectedDate, coinSelected } = useDashboardContext();
+  
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["dashboard-data", selectedDate],
-    queryFn: () => getAllTransactionsByMonth(selectedDate.toISOString()),
+    queryKey: ["dashboard-data", selectedDate, coinSelected],
+    queryFn: () => getAllTransactionsByMonth(selectedDate.toISOString(), coinSelected),
   });
 
   return (
@@ -28,7 +27,7 @@ export default function Dashboard() {
           <AvatarDashboard />
         </div>
 
-          <CoinSelector />
+        <CoinSelector />
 
         <div className="flex justify-center mx-6">
           <MonthPicker />
@@ -51,7 +50,7 @@ export default function Dashboard() {
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-positive">
-                  {currencyFormat(data.sumAllAmountGained, coinSelected?.code)}
+                  {currencyFormat(data.sumAllAmountGained, data.allTransactionsByMonth[0]?.code)}
                 </span>
               )}
             </div>
@@ -60,17 +59,15 @@ export default function Dashboard() {
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-critical">
-                  {currencyFormat(data.sumAllAmountExpend, coinSelected?.code)}
+                  {currencyFormat(data.sumAllAmountExpend, data.allTransactionsByMonth[0]?.code)}
                 </span>
               )}
             </div>
           </div>
         )}
-        
-        {!isError && coinSelected !== "global" && (
-          <Separator />
-        )}
-        
+
+        {!isError && coinSelected !== "global" && <Separator />}
+
         {!isLoading && data && !isError && (
           <LastTransactions data={data.allTransactionsByMonth} />
         )}
@@ -97,10 +94,7 @@ export default function Dashboard() {
           </div>
         )}
 
-
-        {!isError && coinSelected !== "global" && (
-          <Separator />
-        )}
+        {!isError && coinSelected !== "global" && <Separator />}
 
         {!isLoading && data && !isError && coinSelected !== "global" && (
           <ExpenseByCatChart data={data.allTransactionsByMonth} />

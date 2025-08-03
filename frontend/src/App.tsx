@@ -19,7 +19,7 @@ import { TransactionsContext } from "./context/TransactionsContext";
 import { AuthContextProvider } from "./context/AuthContext";
 import AuthenticatedRoutesContext from "./context/AuthenticatedRoutesContext";
 import UnauthRoutesContext from "./context/UnauthRoutesContext";
-import {ListAllTransactions} from "./pages/Dashboard/ListAllTransactions";
+import { ListAllTransactions } from "./pages/Dashboard/ListAllTransactions";
 import { DashboardContext } from "./context/DashboardContext";
 import { UserProfile } from "./pages/Profile/UserProfile/UserProfile";
 import EditUserData from "./pages/Profile/UserProfile/EditUserData";
@@ -39,12 +39,17 @@ function AppRoutes() {
             <Route path="/" element={<Home />} />
             <Route path="/profile/create" element={<CreateProfile />} />
             <Route path="/profile/signin" element={<SignIn />} />
-            <Route path="/profile/default-coin" element={<SplashDefaultCoin />} />
-            <Route path="/profile/default-coin/search" element={<ProfileCreationDefaultCoin />} />
+            <Route
+              path="/profile/default-coin"
+              element={<SplashDefaultCoin />}
+            />
+            <Route
+              path="/profile/default-coin/search"
+              element={<ProfileCreationDefaultCoin />}
+            />
           </Route>
 
           <Route element={<AuthenticatedRoutesContext />}>
-            
             <Route element={<DashboardContext />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route
@@ -55,39 +60,38 @@ function AppRoutes() {
                 path="/transaction/list"
                 element={<ListAllTransactions />}
               />
-            </Route>
 
-            <Route element={<TransactionsContext />}>
-              <Route
-                path="/transaction/edit/:paramTransactionScope/:paramId"
-                element={<Transaction mode="edit" />}
-              />
-              <Route
-                path="/transaction"
-                element={<Transaction mode="create" />}
-              />
+              <Route element={<TransactionsContext />}>
+                <Route
+                  path="/transaction/edit/:paramTransactionScope/:paramId"
+                  element={<Transaction mode="edit" />}
+                />
+                <Route
+                  path="/transaction"
+                  element={<Transaction mode="create" />}
+                />
 
-              <Route path="/categories/:type" element={<Categories />} />
-              <Route
-                path="/categories/sub/:category"
-                element={<SubCategories />}
-              />
-              <Route
-                path="/accounts/list"
-                element={<Accounts />}
-              />
-              <Route path="/accounts/create" element={<CreateAccount />} />
-              <Route path="/recurrency" element={<Recurrency />} />
+                <Route path="/categories/:type" element={<Categories />} />
+                <Route
+                  path="/categories/sub/:category"
+                  element={<SubCategories />}
+                />
+                <Route path="/accounts/list" element={<Accounts />} />
+                <Route path="/accounts/create" element={<CreateAccount />} />
+                <Route path="/recurrency" element={<Recurrency />} />
+              </Route>
             </Route>
 
             <Route path="/profile/user" element={<UserProfile />} />
             <Route path="/profile/user/edit" element={<EditUserData />} />
-            <Route path="/profile/user/change-password" element={<ChangePassword />} />
+            <Route
+              path="/profile/user/change-password"
+              element={<ChangePassword />}
+            />
 
             <Route path="/coins/search" element={<SearchCoin />} />
 
             <Route path="goals" element={<Goals />} />
-
           </Route>
         </Route>
       </Routes>
