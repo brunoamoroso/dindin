@@ -65,9 +65,9 @@ export default function SubCategories() {
   return (
     <div className="bg-surface flex flex-col h-dvh">
       <AppBar title={`SubCategorias de ${category}`} />
-      <div className="container flex flex-1 flex-col bg-container2 rounded-t-lg py-10 justify-between">
+      <div className="px-6 flex flex-1 flex-col bg-layer-tertiary rounded-t-lg py-10 justify-between">
         {isError && (
-          <span className="title-medium text-title">
+          <span className="title-medium text-content-primary">
             Tivemos um problema ao carregar as suas SubCategorias
           </span>
         )}
@@ -110,7 +110,7 @@ export default function SubCategories() {
                     </MenuListItem>
                   ))}
               {data.length === 0 && (
-                <h1 className="title-large text-title">
+                <h1 className="title-large text-content-primary">
                   Essa categoria não possuí nenhuma subcategoria ainda.
                 </h1>
               )}

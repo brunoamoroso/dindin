@@ -19,10 +19,10 @@ export function UserProfile() {
   return (
     <div className="bg-surface min-h-dvh">
       <AppBar title="Perfil" />
-      <main className="container flex flex-1 flex-col mt-6">
+      <main className="px-6 flex flex-1 flex-col mt-6">
         {isLoading && (
           <div className="flex items-center gap-3 py-4">
-            <div className="bg-container2 rounded-full w-16 h-16 flex items-center justify-center">
+            <div className="bg-layer-tertiary rounded-full w-16 h-16 flex items-center justify-center">
               <Skeleton />
             </div>
             <div className="flex flex-col gap-2">
@@ -33,7 +33,7 @@ export function UserProfile() {
         )}
         {!isLoading && data && (
           <div className="flex items-center gap-3 py-4">
-            <div className="bg-container2 rounded-full w-16 h-16 flex items-center justify-center title-small text-body">
+            <div className="bg-layer-tertiary rounded-full w-16 h-16 flex items-center justify-center title-small text-content-secondary">
               {data.photo !== "" && (
                 <img
                   src={data.photo as string}
@@ -46,14 +46,14 @@ export function UserProfile() {
               )}
             </div>
             <div className="flex flex-col">
-              <h1 className="title-medium text-title">{`${data.name} ${data.surname}`}</h1>
-              <span className="body-medium text-subtle">{data.email}</span>
+              <h1 className="title-medium text-content-primary">{`${data.name} ${data.surname}`}</h1>
+              <span className="body-medium text-content-subtle">{data.email}</span>
             </div>
           </div>
         )}
 
-        <div className="flex flex-col gap-6 p-4 bg-container2 rounded-lg mt-6">
-          <h2 className="title-small text-title px-3">Minha Conta</h2>
+        <div className="flex flex-col gap-6 p-4 bg-layer-tertiary rounded-lg mt-6">
+          <h2 className="title-small text-content-primary px-3">Minha Conta</h2>
           <div className="flex flex-col">
             <MenuListItem
               separator

@@ -71,7 +71,7 @@ export function CoinSelector() {
               className="w-7 h-7 object-cover rounded-full"
             />
             <div className="flex gap-1 items-center">
-              <span className="text-subtle label-medium">{userDefaultCoin?.code}</span>
+              <span className="text-content-subtle label-medium">{userDefaultCoin?.code}</span>
               <IconButton variant="ghost" size="small">
                 <ChevronDown className="text-primary" />
               </IconButton>
@@ -79,13 +79,13 @@ export function CoinSelector() {
           </div>
         )}
       </DialogTrigger>
-      <DialogContent className="flex flex-1 flex-col bg-container0 border-outline border p-6">
+      <DialogContent className="flex flex-1 flex-col bg-layer-primary border-outline border p-6">
         {errorUsercCoins && (
           <div className="flex flex-col gap-1">
-            <DialogTitle className="flex justify-center title-small text-title">
+            <DialogTitle className="flex justify-center title-small text-content-primary">
                 Error ao carregar suas moedas
             </DialogTitle>
-            <DialogDescription className="body-medium text-body">
+            <DialogDescription className="body-medium text-content-secondary">
                 Não conseguimos encontrar suas moedas, contate um administrador da aplicação para resolver.
             </DialogDescription>
           </div>
@@ -96,10 +96,10 @@ export function CoinSelector() {
         {!loadingUserCoins && !errorUsercCoins && (
           <Fragment>    
             <div className="flex flex-col gap-1">
-                <DialogTitle className="flex justify-center title-small text-title">
+                <DialogTitle className="flex justify-center title-small text-content-primary">
                     Selecione uma moeda
                 </DialogTitle>
-                <DialogDescription className="body-medium text-body">
+                <DialogDescription className="body-medium text-content-secondary">
                     Selecione uma moeda para gerir suas finanças, caso esteja utilizando
                     alguma outra adicione ela a suas moedas.
                 </DialogDescription>

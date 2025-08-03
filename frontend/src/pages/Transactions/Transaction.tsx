@@ -337,7 +337,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
           <InlineTabsTrigger
             value="expense"
             className={
-              "data-[state=active]:text-negative data-[state=active]:border-negative"
+              "data-[state=active]:text-critical data-[state=active]:border-critical"
             }
           >
             Despesa

@@ -43,7 +43,7 @@ const DrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col border bg-container1 border-outline rounded-t-lg",
+        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col border bg-layer-secondary border-outline rounded-t-lg",
         className
       )}
       {...props}
@@ -84,7 +84,7 @@ const DrawerTitle = React.forwardRef<
   <DrawerPrimitive.Title
     ref={ref}
     className={cn(
-      "title-small text-title leading-none tracking-tight",
+      "title-small text-content-primary leading-none tracking-tight",
       className
     )}
     {...props}
@@ -98,7 +98,7 @@ const DrawerDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Description
     ref={ref}
-    className={cn("body-medium text-subtle", className)}
+    className={cn("body-medium text-content-subtle", className)}
     {...props}
   />
 ))

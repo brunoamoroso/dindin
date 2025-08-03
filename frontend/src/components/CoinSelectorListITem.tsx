@@ -22,8 +22,8 @@ export function CoinSelectorListItem({id, isDefault=false, img, desc, code, onCl
                 
             </img>
             <div className="flex flex-1 flex-col">
-                <span className="label-large text-title">{code}</span>
-                <span className="body-small text-subtle">
+                <span className="label-large text-content-primary">{code}</span>
+                <span className="body-small text-content-subtle">
                     {desc}
                 </span>
             </div>

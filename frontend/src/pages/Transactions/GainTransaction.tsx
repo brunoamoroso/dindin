@@ -56,11 +56,11 @@ export default function GainTransaction({
 
   return (
     <div className="flex flex-col flex-1">
-      <div className="container">
+      <div className="mx-6">
         <div className="py-8 ">
-          <span className="label-medium text-subtle">Valor Recebido</span>
+          <span className="label-medium text-content-subtle">Valor Recebido</span>
           <div className="flex gap-1">
-            <span className="headline-small text-title">
+            <span className="headline-small text-content-primary">
               {contextTransactionData.coin}
             </span>
             <span
@@ -86,7 +86,7 @@ export default function GainTransaction({
           </div>
         </div>
       </div>
-      <div className="container rounded-t-lg bg-container2 py-10 flex flex-col flex-1">
+      <div className="px-6 rounded-t-lg bg-layer-tertiary py-10 flex flex-col flex-1">
         <form
           onSubmit={handleSubmit}
           className="flex flex-col flex-1 gap-16 justify-between"
@@ -100,7 +100,7 @@ export default function GainTransaction({
               onChange={handleInputChange}
             />
             <div className="flex flex-col gap-1.5">
-              <span className="label-large text-title">Categoria</span>
+              <span className="label-large text-content-primary">Categoria</span>
               <Link
                 to="/categories/gain"
                 state={{ mode: mode, id: contextTransactionData.id }}
@@ -112,7 +112,7 @@ export default function GainTransaction({
                     <div className="flex flex-col">
                       {contextTransactionData.category}
                       {contextTransactionData.subcategory && (
-                        <span className="body-small text-subtle">
+                        <span className="body-small text-content-subtle">
                           {contextTransactionData.subcategory}
                         </span>
                       )}
@@ -122,7 +122,7 @@ export default function GainTransaction({
               </Link>
             </div>
             <div className="flex flex-col gap-1.5">
-              <span className="label-large text-title">Conta</span>
+              <span className="label-large text-content-primary">Conta</span>
               <Link
                 to="/accounts/list"
                 state={{ mode: mode, id: contextTransactionData.id }}
@@ -136,7 +136,7 @@ export default function GainTransaction({
               </Link>
             </div>
             <div className="py-3 flex flex-col gap-1.5">
-              <span className="label-large text-title">Quando recebeu</span>
+              <span className="label-large text-content-primary">Quando recebeu</span>
               <div className="flex gap-2">
                 <InputChips
                   value={"today"}
@@ -192,7 +192,7 @@ export default function GainTransaction({
             </div>
             {/* Removed for first release */}
             {/* <div className="flex flex-col gap-1.5">
-              <span className="label-large text-title">Repetir esse ganho</span>
+              <span className="label-large text-content-primary">Repetir esse ganho</span>
               <Link to="/recurrency">
                 <MenuListItem>
                   <RefreshCw />

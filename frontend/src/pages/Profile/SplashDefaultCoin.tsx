@@ -15,10 +15,10 @@ export function SplashDefaultCoin(){
                 <div className="flex flex-col gap-10">
                     <img src={imgSplash} alt="Moeda em verde no centro da imagem com moedas em volta formando uma ellipse" className="mix-blend-lighten"/>
                     <div className="flex flex-col gap-3 text-center">
-                        <h1 className="title-medium text-title">
+                        <h1 className="title-medium text-content-primary">
                             Escolha sua moeda inicial
                         </h1>
-                        <span className="body-large text-body">
+                        <span className="body-large text-content-secondary">
                         Recomendamos que você escolha a moeda que mais usa no seu dia a dia. Depois, você poderá adicionar outras moedas à sua carteira para acompanhar transações em diferentes moedas.
                         </span>
                     </div>

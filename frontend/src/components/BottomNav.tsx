@@ -22,7 +22,7 @@ export default function BottomNav(){
     ];
 
     return(
-        <div className="flex justify-between items-center px-8 fixed bottom-0 w-dvw bg-container0">
+        <div className="flex justify-between items-center px-8 fixed bottom-0 w-dvw bg-layer-primary">
             {navButtons.map((obj, i) => {
                 if(i === 1){
                     return(
@@ -35,7 +35,7 @@ export default function BottomNav(){
                 }
 
                 return(
-                    <NavLink to={obj.link} key={i} className={({isActive}) => `flex flex-col items-center gap-1 py-5 px-10 ${isActive ? " text-primary" : "text-title"}`}>
+                    <NavLink to={obj.link} key={i} className={({isActive}) => `flex flex-col items-center gap-1 py-5 px-10 ${isActive ? " text-primary" : "text-content-primary"}`}>
                         {obj.icon}
                         <span className="label-small">{obj.title}</span>
                     </NavLink>

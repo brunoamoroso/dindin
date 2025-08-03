@@ -59,7 +59,7 @@ export default function Recurrency() {
   return (
     <div className="bg-surface h-dvh flex flex-col">
         <AppBar title="Repetir essa transação" />
-        <div className="container bg-container2 flex flex-1 flex-col rounded-t-lg py-10">
+        <div className="container bg-layer-tertiary flex flex-1 flex-col rounded-t-lg py-10">
             {options.map((option, index, arr) => {
                 if(arr.length - 1 === index){
                     return <MenuListItem size="lg" key={index} trailingIcon={false} dataId={option.value} value={option.desc} onClick={handleClick}>{option.desc}</MenuListItem>

@@ -6,8 +6,8 @@ export default function Home() {
     <div className="container h-dvh bg-splash-cover bg-cover">
       <div className="flex flex-col gap-8 h-full justify-end pb-10">
         <div>
-          <h1 className="text-5xl font-bold text-title">DinDin</h1>
-          <span className="text-2xl text-body">
+          <h1 className="text-5xl font-bold text-content-primary">DinDin</h1>
+          <span className="text-2xl text-content-secondary">
             Sua vida financeira finalmente ficará organizada e equilibrada.
           </span>
         </div>

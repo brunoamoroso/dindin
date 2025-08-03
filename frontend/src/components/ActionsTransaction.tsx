@@ -161,14 +161,14 @@ export default function ActionsTransaction({
                     </Button>
                   </DialogTrigger>
                   <DialogContent
-                    className="bg-container0 max-w-sm rounded-lg"
+                    className="bg-layer-primary max-w-sm rounded-lg"
                     showCloseButton={false}
                   >
                     <DialogHeader>
-                      <DialogTitle className="title-small text-title text-left">
+                      <DialogTitle className="title-small text-content-primary text-left">
                         Excluir transação?
                       </DialogTitle>
-                      <DialogDescription className="body-large text-body text-left">
+                      <DialogDescription className="body-large text-content-secondary text-left">
                         Essa ação não pode ser desfeita.
                         <br />
                         <br />
@@ -249,7 +249,7 @@ export default function ActionsTransaction({
                         Todas as parcelas
                       </Button>
                       <Button
-                        className="w-full text-body"
+                        className="w-full text-content-secondary"
                         variant={"ghost"}
                         size={"lg"}
                         onClick={() => setDrawerInstallmentDeleteOpen(false)}
@@ -302,7 +302,7 @@ export default function ActionsTransaction({
                         </Button>
                       </Link>
                       <Button
-                        className="w-full text-body"
+                        className="w-full text-content-secondary"
                         variant={"ghost"}
                         size={"lg"}
                         onClick={() => setDrawerInstallmentEditOpen(false)}
@@ -315,7 +315,7 @@ export default function ActionsTransaction({
               </>
             )}
             <Button
-              className="w-full text-body"
+              className="w-full text-content-secondary"
               variant={"ghost"}
               size={"lg"}
               onClick={() => setDrawerIsOpen(false)}

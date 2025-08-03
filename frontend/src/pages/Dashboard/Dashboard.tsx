@@ -22,8 +22,8 @@ export default function Dashboard() {
   });
 
   return (
-    <div className="min-h-dvh bg-surface flex flex-col text-body">
-      <div className="container flex flex-1 flex-col gap-6 pb-32">
+    <div className="min-h-dvh bg-surface flex flex-col text-content-secondary">
+      <div className="flex flex-1 flex-col gap-6 pb-32 mx-6">
         <div className="relative flex items-center justify-between py-6">
           <CoinSelector />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -33,10 +33,10 @@ export default function Dashboard() {
         </div>
         {isError && (
           <>
-            <h1 className="text-title headline-small">
+            <h1 className="text-content-primary headline-small">
               Tivemos um problema ao carregar os dados
             </h1>
-            <span className="text-body body-large">
+            <span className="text-content-secondary body-large">
               Pedimos desculpa pela inconveniência, mas não conseguimos carregar
               os seus dados.
             </span>
@@ -44,8 +44,8 @@ export default function Dashboard() {
         )}
         {!isError && (
           <div className="flex gap-6">
-            <div className="flex flex-col flex-1 bg-container2 p-6 rounded-lg">
-              <span className="label-small text-title">Você ganhou</span>
+            <div className="flex flex-col flex-1 bg-layer-tertiary p-6 rounded-lg">
+              <span className="label-small text-content-primary">Você ganhou</span>
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-positive">
@@ -53,11 +53,11 @@ export default function Dashboard() {
                 </span>
               )}
             </div>
-            <div className="flex flex-col flex-1 bg-container2 p-6 rounded-lg">
-              <span className="label-small text-title">Você gastou</span>
+            <div className="flex flex-col flex-1 bg-layer-tertiary p-6 rounded-lg">
+              <span className="label-small text-content-primary">Você gastou</span>
               {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
               {!isLoading && data && (
-                <span className="title-medium text-negative">
+                <span className="title-medium text-critical">
                   {currencyFormat(data.sumAllAmountExpend, userDefaultCoin?.code)}
                 </span>
               )}
@@ -70,8 +70,8 @@ export default function Dashboard() {
         )}
 
         {isLoading && (
-          <div className="flex flex-col bg-container2 rounded-lg py-4">
-            <h1 className="title-small text-title px-6 pb-1">
+          <div className="flex flex-col bg-layer-tertiary rounded-lg py-4">
+            <h1 className="title-small text-content-primary px-6 pb-1">
               Últimas Transações
             </h1>
             <div className="px-2 max-h-44 overflow-hidden">
@@ -95,8 +95,8 @@ export default function Dashboard() {
           <ExpenseByCatChart data={data.allTransactionsByMonth} />
         )}
         {isLoading && (
-          <div className="bg-container2 rounded-lg py-4">
-            <h1 className="title-small text-title px-6">Gasto por Categoria</h1>
+          <div className="bg-layer-tertiary rounded-lg py-4">
+            <h1 className="title-small text-content-primary px-6">Gasto por Categoria</h1>
             <div className="px-6 pt-4">
               <Skeleton className="w-full rounded-lg h-56 mb-10" />
               <div className="flex flex-col gap-6">

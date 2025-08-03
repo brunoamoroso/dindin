@@ -116,16 +116,16 @@ export default function ExpenseTransaction({
 
   return (
     <div className="flex flex-col flex-1">
-      <div className="container">
+      <div className="mx-6">
         <div className="py-8 ">
-          <span className="label-medium text-subtle">Valor Gasto</span>
+          <span className="label-medium text-content-subtle">Valor Gasto</span>
           <div className="flex gap-1">
-            <span className="headline-small text-title">
+            <span className="headline-small text-content-primary">
               {contextTransactionData.coin}
             </span>
             <span
               id="amount_placeholder"
-              className="headline-small text-negative"
+              className="headline-small text-critical"
               onClick={handleAmountPlaceholder}
             >
               {contextTransactionData.amount
@@ -138,7 +138,7 @@ export default function ExpenseTransaction({
               pattern="[0-9]"
               id="amount_input"
               type="text"
-              className="hidden text-negative"
+              className="hidden text-critical"
               placeholder="0.00"
               onChange={handleAmountChange}
               value={currencyFormat(contextTransactionData.amount)}
@@ -146,7 +146,7 @@ export default function ExpenseTransaction({
           </div>
         </div>
       </div>
-      <div className="container rounded-t-lg bg-container2 py-10 flex flex-col flex-1">
+      <div className="px-6 rounded-t-lg bg-layer-tertiary py-10 flex flex-col flex-1">
         <form
           onSubmit={handleSubmit}
           className="flex flex-col flex-1 gap-16 justify-between"
@@ -163,7 +163,7 @@ export default function ExpenseTransaction({
             {((transactionScope !== "one-installment" && mode === "edit") ||
               mode === "create") && (
               <div className="flex flex-col gap-1.5">
-                <span className="label-large text-title">Categoria</span>
+                <span className="label-large text-content-primary">Categoria</span>
                 <Link
                   to="/categories/expense"
                   state={{
@@ -180,7 +180,7 @@ export default function ExpenseTransaction({
                       <div className="flex flex-col">
                         {contextTransactionData.category}
                         {contextTransactionData.subcategory && (
-                          <span className="body-small text-subtle">
+                          <span className="body-small text-content-subtle">
                             {contextTransactionData.subcategory}
                           </span>
                         )}
@@ -192,7 +192,7 @@ export default function ExpenseTransaction({
             )}
 
             <div className="flex flex-col gap-1.5">
-              <span className="label-large text-title">Conta</span>
+              <span className="label-large text-content-primary">Conta</span>
               <Link
                 to="/accounts/list"
                 state={{
@@ -213,7 +213,7 @@ export default function ExpenseTransaction({
             {((transactionScope === "all-installments" && mode === "edit") ||
               mode === "create") && (
               <div className="py-3 flex flex-col gap-1.5">
-                <span className="label-large text-title">
+                <span className="label-large text-content-primary">
                   Condição de Pagamento
                 </span>
                 <div className="flex gap-2">
@@ -274,13 +274,13 @@ export default function ExpenseTransaction({
                 />
                 <span
                   id="installment-helper"
-                  className="body-small text-subtle"
+                  className="body-small text-content-subtle"
                 ></span>
               </div>
             )}
 
             <div className="py-3 flex flex-col gap-1.5">
-              <span className="label-large text-title">Quando pagou</span>
+              <span className="label-large text-content-primary">Quando pagou</span>
               <div className="flex gap-2">
                 <InputChips
                   value={"today"}
@@ -336,7 +336,7 @@ export default function ExpenseTransaction({
             </div>
             {/* Removed for first release */}
             {/* <div className="flex flex-col gap-1.5">
-              <span className="label-large text-title">
+              <span className="label-large text-content-primary">
                 Repetir essa despesa
               </span>
               <Link to="/recurrency">

@@ -56,7 +56,7 @@ export function SearchCoin(){
     return (                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
         <div className="min-h-dvh bg-surface flex flex-1 flex-col">
             <AppBar title="Adicionar uma moeda"/>
-            <div className="container py-10 flex flex-1 flex-col bg-container2 rounded-lg">
+            <div className="container py-10 flex flex-1 flex-col bg-layer-tertiary rounded-lg">
                 <TextField 
                     label="Buscar"
                     placeholder="Buscar moeda"
@@ -83,8 +83,8 @@ export function SearchCoin(){
                                 
                             </img>
                             <div className="flex flex-col">
-                                <span className="label-large text-title">{item.code}</span>
-                                <span className="body-small text-subtle">{item.desc}</span>
+                                <span className="label-large text-content-primary">{item.code}</span>
+                                <span className="body-small text-content-subtle">{item.desc}</span>
                             </div>
                         </div>
                         </MenuListItem>

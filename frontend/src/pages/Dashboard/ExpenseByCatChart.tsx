@@ -87,21 +87,21 @@ export default function ExpenseByCatChart({data} : {data: Types.TransactionType[
                 <div className='flex flex-col px-6' key={i}>
                     <div className='flex items-center py-3.5 gap-4 justify-between'>
                         <div className='flex flex-1 items-center gap-4'>
-                            <div className={'p-2 rounded text-title'} style={{
+                            <div className={'p-2 rounded text-content-primary'} style={{
                                 backgroundColor: badge.dataVizColor,
                                 borderColor: badge.dataVizBorderColor
                             }}>
                                 {badge.icon}
                             </div>
                             <div>
-                                <h2 className='label-large text-title'>{description}</h2>
-                                <p className='body-small text-subtle'>{dataSorted[description].length} {dataSorted[description].length > 1 ? "transações" : "transação"}</p>
+                                <h2 className='label-large text-content-primary'>{description}</h2>
+                                <p className='body-small text-content-subtle'>{dataSorted[description].length} {dataSorted[description].length > 1 ? "transações" : "transação"}</p>
                             </div>
                         </div>
 
                         <div className='text-right'>
-                            <p className='label-large text-negative'>{currencyFormat(totalCatAmount)}</p>
-                            <p className='body-small text-subtle'>{percentage}%</p>
+                            <p className='label-large text-critical'>{currencyFormat(totalCatAmount)}</p>
+                            <p className='body-small text-content-subtle'>{percentage}%</p>
                         </div>
                     </div>
                     {i < Object.keys(dataSorted).length && <Separator />}
@@ -114,10 +114,10 @@ export default function ExpenseByCatChart({data} : {data: Types.TransactionType[
 
 
     return(
-        <div className="bg-container2 rounded-lg py-4">
-            <h1 className="title-small text-title px-6">Gasto por Categoria</h1>
+        <div className="bg-layer-tertiary rounded-lg py-4">
+            <h1 className="title-small text-content-primary px-6">Gasto por Categoria</h1>
             {data.length === 0 && (
-                <span className="flex px-6 py-4 text-subtle body-large">Sem transções neste mês.</span>
+                <span className="flex px-6 py-4 text-content-subtle body-large">Sem transções neste mês.</span>
             )}
             {(data && data.length > 0) && (
                 <div className='flex justify-center'>
