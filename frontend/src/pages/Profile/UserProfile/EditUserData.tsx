@@ -119,7 +119,7 @@ export default function EditUserData() {
         </div>
       )}
       {data && user && !isLoading && (
-        <div className="container flex flex-1 py-10">
+        <div className="px-6 flex flex-1 py-10">
           <form
             className="flex flex-col gap-10 flex-1 justify-between"
             onSubmit={handleSubmit}
