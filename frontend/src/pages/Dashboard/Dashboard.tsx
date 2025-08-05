@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { currencyFormat } from "@/utils/currency-format";
 import BottomNav from "@/components/BottomNav";
@@ -11,6 +10,8 @@ import { CoinSelector } from "@/components/CoinSelector";
 import { useDashboardContext } from "@/context/DashboardContext";
 import { getAllTransactionsByMonth } from "@/api/transactionService";
 import { Separator } from "@/components/ui/separator";
+import { IconButton } from "@/components/ui/icon-button";
+import { Trash2 } from "lucide-react";
 
 export default function Dashboard() {
   const { selectedDate, coinSelected } = useDashboardContext();
@@ -23,8 +24,14 @@ export default function Dashboard() {
   return (
     <div className="min-h-dvh bg-surface flex flex-col text-content-secondary">
       <div className="flex flex-1 flex-col gap-5 pb-40">
-        <div className="flex items-center justify-start py-6 mx-6">
+        <div className="flex items-center justify-between py-6 mx-6">
           <AvatarDashboard />
+
+          {coinSelected !== "global" && (
+              <IconButton variant={"outline"} onClick={() => {console.log("Delete account")}}>
+                <Trash2 />
+              </IconButton>
+          )}
         </div>
 
         <CoinSelector />
