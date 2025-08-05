@@ -79,7 +79,7 @@ export default function SignIn() {
   return (
     <div className="h-dvh bg-surface flex flex-col">
       <AppBar title="Entrar" />
-      <div className="container flex flex-1 flex-col justify-center">
+      <div className="flex flex-1 flex-col justify-center px-6">
         <form onSubmit={handleSubmit} className="flex flex-col gap-10">
           <div className="flex flex-col gap-6">
             <TextField
@@ -99,7 +99,7 @@ export default function SignIn() {
           <Button type="submit" size={"lg"} className={`${loading && "opacity-50 cursor-not-allowed pointer-events-none"}`}>
             {loading ? (
               <div className="flex items-center gap-2">
-                <LoaderCircle />
+                <LoaderCircle className="animate-spin" />
                 Carregando
               </div>
             ): "Entrar"}
