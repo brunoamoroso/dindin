@@ -143,7 +143,7 @@ export default function CreateProfile() {
         <AppBar title="Configurar Conta" />
         <Progress value={50} />
       </div>
-      <div className="container flex flex-1 py-10">
+      <div className="px-6 flex flex-1 py-10">
           <form className="flex flex-col gap-10 flex-1 justify-between" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center gap-2" onClick={triggerInputFile}>

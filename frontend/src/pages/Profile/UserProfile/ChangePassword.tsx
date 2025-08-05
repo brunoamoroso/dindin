@@ -112,7 +112,7 @@ export function ChangePassword() {
   return (
     <div className="bg-surface min-h-dvh flex flex-1 flex-col">
       <AppBar title="Mudar Senha" />
-      <div className="container flex flex-1 flex-col py-10">
+      <div className="px-6 flex flex-1 flex-col py-10">
         <form
           className="flex flex-col gap-10 flex-1 justify-between"
           onSubmit={handleSubmit}
