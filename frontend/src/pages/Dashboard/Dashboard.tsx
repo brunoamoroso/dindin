@@ -47,7 +47,7 @@ export default function Dashboard() {
           <div className="flex gap-6 mx-6 mt-2">
             <div className="flex flex-col flex-1">
               <span className="label-small text-content-primary">Recebeu</span>
-              {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
+              {isLoading && <Skeleton className="w-8/12 h-6 rounded-full" />}
               {!isLoading && data && (
                 <span className="title-medium text-positive">
                   {currencyFormat(data.sumAllAmountGained, data.allTransactionsByMonth[0]?.code)}
@@ -73,11 +73,13 @@ export default function Dashboard() {
         )}
 
         {isLoading && (
-          <div className="flex flex-col bg-layer-tertiary rounded-lg py-4">
-            <h1 className="title-small text-content-primary px-6 pb-1">
-              Últimas Transações
-            </h1>
-            <div className="px-2 max-h-44 overflow-hidden">
+          <div className="flex flex-col">
+            <div className="flex justify-between px-6">
+              <h1 className="title-small text-content-primary pb-1">
+                Últimas Transações
+              </h1>
+              <Skeleton className="h-8 rounded-full w-16" />
+            </div>
               <div className="flex flex-col gap-6 px-4 pt-3">
                 {Array.from({ length: 3 }).map((_x, i) => {
                   return (
@@ -87,10 +89,6 @@ export default function Dashboard() {
                   );
                 })}
               </div>
-            </div>
-            <div className="pt-2 px-2 border-t border-outline">
-              <Button variant={"ghost"}>Ver todas as transações</Button>
-            </div>
           </div>
         )}
 
@@ -99,8 +97,7 @@ export default function Dashboard() {
         {!isLoading && data && !isError && coinSelected !== "global" && (
           <ExpenseByCatChart data={data.allTransactionsByMonth} />
         )}
-        {isLoading && (
-          <div className="bg-layer-tertiary rounded-lg py-4">
+        {isLoading && coinSelected !== "global" && (
             <div className="px-6 pt-4">
               <Skeleton className="w-full rounded-lg h-56 mb-10" />
               <div className="flex flex-col gap-6">
@@ -108,13 +105,12 @@ export default function Dashboard() {
                   return (
                     <div key={i} className="flex flex-col gap-4">
                       <Skeleton className="w-full h-14 rounded" />
-                      <Separator />
+                      {i < 2 && <Separator />}
                     </div>
                   );
                 })}
               </div>
             </div>
-          </div>
         )}
       </div>
       <BottomNav />
