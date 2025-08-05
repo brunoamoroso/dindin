@@ -24,6 +24,7 @@ const buttonVariants = cva(
         sm: "h-9 px-3 peer [&>svg]:h-4 [&>svg]:w-4",
         lg: "py-5 px-8 text-lg",
         icon: "h-10 w-10",
+        link: "h-10"
       },
     },
     defaultVariants: {

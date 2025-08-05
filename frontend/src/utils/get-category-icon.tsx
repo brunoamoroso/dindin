@@ -113,11 +113,11 @@ export default function getCategoryIcon(category: string): {dataVizColor: string
         "receitas variáveis": {
             dataVizColor: "#ca2a39",
             dataVizBorderColor: "#ca2a39",
-                icon: <BadgePercent />
+            icon: <BadgePercent />
             },
         transferências: {
-            dataVizColor: "#ca2a39",
-            dataVizBorderColor: "#ca2a39",
+            dataVizColor: "#55626d",
+            dataVizBorderColor: "#74808c",
             icon: <ArrowRightLeft />
         }
     }

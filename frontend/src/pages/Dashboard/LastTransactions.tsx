@@ -11,12 +11,12 @@ export default function LastTransactions({
 }) {
   return (
     <div className="flex flex-col gap-2.5">
-      <div className="flex flex-1 justify-between items-baseline">
-        <h1 className="title-small text-content-primary px-6 pb-1">
+      <div className="flex flex-1 justify-between items-baseline px-6">
+        <h1 className="title-small text-content-primary pb-1">
           Últimas Transações
         </h1>
         <Link to={`/transaction/list`}>
-        <Button variant={"link"}>Ver todas</Button>
+          <Button variant={"link"} size={'link'}>Ver todas</Button>
         </Link>
       </div>
       <div className="px-2">
