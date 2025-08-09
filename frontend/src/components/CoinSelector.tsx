@@ -5,6 +5,7 @@ import { getUserSelectedCoins } from "@/api/coinService";
 import { CoinType } from "@/types/CoinTypes";
 import { useNavigate } from "react-router-dom";
 import { useDashboardContext } from "@/context/DashboardContext";
+import { Skeleton } from "./ui/skeleton";
 
 export function CoinSelector() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export function CoinSelector() {
     data: userCoins,
     isLoading: loadingUserCoins,
   } = useQuery<CoinType[]>({
-    queryKey: ["userCoins"],
+    queryKey: ["user-coins"],
     queryFn: () => getUserSelectedCoins(),
   });
 
@@ -37,6 +38,9 @@ export function CoinSelector() {
         <Globe size={28} className="fill-text-content-primary" />
         <span>Global</span>
       </CoinSelectorItem>
+      {loadingUserCoins && (
+        <Skeleton className="relative h-[152px] w-[140px] rounded-lg shrink-0" />
+      )}
       {!loadingUserCoins &&
         userCoins &&
         userCoins.map((coin) => (
@@ -56,7 +60,6 @@ export function CoinSelector() {
             </span>
           </CoinSelectorItem>
         ))}
-
       <div className="flex gap-2 items-end h-[152px] w-[140px] border-2 border-outline border-dashed rounded-lg p-6 snap-start shrink-0" onClick={() => navigate('/coins/search')}>
         <div className="flex gap-2 items-center">
           <PlusCircle size={28} className="fill-text-content-primary" />

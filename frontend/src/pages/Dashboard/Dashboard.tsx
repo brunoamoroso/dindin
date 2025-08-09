@@ -10,8 +10,7 @@ import { CoinSelector } from "@/components/CoinSelector";
 import { useDashboardContext } from "@/context/DashboardContext";
 import { getAllTransactionsByMonth } from "@/api/transactionService";
 import { Separator } from "@/components/ui/separator";
-import { IconButton } from "@/components/ui/icon-button";
-import { Trash2 } from "lucide-react";
+import { RemoveCoin } from "@/components/RemoveCoin";
 
 export default function Dashboard() {
   const { selectedDate, coinSelected } = useDashboardContext();
@@ -26,12 +25,7 @@ export default function Dashboard() {
       <div className="flex flex-1 flex-col gap-5 pb-40">
         <div className="flex items-center justify-between py-6 mx-6">
           <AvatarDashboard />
-
-          {coinSelected !== "global" && (
-              <IconButton variant={"outline"} onClick={() => {console.log("Delete account")}}>
-                <Trash2 />
-              </IconButton>
-          )}
+          <RemoveCoin />
         </div>
 
         <CoinSelector />
@@ -40,7 +34,7 @@ export default function Dashboard() {
           <MonthPicker />
         </div>
         {isError && (
-          <>
+          <div className="flex flex-col px-6">
             <h1 className="text-content-primary headline-small">
               Tivemos um problema ao carregar os dados
             </h1>
@@ -48,7 +42,7 @@ export default function Dashboard() {
               Pedimos desculpa pela inconveniência, mas não conseguimos carregar
               os seus dados.
             </span>
-          </>
+          </div>
         )}
         {!isError && coinSelected !== "global" && (
           <div className="flex gap-6 mx-6 mt-2">
@@ -63,7 +57,7 @@ export default function Dashboard() {
             </div>
             <div className="flex flex-col flex-1 text-right">
               <span className="label-small text-content-primary">Gastou</span>
-              {isLoading && <Skeleton className="w-full h-4 rounded-xl" />}
+              {isLoading && <Skeleton className="w-8/12 h-6 rounded-xl" />}
               {!isLoading && data && (
                 <span className="title-medium text-critical">
                   {currencyFormat(data.sumAllAmountExpend, data.allTransactionsByMonth[0]?.code)}
