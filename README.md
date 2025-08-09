@@ -23,7 +23,7 @@ This project represents a full-stack effort, where I worked on everything from p
 -   Deepened my expertise in **TypeScript**, **TailwindCSS**, and the **shadcn** component library;
 -   Developed a robust product roadmap aligned with user needs and future trends in personal finance;
 
-## 🚀Features
+## 🚀 Features
 ### Current Features (MVP):
 -   **Account Management:**  
     Register and log in to start tracking your finances.
@@ -31,12 +31,12 @@ This project represents a full-stack effort, where I worked on everything from p
     Add, update, and delete transactions manually.
 -   **Spending Reports:**  
     View detailed reports showing spending by category to understand financial habits.
+-   **Multi-Currency Support:**  
+    Tools to manage finances across multiple currencies, catering to a global economy, frequent travelers, and cross-border investments.
 
 ### Roadmap:
 1.  **Open Finance Integrations:**  
     Seamless integration with financial institutions to automatically fill user transactions, saving time and reducing manual input.
-2.  **Multi-Currency Support:**  
-    Tools to manage finances across multiple currencies, catering to a global economy, frequent travelers, and cross-border investments.
 3.  **AI Financial Advisor:**  
     Personalized financial advice powered by AI to help users make smarter decisions and achieve their financial goals.
     
