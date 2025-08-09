@@ -19,3 +19,7 @@ export function addNewUserSelectedCoin<T>(body: {coinId: string}): Promise<T>{
 export function setDefaultUserCoin <T>(body: {coinId: string}): Promise<T>{
     return api.put<T>("/coins/user/set-default", body);
 }
+
+export function removeCoin<T>(body: {coinCode: string}): Promise<T>{
+    return api.delete<T>(`/coins/user/remove/${body.coinCode}`);
+}

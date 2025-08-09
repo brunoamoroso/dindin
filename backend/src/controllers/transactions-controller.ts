@@ -144,6 +144,7 @@ export const getAllTransactionsByMonth = async (
     FROM transactions t
     JOIN users u ON t.created_by = u.id
     JOIN coins c ON c.id = t.coin_id
+    JOIN user_selected_coins usc ON usc.user_id = u.id AND usc.coin_id = t.coin_id
     LEFT JOIN accounts acc ON t.account_id = acc.id
     LEFT JOIN categories cat ON t.category_id = cat.id
     LEFT JOIN subcategories sub ON t.subcategory_id = sub.id

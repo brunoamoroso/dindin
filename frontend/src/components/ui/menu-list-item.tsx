@@ -38,7 +38,7 @@ interface MenuListItemProps{
   disabled?: boolean;
 }
 
-const MenuListItem = ({dataId, size = "md", children, trailingIcon = true, onClick, value, separator = false, disabled=false}: MenuListItemProps) => {
+const MenuListItem = ({dataId, size = "md", children, trailingIcon = true, onClick, value, separator = false, disabled = false}: MenuListItemProps) => {
   return (
     <div onClick={onClick} data-id={dataId} data-value={value} data-disabled={disabled} className={"data-[disabled=true]:opacity-50 data-[disabled=true]:pointer-events-none"}>
       <div className={cn(containerMenuVariants({size}))} >

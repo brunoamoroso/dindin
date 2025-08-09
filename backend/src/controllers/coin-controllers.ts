@@ -50,6 +50,8 @@ export const getCoins = async (req: Request, res: Response) =>  {
             return coin;
         }));
 
+        console.log(coinsWithImages)
+
         res.status(200).json(coinsWithImages);
 
     }catch(err){
@@ -121,5 +123,23 @@ export const getDefaultUserCoin = async (req: Request, res: Response) => {
     }catch(err){
         console.log(err);
         res.status(500).json({message: "Internal server error"});
+    }
+}
+
+export const removeCoin = async (req: Request, res: Response) => {
+    const user = req.user;
+    const { coinCode } = req.params;
+
+    try {
+        // Remove the coin from user_selected_coins
+        const queryRemoveCoin = `DELETE FROM user_selected_coins WHERE user_id = $1 AND coin_id = (SELECT id FROM coins WHERE code = $2)`;
+        const valuesRemoveCoin = [user, coinCode];
+
+        await db.query(queryRemoveCoin, valuesRemoveCoin);
+
+        res.status(200).json({ message: "Coin removed successfully" });
+    } catch (error) {
+        console.error("Error removing coin:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 }

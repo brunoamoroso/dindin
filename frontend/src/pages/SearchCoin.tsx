@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 export function SearchCoin(){
     const navigate = useNavigate();
-    type CoinWithUserSelection = CoinType & {userHas: number};
+    type CoinWithUserSelection = CoinType & {userhas: boolean};
     const [searchCoin, setSearchCoin] = useState("");
     const [filteredCoins, setFilteredCoins] = useState<CoinWithUserSelection[]>([]);
 
@@ -46,12 +46,15 @@ export function SearchCoin(){
         }
     }
 
+
     const handleCoinClick = (e: React.MouseEvent<HTMLDivElement>) => {
         const coinId = e.currentTarget.dataset.id;
         if (coinId) {
             mutation.mutate({ coinId });
         }
     }
+
+    console.log(filteredCoins);
 
     return (                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
         <div className="min-h-dvh bg-surface flex flex-1 flex-col">
@@ -67,12 +70,12 @@ export function SearchCoin(){
                 <div className="flex flex-col pt-6">
                     {filteredCoins.map((item, i, arr) => (
                         <MenuListItem
-                            key={i}
+                            key={item.id}
                             separator={arr.length - 1 !== i}
                             dataId={item.id}
                             value={item.code}
                             trailingIcon={false}
-                            disabled={Boolean(item.userHas)}
+                            disabled={item.userhas}
                             onClick={handleCoinClick}
                         >
                         <div className="flex gap-4 items-center">
