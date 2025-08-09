@@ -57,7 +57,7 @@ export default function LastTransactions({
         ))}
 
         {data.length === 0 && (
-          <span className="flex p-4 text-content-subtle body-large">
+          <span className="flex px-4 text-content-subtle body-large">
             Sem transções neste mês.
           </span>
         )}
