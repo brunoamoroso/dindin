@@ -64,7 +64,7 @@ export function ListAllTransactions() {
               <div className="flex flex-col items-end">
                 <span
                   className={`label-medium ${
-                    d.type === "gain" ? "text-positive" : "text-critical"
+                    d.type === "gain" ? "text-content-positive" : "text-content-negative"
                   }`}
                 >
                   {currencyFormat(d.amount)}

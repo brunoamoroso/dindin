@@ -114,7 +114,7 @@ export default function Dashboard() {
             </div>
         )}
       </div>
-      <BottomNav />
+      {coinSelected !== "global" && <BottomNav />}
     </div>
   );
 }

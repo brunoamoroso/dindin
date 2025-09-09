@@ -1,7 +1,8 @@
 import { Link, NavLink } from "react-router-dom";
 import { IconButton } from "./ui/icon-button";
-import { Goal, LayoutGrid, Plus } from "lucide-react";
+import { Gauge, Goal, LayoutGrid, Plus } from "lucide-react";
 import { useDashboardContext } from "@/context/DashboardContext";
+import { cn } from "@/lib/utils";
 
 export default function BottomNav(){
     const {coinSelected} = useDashboardContext();
@@ -19,8 +20,8 @@ export default function BottomNav(){
         },
         {
             link: "/goals",
-            icon: <Goal />,
-            title: "Objetivos"
+            icon: <Gauge />,
+            title: "Limites de Gastos"
         }
     ];
 
@@ -31,7 +32,7 @@ export default function BottomNav(){
                     if( i === 1 && coinSelected === "global" ) return;
                     if(i === 1){
                         return(
-                        <Link to={obj.link} key={i}>
+                        <Link to={obj.link} key={i} className="flex flex-1 justify-center">
                             <IconButton className="w-14 h-14">
                                 {obj.icon}
                             </IconButton>
@@ -40,7 +41,7 @@ export default function BottomNav(){
                     }
 
                     return(
-                        <NavLink to={obj.link} key={i} className={({isActive}) => `flex flex-col items-center gap-1 py-5 px-10 ${isActive ? " text-primary" : "text-content-primary"}`}>
+                        <NavLink to={obj.link} key={i} className={({isActive}) => cn("flex flex-1 flex-col items-center justify-center gap-1 py-5", isActive ? "text-primary" : "text-content-primary")}>
                             {obj.icon}
                             <span className="label-small">{obj.title}</span>
                         </NavLink>

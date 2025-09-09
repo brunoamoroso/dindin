@@ -42,8 +42,8 @@ export default function LastTransactions({
             <div className="flex flex-col items-end">
               <span
                 className={cn("label-medium whitespace-nowrap", {
-                  "text-positive": d.type === "gain",
-                  "text-critical": d.type === "expense",
+                  "text-content-positive": d.type === "gain",
+                  "text-content-negative": d.type === "expense",
                 })}
               >
                 {(d.type === "gain" ? "+ " : "- ") + currencyFormat(d.amount)}
