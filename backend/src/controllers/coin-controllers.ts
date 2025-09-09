@@ -50,8 +50,6 @@ export const getCoins = async (req: Request, res: Response) =>  {
             return coin;
         }));
 
-        console.log(coinsWithImages)
-
         res.status(200).json(coinsWithImages);
 
     }catch(err){

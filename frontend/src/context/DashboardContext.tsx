@@ -6,14 +6,18 @@ export interface DashboardContextType {
   setSelectedDate: React.Dispatch<SetStateAction<Date>>;
   coinSelected: "global" | string;
   setCoinSelected: React.Dispatch<SetStateAction<"global" | string>>;
+  numUserCoins: number;
+  setNumUserCoins: React.Dispatch<SetStateAction<number>>;
 }
 
 export function DashboardContext() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [coinSelected, setCoinSelected] = useState<"global" | string>("global");
+  const [numUserCoins, setNumUserCoins] = useState<number>(0);
+
   return (
     <>
-      <Outlet context={{ selectedDate, setSelectedDate, coinSelected, setCoinSelected }} />
+      <Outlet context={{ selectedDate, setSelectedDate, coinSelected, setCoinSelected, numUserCoins, setNumUserCoins }} />
     </>
   );
 }

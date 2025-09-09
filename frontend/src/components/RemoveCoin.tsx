@@ -10,7 +10,7 @@ import { useToast } from "./ui/use-toast";
 
 export function RemoveCoin() {
 
-    const { coinSelected, setCoinSelected } = useDashboardContext();
+    const { coinSelected, setCoinSelected, numUserCoins } = useDashboardContext();
 
     const [openRemoveCoinDialog, setOpenRemoveCoinDialog] = useState(false);
 
@@ -39,7 +39,7 @@ export function RemoveCoin() {
     });
     return (
         <>
-          {coinSelected !== "global" && (
+          {coinSelected !== "global" && numUserCoins > 1 && (
             <Dialog open={openRemoveCoinDialog} onOpenChange={setOpenRemoveCoinDialog}>
               <DialogTrigger>
                 <IconButton variant={"outline"} size="small">

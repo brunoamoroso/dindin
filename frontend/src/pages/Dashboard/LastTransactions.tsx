@@ -3,6 +3,7 @@ import { currencyFormat } from "@/utils/currency-format";
 import getCategoryIcon from "@/utils/get-category-icon";
 import { Link } from "react-router-dom";
 import * as Types from "@/types/TransactionTypes";
+import { cn } from "@/lib/utils";
 
 export default function LastTransactions({
   data,
@@ -40,9 +41,10 @@ export default function LastTransactions({
             </div>
             <div className="flex flex-col items-end">
               <span
-                className={`label-medium ${
-                  d.type === "gain" ? "text-positive" : "text-critical"
-                }`}
+                className={cn("label-medium whitespace-nowrap", {
+                  "text-positive": d.type === "gain",
+                  "text-critical": d.type === "expense",
+                })}
               >
                 {(d.type === "gain" ? "+ " : "- ") + currencyFormat(d.amount)}
                 <span className="text-content-secondary">

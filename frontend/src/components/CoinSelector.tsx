@@ -6,11 +6,12 @@ import { CoinType } from "@/types/CoinTypes";
 import { useNavigate } from "react-router-dom";
 import { useDashboardContext } from "@/context/DashboardContext";
 import { Skeleton } from "./ui/skeleton";
+import { useEffect } from "react";
 
 export function CoinSelector() {
   const navigate = useNavigate();
 
-  const { coinSelected, setCoinSelected } = useDashboardContext();
+  const { coinSelected, setCoinSelected, setNumUserCoins } = useDashboardContext();
 
   const {
     data: userCoins,
@@ -19,6 +20,13 @@ export function CoinSelector() {
     queryKey: ["user-coins"],
     queryFn: () => getUserSelectedCoins(),
   });
+
+  useEffect(() => {
+    setNumUserCoins?.(userCoins?.length ?? 0);
+    if (userCoins && userCoins.length === 1) {
+      setCoinSelected?.(userCoins[0].code);
+    }
+  }, [coinSelected, setCoinSelected, userCoins]);
 
   const handleClickCoin = (e: React.MouseEvent<HTMLDivElement>) => {
     const coinCode = e.currentTarget.dataset.id;
@@ -34,10 +42,12 @@ export function CoinSelector() {
   };
   return (
     <div className="flex gap-5 scroll-px-6 px-6 snap-mandatory snap-x overflow-x-auto no-scrollbar mb-9">
-      <CoinSelectorItem variant={`${coinSelected === "global" ? "pressed" : "default"}`} id="global" onClick={handleClickCoin}>
-        <Globe size={28} className="fill-text-content-primary" />
-        <span>Global</span>
-      </CoinSelectorItem>
+      {!loadingUserCoins && (userCoins?.length ?? 0) > 1 && (
+        <CoinSelectorItem variant={`${coinSelected === "global" ? "pressed" : "default"}`} id="global" onClick={handleClickCoin}>
+          <Globe size={28} className="fill-text-content-primary" />
+          <span>Global</span>
+        </CoinSelectorItem>
+      )}
       {loadingUserCoins && (
         <Skeleton className="relative h-[152px] w-[140px] rounded-lg shrink-0" />
       )}

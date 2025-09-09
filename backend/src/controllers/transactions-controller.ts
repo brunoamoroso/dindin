@@ -139,7 +139,7 @@ export const getAllTransactionsByMonth = async (
   ).toISOString());
 
   try {
-    let queryAllTransactionsByMonth = `SELECT t.id, t.type, t.description, t.amount, t.account_id, acc.description AS account, t.category_id, t.subcategory_id,
+    let queryAllTransactionsByMonth = `SELECT t.id, t.type, t.description, t.amount, t.account_id, acc.description AS account, t.category_id, t.subcategory_id, t.date,
     cat.description AS category, sub.description AS subcategory, t.installments, t.install_number, c.code
     FROM transactions t
     JOIN users u ON t.created_by = u.id
