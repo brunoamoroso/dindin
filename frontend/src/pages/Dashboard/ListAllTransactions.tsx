@@ -9,6 +9,8 @@ import { useEffect } from "react";
 import { useDashboardContext } from "@/context/DashboardContext";
 import { MonthPicker } from "../MonthPicker";
 import { getAllTransactionsByMonth } from "@/api/transactionService";
+import { Skeleton } from "@/components/ui/skeleton";
+import { DataAllTransactionsType } from "@/types/TransactionTypes";
 
 export function ListAllTransactions() {
   const { selectedDate, setSelectedDate, coinSelected } = useDashboardContext();
@@ -21,7 +23,7 @@ export function ListAllTransactions() {
     }
   }, [dateParams, setSelectedDate]);
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery<DataAllTransactionsType>({
     queryKey: ["listalltransactions-data", selectedDate],
     queryFn: () => getAllTransactionsByMonth(selectedDate.toISOString(), coinSelected),
   });
@@ -35,10 +37,15 @@ export function ListAllTransactions() {
       </div>
 
       <div className="container flex flex-col flex-1 bg-layer-tertiary rounded-t-lg py-10 px-6">
-        {data?.allTransactionsByMonth.length === 0 && (
+        {isLoading && (
+          Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-8 mb-4 flex" />
+          ))
+        )}
+        {!isLoading && data?.allTransactionsByMonth.length === 0 && (
           <span className="body-large">Não houveram transações neste mês.</span>
         )}
-        {data?.allTransactionsByMonth.map((d, i, arr) => (
+        {!isLoading && data?.allTransactionsByMonth.map((d, i, arr) => (
           <div key={i} className="flex flex-col">
             <div
               key={i}
