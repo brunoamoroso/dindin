@@ -11,7 +11,7 @@ export function SplashDefaultCoin(){
                 <AppBar title="Configurar Conta"/>
                 <Progress value={80} />
             </div>
-            <main className="container my-10 flex flex-col flex-1 justify-between">
+            <main className="mx-6 my-10 flex flex-col flex-1 justify-between">
                 <div className="flex flex-col gap-10">
                     <img src={imgSplash} alt="Moeda em verde no centro da imagem com moedas em volta formando uma ellipse" className="mix-blend-lighten"/>
                     <div className="flex flex-col gap-3 text-center">

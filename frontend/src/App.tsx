@@ -80,6 +80,7 @@ function AppRoutes() {
                 <Route path="/accounts/create" element={<CreateAccount />} />
                 <Route path="/recurrency" element={<Recurrency />} />
               </Route>
+              <Route path="/coins/search" element={<SearchCoin />} />
             </Route>
 
             <Route path="/profile/user" element={<UserProfile />} />
@@ -88,8 +89,6 @@ function AppRoutes() {
               path="/profile/user/change-password"
               element={<ChangePassword />}
             />
-
-            <Route path="/coins/search" element={<SearchCoin />} />
 
             <Route path="goals" element={<Goals />} />
           </Route>

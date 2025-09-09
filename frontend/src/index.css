@@ -149,6 +149,8 @@
   --color-content-secondary: var(--color-neutral-100);
   --color-content-subtle: var(--color-neutral-400);
   --color-content-inverted: var(--color-neutral-950);
+  --color-content-positive: var(--color-green-300);
+  --color-content-negative: var(--color-red-300);
 
   --color-surface: var(--color-neutral-950);
 

@@ -1,3 +1,4 @@
+import React from "react";
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 
@@ -24,9 +25,9 @@ const coinSelectionVariants = cva(
     }
 );
 
-export function CoinSelectorItem({id, variant = "default", children, onClick}: CoinListItemProps){
+export const CoinSelectorItem = React.forwardRef<HTMLDivElement, CoinListItemProps>(({id, variant = "default", children, onClick}, ref) => {
     return(
-        <div className={cn(coinSelectionVariants({variant}))} onClick={onClick} data-id={id}>
+        <div className={cn(coinSelectionVariants({variant}))} onClick={onClick} data-id={id} ref={ref}>
             <div className="flex gap-2 items-center z-20">
                 {children}
             </div>
@@ -35,4 +36,6 @@ export function CoinSelectorItem({id, variant = "default", children, onClick}: C
             }
         </div>
     )
-}
+});
+
+CoinSelectorItem.displayName = "CoinSelectorItem";

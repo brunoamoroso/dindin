@@ -2,8 +2,9 @@ import { addNewUserSelectedCoin, getCoins } from "@/api/coinService";
 import AppBar from "@/components/AppBar";
 import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
+import { useDashboardContext } from "@/context/DashboardContext";
 import { CoinType } from "@/types/CoinTypes";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -12,7 +13,8 @@ export function SearchCoin(){
     type CoinWithUserSelection = CoinType & {userhas: boolean};
     const [searchCoin, setSearchCoin] = useState("");
     const [filteredCoins, setFilteredCoins] = useState<CoinWithUserSelection[]>([]);
-
+    const {setCoinSelected} = useDashboardContext();
+    const queryClient = useQueryClient();
     const {data} = useQuery<CoinWithUserSelection[]>({
         queryKey: ["getCoins"],
         queryFn: () => getCoins()
@@ -21,6 +23,7 @@ export function SearchCoin(){
     const mutation = useMutation({
         mutationFn: (data: {coinId: string}) => addNewUserSelectedCoin(data),
         onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ["user-coins"]});
             navigate(-1);
         }
     });
@@ -46,20 +49,21 @@ export function SearchCoin(){
         }
     }
 
-
     const handleCoinClick = (e: React.MouseEvent<HTMLDivElement>) => {
         const coinId = e.currentTarget.dataset.id;
+        const coinCode = e.currentTarget.dataset.value;
+        if (coinCode !== undefined) {
+            setCoinSelected?.(coinCode);
+        }
         if (coinId) {
             mutation.mutate({ coinId });
         }
     }
 
-    console.log(filteredCoins);
-
     return (                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
         <div className="min-h-dvh bg-surface flex flex-1 flex-col">
             <AppBar title="Adicionar uma moeda"/>
-            <div className="container py-10 flex flex-1 flex-col bg-layer-tertiary rounded-lg px-6">
+            <div className="px-6 py-10 flex flex-1 flex-col bg-layer-tertiary rounded-lg">
                 <TextField 
                     label="Buscar"
                     placeholder="Buscar moeda"
