@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import { IconButton } from "./ui/icon-button";
-import { Gauge, Goal, LayoutGrid, Plus } from "lucide-react";
+import { Gauge, LayoutGrid, Plus } from "lucide-react";
 import { useDashboardContext } from "@/context/DashboardContext";
 import { cn } from "@/lib/utils";
 
