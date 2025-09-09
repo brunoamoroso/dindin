@@ -13,8 +13,6 @@ export function CoinSelector() {
 
   const { coinSelected, setCoinSelected, setNumUserCoins } = useDashboardContext();
 
-  console.log("Selected Coin: ", coinSelected);
-
   const {
     data: userCoins,
     isLoading: loadingUserCoins,
