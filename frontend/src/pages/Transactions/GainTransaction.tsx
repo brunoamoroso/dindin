@@ -14,7 +14,7 @@ import TextField from "@/components/ui/textfield";
 import { TransactionsContextType } from "@/context/TransactionsContext";
 import { cn } from "@/lib/utils";
 import { currencyFormat } from "@/utils/currency-format";
-import { getCurrencySymbol } from "@/utils/get-currency-symbol";
+import getCategoryIcon from "@/utils/get-category-icon";
 import { Landmark, LoaderCircle, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
@@ -43,6 +43,7 @@ export default function GainTransaction({
     setContextTransactionData,
   }: TransactionsContextType = useOutletContext();
   const [isDialogpOpen, setIsDialogOpen] = useState(false);
+  const badge = getCategoryIcon(contextTransactionData.category || "");
 
   const handleDayClick = (day: Date) => {
     setContextTransactionData((prevTransaction) => ({
@@ -59,10 +60,12 @@ export default function GainTransaction({
     <div className="flex flex-col flex-1">
       <div className="mx-6">
         <div className="py-8 ">
-          <span className="label-medium text-content-subtle">Valor Recebido</span>
+          <span className="label-medium text-content-subtle">
+            Valor Recebido
+          </span>
           <div className="flex gap-1">
             <span className="headline-small text-content-primary">
-              {getCurrencySymbol(contextTransactionData.coin)}
+              {contextTransactionData.coin}
             </span>
             <span
               id="amount_placeholder"
@@ -101,23 +104,40 @@ export default function GainTransaction({
               onChange={handleInputChange}
             />
             <div className="flex flex-col gap-1.5">
-              <span className="label-large text-content-primary">Categoria</span>
+              <span className="label-large text-content-primary">
+                Categoria
+              </span>
               <Link
                 to="/categories/gain"
                 state={{ mode: mode, id: contextTransactionData.id }}
               >
                 <MenuListItem>
-                  <Tag />
-                  {!contextTransactionData.category && "Escolha uma categoria"}
+                  {!contextTransactionData.category && (
+                    <>
+                      <Tag />
+                      <span>Escolha uma categoria</span>
+                    </>
+                  )}
                   {contextTransactionData.category && (
-                    <div className="flex flex-col">
-                      {contextTransactionData.category}
-                      {contextTransactionData.subcategory && (
-                        <span className="body-small text-content-subtle">
-                          {contextTransactionData.subcategory}
-                        </span>
-                      )}
-                    </div>
+                    <>
+                      <div
+                        className={"p-2 rounded text-content-primary"}
+                        style={{
+                          backgroundColor: badge.dataVizColor,
+                          borderColor: badge.dataVizBorderColor,
+                        }}
+                      >
+                        {badge.icon}
+                      </div>
+                      <div className="flex flex-col">
+                        {contextTransactionData.category}
+                        {contextTransactionData.subcategory && (
+                          <span className="body-small text-content-subtle">
+                            {contextTransactionData.subcategory}
+                          </span>
+                        )}
+                      </div>
+                    </>
                   )}
                 </MenuListItem>
               </Link>
@@ -126,7 +146,11 @@ export default function GainTransaction({
               <span className="label-large text-content-primary">Conta</span>
               <Link
                 to="/accounts/list"
-                state={{ mode: mode, id: contextTransactionData.id, flow: "transaction" }}
+                state={{
+                  mode: mode,
+                  id: contextTransactionData.id,
+                  flow: "transaction",
+                }}
               >
                 <MenuListItem>
                   <Landmark />
@@ -137,7 +161,9 @@ export default function GainTransaction({
               </Link>
             </div>
             <div className="py-3 flex flex-col gap-1.5">
-              <span className="label-large text-content-primary">Quando recebeu</span>
+              <span className="label-large text-content-primary">
+                Quando recebeu
+              </span>
               <div className="flex gap-2">
                 <InputChips
                   value={"today"}
