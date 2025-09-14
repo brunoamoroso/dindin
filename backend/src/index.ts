@@ -24,7 +24,7 @@ app.use("/categories", categoriesRoutes)
 app.use("/accounts", accountsRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/coins", coinRoutes);
-app.use("/limits", limitRoutes)
+app.use("/limits", limitRoutes);
 
 app.use((req, res) => {
     res.status(404);
