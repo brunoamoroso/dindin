@@ -23,6 +23,7 @@ export default function Categories() {
     useOutletContext();
   const [searchQuery, setSearchQuery] = useState("");
 
+  const flow: "transaction" | "limit" = location.state?.flow || "transaction";
   const { id, mode, transactionScope } = location.state || {};
 
   if (type === undefined) {
@@ -70,6 +71,12 @@ export default function Categories() {
       throw new Error("Category is undefined");
     }
 
+    if(flow === "limit"){
+      navigate("/limits/create", {replace: true, state: { category_id: idCat, category: descCat }});
+      return;
+    }
+    
+    //if flow transaction
     setContextTransactionData((prev) => ({
       ...prev,
       category_id: idCat,
@@ -79,6 +86,9 @@ export default function Categories() {
     navigate(`/categories/sub/${descCat}`, { state: { mode: mode, id: id, transactionScope: transactionScope } });
   };
 
+  /**
+   * this only exists for when the user search for something and it returns a subcategory
+   */
   const handleClickSub = ({
     idCat,
     descCat,

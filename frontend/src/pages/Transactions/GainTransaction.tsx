@@ -126,7 +126,7 @@ export default function GainTransaction({
               <span className="label-large text-content-primary">Conta</span>
               <Link
                 to="/accounts/list"
-                state={{ mode: mode, id: contextTransactionData.id }}
+                state={{ mode: mode, id: contextTransactionData.id, flow: "transaction" }}
               >
                 <MenuListItem>
                   <Landmark />

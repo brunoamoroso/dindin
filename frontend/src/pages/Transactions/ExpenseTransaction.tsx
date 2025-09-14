@@ -171,6 +171,7 @@ export default function ExpenseTransaction({
                     mode: mode,
                     id: id,
                     transactionScope: transactionScope,
+                    flow: "transaction"
                   }}
                 >
                   <MenuListItem>
