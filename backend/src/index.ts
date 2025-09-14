@@ -8,6 +8,7 @@ import path from 'path';
 import coinRoutes from './routes/coin-routes';
 import dotenv from 'dotenv';
 import { getCoinCoversURL } from './utils/get-coin-covers';
+import limitRoutes from './routes/limit-routes';
 
 dotenv.config({path: '.env.local'});
 
@@ -23,6 +24,7 @@ app.use("/categories", categoriesRoutes)
 app.use("/accounts", accountsRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/coins", coinRoutes);
+app.use("/limits", limitRoutes)
 
 app.use((req, res) => {
     res.status(404);
