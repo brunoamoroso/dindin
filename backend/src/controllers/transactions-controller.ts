@@ -41,12 +41,27 @@ export const addTransaction = async (req: Request, res: Response) => {
     let expenseValues;
 
     if (type === "expense" && paymentCondition === "single") {
-      queryExpenseTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, date, payment_condition, created_by)
-      VALUES ((SELECT id FROM coins c WHERE c.code = $1),$2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`;
+      queryExpenseTransaction = `
+      WITH ins AS (
+        INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, date, payment_condition, created_by)
+        VALUES ((SELECT id FROM coins c WHERE c.code = $1),$2, $3, $4, $5, $6, $7, $8, $9, $10) 
+        RETURNING *
+      ),
+      upd AS(
+        UPDATE expense_limits el
+        SET amount_spent = el.amount_spent + ins.amount 
+        FROM ins
+        WHERE el.created_by = ins.created_by
+          AND el.coin_id = ins.coin_id
+          AND el.category_id = ins.category_id
+          AND el.created_at BETWEEN (DATE_TRUNC('month', ins.date::date)) AND (DATE_TRUNC('month', ins.date::date) + INTERVAL '1 month - 1 day')
+      )
+      SELECT * FROM ins`;
 
       expenseValues = [coin, type, description, amount, account_id, category_id, subcategory_id || null, localDate, paymentCondition, req.user];
 
       const {rows: expenseTransaction} = await db.query(queryExpenseTransaction, expenseValues);
+
       return res.status(201).json(expenseTransaction);
     }
 
@@ -106,17 +121,37 @@ export const addTransaction = async (req: Request, res: Response) => {
         obj.created_by
       ]);
 
-      queryExpenseTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id,
-      category_id, subcategory_id, date, payment_condition, install_number, installments, group_installment_id, created_by)
-      VALUES `;
-
+      
       const valuesPlaceholder = Array.from({length: bulkTransactions.length}, (_, i) => {
         return `((SELECT id FROM coins c WHERE c.code = $${i * 13 + 1}), $${i * 13 + 2}, $${i * 13 + 3}, $${i * 13 + 4}, $${i * 13 + 5}, $${i * 13 + 6}, $${i * 13 + 7}, $${i * 13 + 8}, $${i * 13 + 9}, $${i * 13 + 10}, $${i * 13 + 11}, $${i * 13 + 12}, $${i * 13 + 13})`;
       }).join(", ");
-
-      queryExpenseTransaction += valuesPlaceholder + " RETURNING *";
+      
+      queryExpenseTransaction = `
+      WITH ins AS (
+        INSERT INTO transactions (coin_id, type, description, amount, account_id,
+        category_id, subcategory_id, date, payment_condition, install_number, installments, group_installment_id, created_by)
+        VALUES ${valuesPlaceholder}
+        RETURNING amount, category_id, coin_id, created_by, date
+      ),
+      agg AS (
+        SELECT category_id, coin_id, created_by, date_trunc('month', date::date) AS month_start, SUM(amount) AS total_amount
+        FROM ins
+        GROUP BY category_id, coin_id, created_by, month_start
+      ),
+      upd AS (
+        UPDATE expense_limits el
+        SET amount_spent = el.amount_spent + agg.total_amount
+        FROM agg
+        WHERE el.category_id = agg.category_id
+          AND el.coin_id = agg.coin_id
+          AND el.created_by = agg.created_by
+          AND el.created_at BETWEEN agg.month_start AND (agg.month_start + INTERVAL '1 month - 1 day')::date
+        RETURNING *
+      )
+      SELECT * FROM ins`;
 
       const {rows: expenseTransaction} = await db.query(queryExpenseTransaction, valuesAddTransaction);
+
       return res.status(201).json(expenseTransaction);
     }
   } catch (err) {
@@ -194,7 +229,25 @@ export const deleteTransaction = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const queryDeleteTransaction = `DELETE FROM transactions WHERE id = $1`;
+    const queryDeleteTransaction = `
+    WITH del AS (
+      DELETE FROM transactions 
+      WHERE id = $1
+      RETURNING *
+    ),
+    upd AS (
+      UPDATE expense_limits el
+      SET amount_spent = GREATEST(0, el.amount_spent - del.amount)
+      FROM del
+      WHERE del.type = 'expense'
+        AND del.payment_condition = 'single'
+        AND el.created_by = del.created_by
+        AND el.coin_id = del.coin_id
+        AND el.category_id = del.category_id
+        AND el.created_at BETWEEN (DATE_TRUNC('month', del.date::date)) AND (DATE_TRUNC('month', del.date::date) + INTERVAL '1 month - 1 day')
+    )
+    SELECT * FROM del
+    `;
     const valuesDeleteTransaction = [id];
     await db.query(queryDeleteTransaction, valuesDeleteTransaction);
 
@@ -246,16 +299,19 @@ export const getAllInstallmentsTransaction = async (req: Request, res: Response)
     const queryAllInstallmentsTransaction = `SELECT t.id, t.coin_id, t.type, t.description, t.amount, t.account_id, acc.description AS account, t.category_id,
     cat.description as category, t.subcategory_id, sub.description as subcategory, t.installments, t.payment_condition, t.install_number, t.date
     FROM transactions t
+    JOIN transactions seed ON seed.id = $1
     JOIN accounts acc ON t.account_id = acc.id
     LEFT JOIN categories cat ON t.category_id = cat.id
     LEFT JOIN subcategories sub ON t.subcategory_id = sub.id
-    WHERE t.group_installment_id = $1
+    WHERE t.group_installment_id = seed.group_installment_id AND seed.group_installment_id IS NOT NULL
     ORDER BY t.date ASC
     `;
 
-    const valuesQueryAllInstallmentsTransaction = [groupId];
-    const {rows: allInstallmentsTransaction} = await db.query(queryAllInstallmentsTransaction, valuesQueryAllInstallmentsTransaction);
+    const {rows: allInstallmentsTransaction} = await db.query(queryAllInstallmentsTransaction, [id]);
 
+    if(allInstallmentsTransaction.length === 0) {
+      throw new Error("Couldn't find installments transactions");
+    }
 
     const dataAllInstallmentsSorted = {
       type: allInstallmentsTransaction[0].type,  
@@ -292,14 +348,61 @@ export const updateTransaction = async (req: Request, res: Response) => {
     date,
   } = req.body;
   const localDate = toPostgresDate(date.value);
-console.log(req.body);
   try {
-      const queryUpdateTransaction = `UPDATE transactions
-      SET type = $1, amount = $2, description = $3, account_id = $4, category_id = $5, subcategory_id = $6, date = $7
-      WHERE id = $8
-      RETURNING *`;
 
-      const queryValues = [type, amount, description, account_id, category_id, subcategory_id || null, localDate, id];
+    //bucket here refers to the month and category, if it changes I have to update the old bucket
+      const queryUpdateTransaction = `
+      WITH old AS (
+        SELECT * 
+        FROM transactions 
+        WHERE id = $1
+      ),
+      upd AS (
+        UPDATE transactions t
+        SET type = $2, amount = $3, description = $4, account_id = $5, category_id = $6, subcategory_id = $7, date = $8
+        FROM old
+        WHERE t.id = old.id
+        RETURNING t.*
+      ),
+      same_bucket AS (
+        UPDATE expense_limits el
+        SET amount_spent = GREATEST(0, amount_spent - (old.amount - upd.amount))
+        FROM old, upd
+        WHERE old.type = 'expense'
+          AND el.created_by = upd.created_by
+          AND el.coin_id = upd.coin_id
+          AND el.category_id = upd.category_id
+          AND el.created_at BETWEEN (DATE_TRUNC('month', old.date::date)) AND (DATE_TRUNC('month', old.date::date) + INTERVAL '1 month - 1 day')
+        RETURNING el.id
+      ),
+      diff_bucket_old AS (
+        UPDATE expense_limits el
+        SET amount_spent = GREATEST(0, amount_spent - old.amount)
+        FROM old, upd
+        WHERE old.type = 'expense'
+          AND (old.category_id <> upd.category_id OR DATE_TRUNC('month', old.date::date) <> DATE_TRUNC('month', upd.date::date))
+          AND el.created_by = old.created_by
+          AND el.coin_id = old.coin_id
+          AND el.category_id = old.category_id
+          AND el.created_at BETWEEN (DATE_TRUNC('month', old.date::date)) AND (DATE_TRUNC('month', old.date::date) + INTERVAL '1 month - 1 day')
+        RETURNING el.id
+      ),
+      diff_bucket_new AS (
+        UPDATE expense_limits el
+        SET amount_spent = el.amount_spent + upd.amount
+        FROM old, upd
+        WHERE upd.type = 'expense'
+          AND (old.category_id <> upd.category_id OR DATE_TRUNC('month', old.date::date) <> DATE_TRUNC('month', upd.date::date))
+          AND el.created_by = upd.created_by
+          AND el.coin_id = upd.coin_id
+          AND el.category_id = upd.category_id
+          AND el.created_at BETWEEN (DATE_TRUNC('month', upd.date::date)) AND (DATE_TRUNC('month', upd.date::date) + INTERVAL '1 month - 1 day')
+        RETURNING el.id
+      )
+      SELECT * FROM upd
+      `;
+
+      const queryValues = [id, type, amount, description, account_id, category_id, subcategory_id || null, localDate];
       
       const {rows: responseUpdateTransaction} = await db.query(queryUpdateTransaction, queryValues);
       
@@ -321,112 +424,120 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
   } = req.body;
   const newInstallments = parseInt(req.body.installments);
 
-  console.log(req.body);
-
   const {id} = req.params;
-  let localDate = toPostgresDate(date.value);
+  const localDate = toPostgresDate(date.value);
 
   try{
-    if(id === undefined) {
-      throw new Error("Id is undefined");
-    }
-    
-    const queryCurrentData = `SELECT group_installment_id, installments FROM transactions WHERE id = $1`;
-    const valuesCurrentData = [id];
-    
-    const {rows: currentData} = await db.query(queryCurrentData, valuesCurrentData);
-    
-    if(currentData[0].installments === null) {
-      throw new Error("Current Installments returned as null");
-    }
-    
-    if(currentData[0].group_installment_id === null) {
-      throw new Error("Group Installment Id returned as null");
-    }
+    const queryUpdateAllInstallments = `
+    WITH seed AS (
+     SELECT 
+        t.group_installment_id AS gid,
+        t.created_by,
+        t.coin_id
+    FROM transactions t
+    WHERE t.id = $1 AND t.group_installment_id IS NOT NULL
+    ),
+    -- delete installments if the number shrank
+    del AS (
+      DELETE FROM transactions x
+      USING seed
+      WHERE x.group_installment_id = seed.gid
+        AND x.install_number > $2
+      RETURNING x.*
+    ),
+    -- builds a temporary table with the number of installments to be created/updated
+    gen AS (
+      SELECT generate_series(1, $2)::int AS n
+    ),
+    -- build the values to be inserted
+    values AS (
+      SELECT seed.coin_id AS coin_id,
+      'expense'::text AS type,
+      $4::text AS description,
+      ($3::bigint / $2) + CASE WHEN n = 1 THEN ($3::bigint % $2) ELSE 0 END as amount,
+      $5::uuid as account_id,
+      $6::uuid as category_id,
+      $7::uuid as subcategory_id,
+      ($8::date + (n-1) * (INTERVAL '1 month'))::date AS date,
+      'multi'::text AS payment_condition,
+      n AS install_number,
+      $2::int AS installments,
+      seed.gid AS group_installment_id,
+      seed.created_by AS created_by
+      FROM gen, seed
+    ),
+    --  do a upsert in the above create values of the new installments
+    upsert AS (
+      INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, 
+      date, payment_condition, install_number, installments, group_installment_id, created_by)
+      SELECT * FROM values
+      ON CONFLICT (group_installment_id, install_number)
+      DO UPDATE SET
+        description = EXCLUDED.description,
+        amount = EXCLUDED.amount,
+        category_id = EXCLUDED.category_id,
+        subcategory_id = EXCLUDED.subcategory_id,
+        account_id = EXCLUDED.account_id,
+        date = EXCLUDED.date,
+        installments = EXCLUDED.installments
+      RETURNING *
+    ),
+    --  months touched by upsert and deletions
+    bucket AS (
+      SELECT u.created_by, u.coin_id, u.category_id, DATE_TRUNC('month', u.date::date) AS month_start
+      FROM upsert u
+      GROUP BY 1,2,3,4
+      UNION
+      SELECT d.created_by, d.coin_id, d.category_id, DATE_TRUNC('month', d.date::date) AS month_start
+      FROM del d
+    ),
+    -- recompute correct monthly totals for transactions
+    agg AS (
+      SELECT b.created_by, b.coin_id, b.category_id, b.month_start,
 
-    const amountSplit = splitInstallments({ amount, installments: newInstallments }); // in cents
+      -- 
+      COALESCE((
+        SELECT SUM(t.amount)
+        FROM transactions t
+        WHERE t.created_by = b.created_by
+          AND t.coin_id = b.coin_id
+          AND t.category_id = b.category_id
+          AND t.type = 'expense'
+          AND t.date >= b.month_start 
+          AND t.date < (b.month_start + INTERVAL '1 month')::date
+          AND (t.group_installment_id IS DISTINCT FROM s.gid OR t.group_installment_id IS NULL)
+      ),0)
 
-    const bulkTransactions = Array.from({ length: newInstallments }, (_, i) => {
-      // create and array of objects of the transactions
-      if (i > 0) {
-        const dateIncrease = new Date(date.value);
-        if (dateIncrease.getDate() === 31) {
-          // +1 because 0 returns the last day from the previous month
-          dateIncrease.setFullYear(
-            dateIncrease.getFullYear(),
-            dateIncrease.getMonth() + (i + 1),
-            0
-          );
-        } else {
-          dateIncrease.setMonth(dateIncrease.getMonth() + i);
-        }
-        localDate = toPostgresDate(dateIncrease.toISOString());
-      }
+      +
 
-      return {
-        coin: req.user,
-        type: "expense",
-        description: description,
-        amount: amountSplit[i],
-        account: account_id,
-        category: category_id,
-        subCategory: subcategory_id ? subcategory_id : null,
-        date: localDate,
-        payment_condition: "multi",
-        install_number: i + 1,
-        installments: newInstallments,
-        group_installment_id: currentData[0].group_installment_id,
-        created_by: req.user,
-      };
-    });
+      COALESCE((
+        SELECT SUM(u.amount)
+        FROM upsert u
+        WHERE u.created_by = b.created_by
+          AND u.coin_id = b.coin_id
+          AND u.category_id = b.category_id
+          AND u.date >= b.month_start 
+          AND u.date < (b.month_start + INTERVAL '1 month')::date
+      ),0) AS total_amount
+      FROM bucket b, seed s
+    ),
+    upd_expense_limits AS (
+      UPDATE expense_limits el
+      SET amount_spent = agg.total_amount
+      FROM agg
+      WHERE el.created_by = agg.created_by
+        AND el.coin_id = agg.coin_id
+        AND el.category_id = agg.category_id
+        AND el.created_at >= agg.month_start 
+        AND el.created_at < (agg.month_start + INTERVAL '1 month')::date
+      RETURNING el.id
+    )
+    SELECT * FROM upsert
+    `;
 
-    //Convert the bulk transactions into a flat array, did like this to keep a better readability and maintainability
-    const valuesUpdateallInstallments = bulkTransactions.flatMap(obj => [
-      obj.coin,
-      obj.type,
-      obj.description,
-      obj.amount,
-      obj.account,
-      obj.category,
-      obj.subCategory,
-      obj.date,
-      obj.payment_condition,
-      obj.install_number,
-      obj.installments,
-      obj.group_installment_id,
-      obj.created_by
-    ]);
-
-    const valuesUpdateallInstallmentsPlaceholder = bulkTransactions.map((_, i) => `((SELECT user_default_coin FROM users WHERE id = $${i * 13 + 1}), $${i * 13 + 2}, $${i * 13 + 3}, $${i * 13 + 4}, 
-         $${i * 13 + 5}, $${i * 13 + 6}, $${i * 13 + 7}, $${i * 13 + 8}, 
-         $${i * 13 + 9}, $${i * 13 + 10}, $${i * 13 + 11}, $${i * 13 + 12}, $${i * 13 + 13})`).join(", ");
-
-    const queryUpdateAllInstallments = `INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id,
-    subcategory_id, date, payment_condition, install_number, installments, group_installment_id, created_by)
-    VALUES ${valuesUpdateallInstallmentsPlaceholder}
-    ON CONFLICT (group_installment_id, install_number)
-    DO UPDATE SET
-      description = EXCLUDED.description,
-      amount = EXCLUDED.amount,
-      category_id = EXCLUDED.category_id,
-      subcategory_id = EXCLUDED.subcategory_id,
-      account_id = EXCLUDED.account_id,
-      date = EXCLUDED.date,
-      installments = EXCLUDED.installments
-    RETURNING *`;
+    const valuesUpdateallInstallments = [id, newInstallments, amount, description, account_id, category_id, subcategory_id || null, localDate];
 
     const {rows: updateTransactions } = await db.query(queryUpdateAllInstallments, valuesUpdateallInstallments);
-
-    //if the new installments are less than the current installments, delete the remaining installments
-    if(newInstallments < currentData[0].installments) {
-      const queryDeleteRemainingInstallments = `DELETE 
-      FROM transactions 
-      WHERE group_installment_id = $1 AND install_number > $2`;
-
-      const valuesDeleteRemainingInstallments = [currentData[0].group_installment_id, newInstallments];
-
-      await db.query(queryDeleteRemainingInstallments, valuesDeleteRemainingInstallments);
-    }
 
     return res.status(200).json({updateTransactions});
   }catch(err) {
