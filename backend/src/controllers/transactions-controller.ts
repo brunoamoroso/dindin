@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { db } from "../db/conn";
 import { toPostgresDate } from "../utils/to-postgres-date";
-import splitInstallments from "../utils/split-installments";
 
 export const addTransaction = async (req: Request, res: Response) => {
   const {
@@ -66,71 +65,42 @@ export const addTransaction = async (req: Request, res: Response) => {
     }
 
     if (type === "expense" && paymentCondition === "multi"){
-      const amountSplit = splitInstallments({ amount, installments }); // in cents
-      const {rows: uuid} = await db.query("SELECT gen_random_uuid()");
-      const groupInstallmentId = uuid[0].gen_random_uuid;
 
-      const bulkTransactions = Array.from({ length: installments }, (_, i) => {
-        // create and array of objects of the transactions
-        if (i > 0) {
-          const dateIncrease = new Date(date.value);
-          if (dateIncrease.getDate() === 31) {
-            // +1 because 0 returns the last day from the previous month
-            dateIncrease.setFullYear(
-              dateIncrease.getFullYear(),
-              dateIncrease.getMonth() + (i + 1),
-              0
-            );
-          } else {
-            dateIncrease.setMonth(dateIncrease.getMonth() + i);
-          }
-          localDate = toPostgresDate(dateIncrease.toISOString());
-        }
+      const valuesAddTransaction = [coin, description, amount, installments, account_id, category_id, subcategory_id || null, localDate, req.user];
 
-        return {
-          coin: coin, 
-          type: "expense", 
-          description: description, 
-          amount: amountSplit[i],
-          account: account_id,
-          category: category_id,
-          subCategory: subcategory_id || null,
-          date: localDate,
-          payment_condition: paymentCondition,
-          install_number: i + 1,
-          installments: installments,
-          group_installment_id: groupInstallmentId,
-          created_by: req.user
-        };
-      });
-
-      //Convert the bulk transactions into a flat array, did like this to keep a better readability and maintainability
-      const valuesAddTransaction = bulkTransactions.flatMap(obj => [
-        obj.coin,
-        obj.type,
-        obj.description,
-        obj.amount,
-        obj.account,
-        obj.category,
-        obj.subCategory,
-        obj.date,
-        obj.payment_condition,
-        obj.install_number,
-        obj.installments,
-        obj.group_installment_id,
-        obj.created_by
-      ]);
-
-      
-      const valuesPlaceholder = Array.from({length: bulkTransactions.length}, (_, i) => {
-        return `((SELECT id FROM coins c WHERE c.code = $${i * 13 + 1}), $${i * 13 + 2}, $${i * 13 + 3}, $${i * 13 + 4}, $${i * 13 + 5}, $${i * 13 + 6}, $${i * 13 + 7}, $${i * 13 + 8}, $${i * 13 + 9}, $${i * 13 + 10}, $${i * 13 + 11}, $${i * 13 + 12}, $${i * 13 + 13})`;
-      }).join(", ");
-      
       queryExpenseTransaction = `
-      WITH ins AS (
+      WITH coin AS (
+        SELECT id FROM coins c WHERE c.code = $1),
+      seed AS (
+        SELECT gen_random_uuid() as gid
+      ),
+      gen AS (
+        SELECT generate_series(1, $4)::int AS n
+      ),
+      vals AS (
+        SELECT 
+          coin.id AS coin_id,
+          'expense'::text AS type,
+          $2::text AS description,
+          ($3::bigint / $4) + CASE WHEN n = 1 THEN ($3::bigint % $4) ELSE 0 END as amount,
+          n AS install_number,
+          $4::int AS installments,
+          $5::uuid as account_id,
+          $6::uuid as category_id,
+          $7::uuid as subcategory_id,
+          ($8::date + (n-1) * (INTERVAL '1 month'))::date AS date,
+          'multi'::text AS payment_condition,
+          seed.gid AS group_installment_id,
+          $9::uuid AS created_by
+          FROM gen, seed, coin
+      ),
+      ins AS (
         INSERT INTO transactions (coin_id, type, description, amount, account_id,
         category_id, subcategory_id, date, payment_condition, install_number, installments, group_installment_id, created_by)
-        VALUES ${valuesPlaceholder}
+        SELECT
+          coin_id, type, description, amount, account_id, category_id, subcategory_id,
+          date, payment_condition, install_number, installments, group_installment_id, created_by
+        FROM vals
         RETURNING amount, category_id, coin_id, created_by, date
       ),
       agg AS (
@@ -145,7 +115,8 @@ export const addTransaction = async (req: Request, res: Response) => {
         WHERE el.category_id = agg.category_id
           AND el.coin_id = agg.coin_id
           AND el.created_by = agg.created_by
-          AND el.created_at BETWEEN agg.month_start AND (agg.month_start + INTERVAL '1 month - 1 day')::date
+          AND el.created_at >= agg.month_start
+          AND el.created_at < (agg.month_start + INTERVAL '1 month')::date
         RETURNING *
       )
       SELECT * FROM ins`;
@@ -450,7 +421,7 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
       SELECT generate_series(1, $2)::int AS n
     ),
     -- build the values to be inserted
-    values AS (
+    vals AS (
       SELECT seed.coin_id AS coin_id,
       'expense'::text AS type,
       $4::text AS description,
@@ -470,7 +441,10 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
     upsert AS (
       INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, 
       date, payment_condition, install_number, installments, group_installment_id, created_by)
-      SELECT * FROM values
+      SELECT
+        coin_id, type, description, amount, account_id, category_id, subcategory_id,
+        date, payment_condition, install_number, installments, group_installment_id, created_by
+      FROM vals
       ON CONFLICT (group_installment_id, install_number)
       DO UPDATE SET
         description = EXCLUDED.description,

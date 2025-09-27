@@ -1,0 +1,13 @@
+import { api } from "./api";
+
+export function createLimit<T>(body: unknown): Promise<T>{
+    return api.post<T>("/limits/create", body);
+}
+
+export function getLimits<T>(selectedDate: Date, coinSelected: string):Promise<T>{
+    return api.get<T>(`/limits/${selectedDate}/${coinSelected}`);
+}   
+
+export function updateLimit<T>(id: string, body: unknown):Promise<T>{
+    return api.put<T>(`/limits/update/${id}`, body);
+}
