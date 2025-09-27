@@ -88,3 +88,21 @@ export const getLimits = async (req: Request, res: Response) => {
     return res.status(422).json({ message: message });
   }
 };
+
+export const deleteLimit = async (req: Request, res: Response) => {
+  const user = req.user;
+  const { id } = req.params;
+
+  try {
+    const queryDeleteLimit = `DELETE FROM expense_limits WHERE id = $1 AND created_by = $2`;
+    const valuesDeleteLimit = [id, user];
+
+    await db.query(queryDeleteLimit, valuesDeleteLimit);
+
+    res.status(200).send({ message: "Limit deleted successfully" });
+  } catch (err: unknown) {
+    console.error(err);
+    const message = (err instanceof Error && err.message) || "Erro inesperado";
+    return res.status(422).json({ message: message });
+  }
+}

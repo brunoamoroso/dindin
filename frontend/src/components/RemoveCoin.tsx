@@ -41,7 +41,7 @@ export function RemoveCoin() {
         <>
           {coinSelected !== "global" && numUserCoins > 1 && (
             <Dialog open={openRemoveCoinDialog} onOpenChange={setOpenRemoveCoinDialog}>
-              <DialogTrigger>
+              <DialogTrigger asChild>
                 <IconButton variant={"outline"} size="small">
                   <Trash2 />
                 </IconButton>

@@ -14,22 +14,27 @@ export interface LimitDataType{
 export interface LimitContextType {
   limitData: LimitDataType;
   setLimitData: React.Dispatch<SetStateAction<LimitDataType>>;
+  resetLimitData: () => void;
 }
 
 export function LimitContext() {
     const {coinSelected, selectedDate} = useDashboardContext();
 
-    const [limitData, setLimitData] = useState<LimitDataType>({
-      amount: 0,
+    const initialState: LimitDataType = {
+        amount: 0,
       selectedDate: selectedDate,
       coinSelected: coinSelected,
       category_id: "",
       category: "",
-    });
+    }
+
+    const [limitData, setLimitData] = useState<LimitDataType>({...initialState});
+
+    const resetLimitData = () => setLimitData({...initialState});
 
   return (
     <>
-      <Outlet context={{ limitData, setLimitData }} />
+      <Outlet context={{ limitData, setLimitData, resetLimitData }} />
     </>
   );
 }

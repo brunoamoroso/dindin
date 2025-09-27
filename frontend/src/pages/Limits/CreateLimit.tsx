@@ -17,7 +17,7 @@ export function CreateLimit() {
   const navigate = useNavigate();
   const {toast} = useToast();
   const { category, category_id } = location.state || {};
-  const { limitData, setLimitData } = useLimitContext();
+  const { limitData, setLimitData, resetLimitData } = useLimitContext();
   const badge = getCategoryIcon(limitData.category);
 
   useEffect(() => {
@@ -49,6 +49,9 @@ export function CreateLimit() {
 
   const mutationCreateLimit = useMutation({
     mutationFn: (data: LimitDataType) => createLimit(data),
+    onSuccess: () => {
+      resetLimitData();
+    }
   });
 
   const handleSubmit = () => {
