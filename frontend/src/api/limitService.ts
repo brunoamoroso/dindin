@@ -4,6 +4,10 @@ export function createLimit<T>(body: unknown): Promise<T>{
     return api.post<T>("/limits/create", body);
 }
 
+export function getLimitById<T>(id: string): Promise<T> {
+    return api.get<T>(`/limits/${id}`);
+}
+
 export function getLimits<T>(selectedDate: Date, coinSelected: string):Promise<T>{
     return api.get<T>(`/limits/${selectedDate}/${coinSelected}`);
 }   

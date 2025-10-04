@@ -11,6 +11,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteLimit } from "@/api/limitService";
 import { useToast } from "./ui/use-toast";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Link } from "react-router-dom";
 
 export function LimitListItem({ ...props }: LimitType) {
   const badge = getCategoryIcon(props.category);
@@ -102,9 +103,11 @@ export function LimitListItem({ ...props }: LimitType) {
                       </div>
                     </DialogContent>
                   </Dialog>
-                  <Button variant="outline" size="lg" className="w-full">
-                    <SquarePen /> Editar
-                  </Button>
+                  <Link to={`/limits/edit/${props.id}`} className="w-full">
+                    <Button variant="outline" size="lg" className="w-full">
+                      <SquarePen /> Editar
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </DrawerContent>

@@ -2,7 +2,8 @@ import { getLimits } from "@/api/limitService";
 import AppBar from "@/components/AppBar";
 import { LimitListItem } from "@/components/LimitListItem";
 import { Button } from "@/components/ui/button";
-import { LimitDataType, useLimitContext } from "@/context/LimitContext";
+import { useLimitContext } from "@/context/LimitContext";
+import { LimitType } from "@/types/LimitType";
 import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -11,7 +12,7 @@ export function Limits() {
   const { limitData } = useLimitContext();
   const { selectedDate, coinSelected } = limitData;
 
-  const { data, isLoading } = useQuery<LimitDataType[]>({
+  const { data, isLoading } = useQuery<LimitType[]>({
     queryKey: ["limits-data", selectedDate, coinSelected],
     queryFn: () => getLimits(selectedDate, coinSelected),
     enabled: !!selectedDate && !!coinSelected,

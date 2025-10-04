@@ -68,27 +68,28 @@ function AppRoutes() {
 
               <Route element={<LimitContext />}>
                 <Route path="limits" element={<Limits />} />
-                <Route path="limits/create" element={<CreateLimit />} />
-              </Route>
+                <Route path="limits/create" element={<CreateLimit mode="create"/>} />
+                <Route path="limits/edit/:id" element={<CreateLimit mode="edit"/>} />
 
-              <Route element={<TransactionsContext />}>
-                <Route
-                  path="/transaction/edit/:paramTransactionScope/:paramId"
-                  element={<Transaction mode="edit" />}
-                />
-                <Route
-                  path="/transaction"
-                  element={<Transaction mode="create" />}
-                />
+                <Route element={<TransactionsContext />}>
+                  <Route
+                    path="/transaction/edit/:paramTransactionScope/:paramId"
+                    element={<Transaction mode="edit" />}
+                  />
+                  <Route
+                    path="/transaction"
+                    element={<Transaction mode="create" />}
+                  />
 
-                <Route path="/categories/:type" element={<Categories />} />
-                <Route
-                  path="/categories/sub/:category"
-                  element={<SubCategories />}
-                />
-                <Route path="/accounts/list" element={<Accounts />} />
-                <Route path="/accounts/create" element={<CreateAccount />} />
-                <Route path="/recurrency" element={<Recurrency />} />
+                  <Route path="/categories/:type" element={<Categories />} />
+                  <Route
+                    path="/categories/sub/:category"
+                    element={<SubCategories />}
+                  />
+                  <Route path="/accounts/list" element={<Accounts />} />
+                  <Route path="/accounts/create" element={<CreateAccount />} />
+                  <Route path="/recurrency" element={<Recurrency />} />
+                </Route>
               </Route>
             </Route>
 

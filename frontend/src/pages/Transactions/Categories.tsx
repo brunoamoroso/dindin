@@ -71,11 +71,18 @@ export default function Categories() {
       throw new Error("Category is undefined");
     }
 
-    if(flow === "limit"){
-      navigate("/limits/create", {replace: true, state: { category_id: idCat, category: descCat }});
+    if (flow === "limit") {
+      mode === "create"
+        ? navigate(`/limits/create`, {
+            state: { category_id: idCat, category: descCat },
+          })
+        : navigate(`/limits/${mode}/${id}`, {
+            replace: true,
+            state: { category_id: idCat, category: descCat },
+          });
       return;
     }
-    
+
     //if flow transaction
     setContextTransactionData((prev) => ({
       ...prev,
@@ -83,7 +90,9 @@ export default function Categories() {
       category: descCat,
     }));
 
-    navigate(`/categories/sub/${descCat}`, { state: { mode: mode, id: id, transactionScope: transactionScope } });
+    navigate(`/categories/sub/${descCat}`, {
+      state: { mode: mode, id: id, transactionScope: transactionScope },
+    });
   };
 
   /**
@@ -108,7 +117,9 @@ export default function Categories() {
       subcategory: descSub,
     }));
 
-    navigate(`/transaction`, { state: { mode: mode, id: id, transactionScope: transactionScope } });
+    navigate(`/transaction`, {
+      state: { mode: mode, id: id, transactionScope: transactionScope },
+    });
   };
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
@@ -176,7 +187,9 @@ export default function Categories() {
             <div className="flex flex-col gap-10">
               {searchedCategories.find((i) => i.isCategory) && (
                 <div className="flex flex-col gap-2">
-                  <h1 className="title-small text-content-primary">Categorias</h1>
+                  <h1 className="title-small text-content-primary">
+                    Categorias
+                  </h1>
                   <div className="flex flex-col">
                     {searchedCategories
                       .filter((item) => item.isCategory)
@@ -200,38 +213,41 @@ export default function Categories() {
 
               {searchedCategories.find((i) => !i.isCategory) && (
                 <div className="flex flex-col gap-2">
-                  <h1 className="title-small text-content-primary">SubCategorias</h1>
+                  <h1 className="title-small text-content-primary">
+                    SubCategorias
+                  </h1>
                   <div className="flex flex-col">
                     {searchedCategories
                       .filter((item) => !item.isCategory)
                       .map((item, i, arrInitial) => {
-                        if (item.category_id !== undefined || item.category_description !== undefined) {
+                        if (
+                          item.category_id !== undefined ||
+                          item.category_description !== undefined
+                        ) {
                           return (
-                              <MenuListItem
-                                size="lg"
-                                key={`${item.category_id}-${i}`}
-                                dataId={item.id}
-                                value={item.description}
-                                onClick={() =>
-                                  handleClickSub({
-                                    idCat: item.category_id!,
-                                    descCat: item.category_description!,
-                                    idSub: item.id,
-                                    descSub: item.description,
-                                  })
-                                }
-                                trailingIcon={false}
-                                separator={
-                                  arrInitial.length > i + 1
-                                }
-                              >
-                                <div className="flex flex-col gap-0.5">
-                                  {item.category_description}
-                                  <span className="body-medium text-content-subtle">
-                                    {item.description}
-                                  </span>
-                                </div>
-                              </MenuListItem>
+                            <MenuListItem
+                              size="lg"
+                              key={`${item.category_id}-${i}`}
+                              dataId={item.id}
+                              value={item.description}
+                              onClick={() =>
+                                handleClickSub({
+                                  idCat: item.category_id!,
+                                  descCat: item.category_description!,
+                                  idSub: item.id,
+                                  descSub: item.description,
+                                })
+                              }
+                              trailingIcon={false}
+                              separator={arrInitial.length > i + 1}
+                            >
+                              <div className="flex flex-col gap-0.5">
+                                {item.category_description}
+                                <span className="body-medium text-content-subtle">
+                                  {item.description}
+                                </span>
+                              </div>
+                            </MenuListItem>
                           );
                         }
                       })}
