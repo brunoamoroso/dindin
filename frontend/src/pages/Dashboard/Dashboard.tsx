@@ -57,7 +57,7 @@ export default function Dashboard() {
             </div>
             <div className="flex flex-col flex-1 text-right">
               <span className="label-small text-content-primary">Gastou</span>
-              {isLoading && <Skeleton className="w-8/12 h-6 rounded-xl" />}
+              {isLoading && <Skeleton className="w-8/12 h-6 rounded-xl self-end" />}
               {!isLoading && data && (
                 <span className="title-medium text-critical">
                   {currencyFormat(data.sumAllAmountExpend, data.allTransactionsByMonth[0]?.code)}

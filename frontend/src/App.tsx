@@ -27,8 +27,11 @@ import { ChangePassword } from "./pages/Profile/UserProfile/ChangePassword";
 import { SearchCoin } from "./pages/SearchCoin";
 import { SplashDefaultCoin } from "./pages/Profile/SplashDefaultCoin";
 import { ProfileCreationDefaultCoin } from "./pages/Profile/ProfileCreationDefaultCoin";
-import { Goals } from "./pages/Goals";
+
 import { CreateAccount } from "./pages/Transactions/Accounts/CreateAccount";
+import { Limits } from "./pages/Limits/Limits";
+import { CreateLimit } from "./pages/Limits/CreateLimit";
+import { LimitContext } from "./context/LimitContext";
 
 function AppRoutes() {
   return (
@@ -61,26 +64,33 @@ function AppRoutes() {
                 element={<ListAllTransactions />}
               />
 
-              <Route element={<TransactionsContext />}>
-                <Route
-                  path="/transaction/edit/:paramTransactionScope/:paramId"
-                  element={<Transaction mode="edit" />}
-                />
-                <Route
-                  path="/transaction"
-                  element={<Transaction mode="create" />}
-                />
-
-                <Route path="/categories/:type" element={<Categories />} />
-                <Route
-                  path="/categories/sub/:category"
-                  element={<SubCategories />}
-                />
-                <Route path="/accounts/list" element={<Accounts />} />
-                <Route path="/accounts/create" element={<CreateAccount />} />
-                <Route path="/recurrency" element={<Recurrency />} />
-              </Route>
               <Route path="/coins/search" element={<SearchCoin />} />
+
+              <Route element={<LimitContext />}>
+                <Route path="limits" element={<Limits />} />
+                <Route path="limits/create" element={<CreateLimit mode="create"/>} />
+                <Route path="limits/edit/:id" element={<CreateLimit mode="edit"/>} />
+
+                <Route element={<TransactionsContext />}>
+                  <Route
+                    path="/transaction/edit/:paramTransactionScope/:paramId"
+                    element={<Transaction mode="edit" />}
+                  />
+                  <Route
+                    path="/transaction"
+                    element={<Transaction mode="create" />}
+                  />
+
+                  <Route path="/categories/:type" element={<Categories />} />
+                  <Route
+                    path="/categories/sub/:category"
+                    element={<SubCategories />}
+                  />
+                  <Route path="/accounts/list" element={<Accounts />} />
+                  <Route path="/accounts/create" element={<CreateAccount />} />
+                  <Route path="/recurrency" element={<Recurrency />} />
+                </Route>
+              </Route>
             </Route>
 
             <Route path="/profile/user" element={<UserProfile />} />
@@ -89,8 +99,6 @@ function AppRoutes() {
               path="/profile/user/change-password"
               element={<ChangePassword />}
             />
-
-            <Route path="goals" element={<Goals />} />
           </Route>
         </Route>
       </Routes>

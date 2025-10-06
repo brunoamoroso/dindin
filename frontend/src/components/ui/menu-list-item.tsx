@@ -3,7 +3,7 @@ import { cva } from "class-variance-authority";
 import { ChevronRight } from "lucide-react";
 import { Separator } from "./separator";
 
-const containerMenuVariants = cva("py-4 px-3 flex justify-between text-content-primary", {
+const containerMenuVariants = cva("py-4 px-3 flex justify-between items-center text-content-primary", {
   variants: {
     size: {
       md: "",

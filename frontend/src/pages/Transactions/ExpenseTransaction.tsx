@@ -13,7 +13,7 @@ import MenuListItem from "@/components/ui/menu-list-item";
 import TextField from "@/components/ui/textfield";
 import { TransactionsContextType } from "@/context/TransactionsContext";
 import { currencyFormat } from "@/utils/currency-format";
-import { getCurrencySymbol } from "@/utils/get-currency-symbol";
+import getCategoryIcon from "@/utils/get-category-icon";
 import splitInstallmentsDisplay from "@/utils/get-split-installments";
 import { Landmark, LoaderCircle, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
@@ -53,11 +53,12 @@ export default function ExpenseTransaction({
     setContextTransactionData,
   }: TransactionsContextType = useOutletContext();
   const [isDialogpOpen, setIsDialogOpen] = useState(false);
+  const badge = getCategoryIcon(contextTransactionData.category || "");
 
   const handlePaymentChips = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const target = e.currentTarget;
-    
+
     if (
       target.value === "single" &&
       contextTransactionData.installments !== "0"
@@ -122,7 +123,7 @@ export default function ExpenseTransaction({
           <span className="label-medium text-content-subtle">Valor Gasto</span>
           <div className="flex gap-1">
             <span className="headline-small text-content-primary">
-              {getCurrencySymbol(contextTransactionData.coin)}
+              {contextTransactionData.coin}
             </span>
             <span
               id="amount_placeholder"
@@ -164,28 +165,45 @@ export default function ExpenseTransaction({
             {((transactionScope !== "one-installment" && mode === "edit") ||
               mode === "create") && (
               <div className="flex flex-col gap-1.5">
-                <span className="label-large text-content-primary">Categoria</span>
+                <span className="label-large text-content-primary">
+                  Categoria
+                </span>
                 <Link
                   to="/categories/expense"
                   state={{
                     mode: mode,
                     id: id,
                     transactionScope: transactionScope,
+                    flow: "transaction",
                   }}
                 >
                   <MenuListItem>
-                    <Tag />
-                    {!contextTransactionData.category &&
-                      "Escolha uma categoria"}
+                    {!contextTransactionData.category && (
+                      <>
+                        <Tag />
+                        <span>Escolha uma categoria</span>
+                      </>
+                    )}
                     {contextTransactionData.category && (
-                      <div className="flex flex-col">
-                        {contextTransactionData.category}
-                        {contextTransactionData.subcategory && (
-                          <span className="body-small text-content-subtle">
-                            {contextTransactionData.subcategory}
-                          </span>
-                        )}
-                      </div>
+                      <>
+                        <div
+                          className={"p-2 rounded text-content-primary"}
+                          style={{
+                            backgroundColor: badge.dataVizColor,
+                            borderColor: badge.dataVizBorderColor,
+                          }}
+                        >
+                          {badge.icon}
+                        </div>
+                        <div className="flex flex-col">
+                          {contextTransactionData.category}
+                          {contextTransactionData.subcategory && (
+                            <span className="body-small text-content-subtle">
+                              {contextTransactionData.subcategory}
+                            </span>
+                          )}
+                        </div>
+                      </>
                     )}
                   </MenuListItem>
                 </Link>
@@ -281,7 +299,9 @@ export default function ExpenseTransaction({
             )}
 
             <div className="py-3 flex flex-col gap-1.5">
-              <span className="label-large text-content-primary">Quando pagou</span>
+              <span className="label-large text-content-primary">
+                Quando pagou
+              </span>
               <div className="flex gap-2">
                 <InputChips
                   value={"today"}

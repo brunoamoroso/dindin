@@ -63,7 +63,7 @@ export function SearchCoin(){
     return (                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
         <div className="min-h-dvh bg-surface flex flex-1 flex-col">
             <AppBar title="Adicionar uma moeda"/>
-            <div className="px-6 py-10 flex flex-1 flex-col bg-layer-tertiary rounded-lg">
+            <div className="px-6 py-10 flex flex-1 flex-col bg-layer-tertiary rounded-t-lg">
                 <TextField 
                     label="Buscar"
                     placeholder="Buscar moeda"

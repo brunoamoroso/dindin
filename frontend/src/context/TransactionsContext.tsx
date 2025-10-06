@@ -30,15 +30,11 @@ export interface TransactionsContextType {
   >;
 }
 
-function CoinTransaction(): string{
-  const {coinSelected} = useDashboardContext();
-  return coinSelected;
-}
-
 export function TransactionsContext(){
+  const {coinSelected} = useDashboardContext();
   const [contextTransactionData, setContextTransactionData] =
     useState<TransactionDataType>({
-      coin: CoinTransaction(),
+      coin: coinSelected,
       type: "gain",
       amount: 0,
       description: "",

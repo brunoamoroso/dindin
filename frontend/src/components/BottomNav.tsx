@@ -19,7 +19,7 @@ export default function BottomNav(){
             title: "+"
         },
         {
-            link: "/goals",
+            link: "/limits",
             icon: <Gauge />,
             title: "Limites de Gastos"
         }
