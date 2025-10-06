@@ -2,11 +2,11 @@ import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
 import PasswordValidator from "@/components/ui/passwordvalidator";
 import TextField from "@/components/ui/textfield";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { passwordCheck } from "@/utils/password-check";
 import { useMutation } from "@tanstack/react-query";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { CircleCheck, CircleX, LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { changePassword } from "@/api/profileService";
 
@@ -26,7 +26,6 @@ export function ChangePassword() {
     hasSymbol: false,
   });
   const [passwordValid, setPasswordValid] = useState(false);
-  const { toast } = useToast();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -65,46 +64,19 @@ export function ChangePassword() {
     e.preventDefault();
 
     if (!passwordValid) {
-      toast({
-        title: (
-            <div className="flex gap-3 items-center">
-              <CircleX />
-              A senha não preenche os requisitos necessários
-            </div>
-          ),
-        variant: "destructive",
-        duration: 2000,
-      });
+      toast.error("Senha inválida. Verifique os requisitos.");
       return;
     }
 
     mutation.mutate(passwordData, {
       onSuccess: () => {
-        toast({
-          title: (
-            <div className="flex gap-3 items-center">
-              <CircleCheck />
-              Senha atualizada!
-            </div>
-          ),
-          variant: "positive",
-          duration: 1000,
-        });
+        toast.success("Senha atualizada com sucesso!");
       },
       onError: (err) => {
         console.error(err);
         const errorMessage =
           (err as Error).message || "Erro desconhecido. Tente novamente.";
-        toast({
-          title: (
-            <div className="flex gap-3 items-center">
-              <CircleX />
-              {errorMessage}
-            </div>
-          ),
-          variant: "destructive",
-          duration: 2000,
-        });
+        toast.error(errorMessage);
       },
     });
   };
@@ -137,13 +109,25 @@ export function ChangePassword() {
             </div>
           </div>
 
-          <Button size={"lg"} type="submit" className={cn("w-full", `${mutation.isPending && "opacity-50 cursor-not-allowed pointer-events-none"}`)}>
+          <Button
+            size={"lg"}
+            type="submit"
+            className={cn(
+              "w-full",
+              `${
+                mutation.isPending &&
+                "opacity-50 cursor-not-allowed pointer-events-none"
+              }`
+            )}
+          >
             {mutation.isPending ? (
               <div className="flex items-center gap-2">
                 <LoaderCircle size={16} className="animate-spin" />
                 Carregando
               </div>
-            ) : ("Salvar")}
+            ) : (
+              "Salvar"
+            )}
           </Button>
         </form>
       </div>
