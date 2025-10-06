@@ -13,12 +13,6 @@ import CreateProfile from "./pages/Profile/CreateProfile";
 import Accounts from "./pages/Transactions/Accounts/Accounts";
 import Recurrency from "./pages/Transactions/Recurrency";
 import SignIn from "./pages/Profile/SignIn";
-
-//context
-import { TransactionsContext } from "./context/TransactionsContext";
-import { AuthContextProvider } from "./context/AuthContext";
-import AuthenticatedRoutesContext from "./context/AuthenticatedRoutesContext";
-import UnauthRoutesContext from "./context/UnauthRoutesContext";
 import { ListAllTransactions } from "./pages/Dashboard/ListAllTransactions";
 import { DashboardContext } from "./context/DashboardContext";
 import { UserProfile } from "./pages/Profile/UserProfile/UserProfile";
@@ -27,11 +21,17 @@ import { ChangePassword } from "./pages/Profile/UserProfile/ChangePassword";
 import { SearchCoin } from "./pages/SearchCoin";
 import { SplashDefaultCoin } from "./pages/Profile/SplashDefaultCoin";
 import { ProfileCreationDefaultCoin } from "./pages/Profile/ProfileCreationDefaultCoin";
-
 import { CreateAccount } from "./pages/Transactions/Accounts/CreateAccount";
 import { Limits } from "./pages/Limits/Limits";
 import { CreateLimit } from "./pages/Limits/CreateLimit";
+
+//context
+import { TransactionsContext } from "./context/TransactionsContext";
+import { AuthContextProvider } from "./context/AuthContext";
+import AuthenticatedRoutesContext from "./context/AuthenticatedRoutesContext";
+import UnauthRoutesContext from "./context/UnauthRoutesContext";
 import { LimitContext } from "./context/LimitContext";
+
 
 function AppRoutes() {
   return (

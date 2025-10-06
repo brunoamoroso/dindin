@@ -10,7 +10,7 @@ import { currencyFormat } from "@/utils/currency-format";
 import getCategoryIcon from "@/utils/get-category-icon";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Tag } from "lucide-react";
-import { ChangeEvent, MouseEvent, useEffect } from "react";
+import { ChangeEvent, MouseEvent, useCallback, useEffect } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
@@ -35,6 +35,15 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
     },
     enabled: mode === "edit" && !!id,
   });
+
+  const reset = useCallback(() => {
+    if (mode === "create") resetLimitData();
+  }, [mode, resetLimitData]);
+
+  useEffect(() => {
+    reset();
+  }, [reset]);
+
 
   useEffect(() => {
     if (mode === "edit" && data && id) {
