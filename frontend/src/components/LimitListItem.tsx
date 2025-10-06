@@ -86,10 +86,8 @@ export function LimitListItem({ ...props }: LimitType) {
                     </DialogTrigger>
                     <DialogContent>
                       <DialogTitle>Tem certeza que deseja excluir este limite?</DialogTitle>
-                      <DialogDescription>
-                        <p className="body-medium text-content-secondary">
+                      <DialogDescription className="body-medium text-content-secondary">
                           Esta ação não pode ser desfeita. As transações associadas a este limite não serão excluídas.
-                        </p>
                       </DialogDescription>
                       <div className="flex gap-2 mt-8">
                         <DialogClose className="flex flex-1" asChild>

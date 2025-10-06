@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useCallback, useMemo, useState } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
 import { useDashboardContext } from "./DashboardContext";
 
@@ -20,21 +20,27 @@ export interface LimitContextType {
 export function LimitContext() {
     const {coinSelected, selectedDate} = useDashboardContext();
 
-    const initialState: LimitDataType = {
-        amount: 0,
+    const initialState = useMemo<LimitDataType>(() => ({
+      amount: 0,
       selectedDate: selectedDate,
       coinSelected: coinSelected,
       category_id: "",
       category: "",
-    }
+    }), [selectedDate, coinSelected]);
 
     const [limitData, setLimitData] = useState<LimitDataType>({...initialState});
 
-    const resetLimitData = () => setLimitData({...initialState});
+    const resetLimitData = useCallback(() => setLimitData({ ...initialState }), [initialState]);
+
+    const value = useMemo(() => ({
+      limitData,
+      setLimitData,
+      resetLimitData,
+    }), [limitData, setLimitData, resetLimitData]);
 
   return (
     <>
-      <Outlet context={{ limitData, setLimitData, resetLimitData }} />
+      <Outlet context={value} />
     </>
   );
 }
