@@ -180,53 +180,55 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     } = contextTransactionData;
 
     if (amount === 0) {
-      toast.error("Sua transação não tem um valor");
+      toast.error("Sua transação não tem um valor", { duration: 2000 });
       return;
     }
 
     if (category === undefined) {
-      toast.error("Selecione ao menos uma categoria");
+      toast.error("Selecione ao menos uma categoria", { duration: 2000 });
       return;
     }
 
     if (account === undefined) {
-      toast.error("Selecione uma conta para a transação");
+      toast.error("Selecione uma conta para a transação", { duration: 2000 });
       return;
     }
 
     if (date.value === undefined) {
-      toast.error("Selecione quando foi a transação");
+      toast.error("Selecione quando foi a transação", { duration: 2000 });
       return;
     }
 
     if (type === "expense" && paymentCondition === "none") {
-      toast.error("Selecione uma Condição de Pagamento para a transação");
+      toast.error("Selecione uma Condição de Pagamento para a transação", { duration: 2000 });
       return;
-    }
+    } 
 
     if (paymentCondition === "multi" && installments === "0") {
-      toast.error("Informe quantas parcelas terá a sua transação");
+      toast.error("Informe quantas parcelas terá a sua transação", { duration: 2000 });
       return;
     }
 
     if (mode === "create") {
       mutationAdd.mutate(contextTransactionData, {
         onSuccess: () => {
-          toast.success("Transação registrada!");
+          toast.success("Transação registrada!", { duration: 2000 });
           navigate("/dashboard");
         },
+        onError: () => {
+          toast.error("Não conseguimos adicionar a transação", { duration: 2000 });
+        }
       });
-      return;
     }
 
     if (mode === "edit" && transactionScope !== "all-installments") {
       mutationUpdate.mutate(contextTransactionData, {
         onSuccess: () => {
-          toast.success("Transação atualizada!");
+          toast.success("Transação atualizada!", { duration: 2000 });
           navigate(`/transaction/list/${contextTransactionData.date.value}`);
         },
         onError: () => {
-          toast.error("Não conseguimos editar a transação");
+          toast.error("Não conseguimos editar a transação", { duration: 2000 });
         },
       });
     }
@@ -234,11 +236,11 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     if (mode === "edit" && transactionScope === "all-installments") {
       mutationUpdateAllInstallments.mutate(contextTransactionData, {
         onSuccess: () => {
-          toast.success("Transação atualizada!");
+          toast.success("Transação atualizada!", { duration: 2000 });
           navigate(`/transaction/list/${contextTransactionData.date.value}`);
         },
         onError: () => {
-          toast.error("Não conseguimos editar a transação");
+          toast.error("Não conseguimos editar a transação", { duration: 2000 });
         },
       });
     }

@@ -8,7 +8,7 @@ import {
   DrawerTrigger,
 } from "./ui/drawer";
 import { IconButton } from "./ui/icon-button";
-import { CircleCheck, EllipsisVertical, SquarePen, Trash2 } from "lucide-react";
+import { EllipsisVertical, SquarePen, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -23,7 +23,7 @@ import {
 } from "./ui/dialog";
 import { currencyFormat } from "@/utils/currency-format";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "./ui/use-toast";
+import { toast } from "sonner";
 import { deleteAllTransactionInstallment, deleteOneTransactionInstallment, deleteTransaction } from "@/api/transactionService";
 
 interface ActionsTransactionProps {
@@ -58,16 +58,7 @@ export default function ActionsTransaction({
   const handleDelete = (id: string) => {
     mutationOneTransaction.mutate(id, {
       onSuccess: () => {
-        toast({
-          title: (
-            <div className="flex gap-3 items-center">
-              <CircleCheck />
-              Transação excluída
-            </div>
-          ),
-          duration: 2500,
-          variant: "positive",
-        });
+        toast("Transação excluída", { duration: 2000 });
 
         queryClient.invalidateQueries({
           queryKey: ["listalltransactions-data"],
@@ -76,6 +67,9 @@ export default function ActionsTransaction({
         setDrawerIsOpen(false);
         setDialogIsOpen(false);
       },
+      onError: () => {
+        toast.error("Erro ao excluir a transação", { duration: 2000 });
+      }
     });
   };
 
@@ -88,20 +82,12 @@ export default function ActionsTransaction({
   const handleDeleteThisInstallment = (id: string) => {
     mutationOneInstallmentTransaction.mutate(id, {
       onSuccess: () => {
+        toast("Transação excluída", {duration: 2000});
+        
         queryClient.invalidateQueries({
           queryKey: ["listalltransactions-data"],
         });
 
-        toast({
-          title: (
-            <div className="flex gap-3 items-center">
-              <CircleCheck />
-              Transação excluída
-            </div>
-          ),
-          duration: 2500,
-          variant: "positive",
-        });
         setDrawerInstallmentDeleteOpen(false);
         setDrawerIsOpen(false);
       },
@@ -121,16 +107,8 @@ export default function ActionsTransaction({
           queryKey: ["listalltransactions-data"],
         });
 
-        toast({
-          title: (
-            <div className="flex gap-3 items-center">
-              <CircleCheck />
-              Transação excluída
-            </div>
-          ),
-          duration: 2500,
-          variant: "positive",
-        });
+        toast("Transação excluída", { duration: 2000 });
+
         setDrawerInstallmentDeleteOpen(false);
         setDrawerIsOpen(false);
       },

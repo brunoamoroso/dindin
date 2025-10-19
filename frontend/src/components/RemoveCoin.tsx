@@ -6,15 +6,13 @@ import { Button } from "./ui/button";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeCoin } from "@/api/coinService";
-import { useToast } from "./ui/use-toast";
+import { toast } from "sonner";
 
 export function RemoveCoin() {
 
     const { coinSelected, setCoinSelected, numUserCoins } = useDashboardContext();
 
     const [openRemoveCoinDialog, setOpenRemoveCoinDialog] = useState(false);
-
-    const {toast} = useToast();
 
     const queryClient = useQueryClient();
 
@@ -29,11 +27,7 @@ export function RemoveCoin() {
             setOpenRemoveCoinDialog(false);
         },
         onError: (error) => {
-            toast({
-                title: "Erro ao remover moeda",
-                description: "Não foi possível remover a moeda selecionada. Tente novamente mais tarde.",
-                variant: "destructive",
-            })
+            toast.error("Erro ao remover moeda", { duration: 2000 });
             console.error("Error removing coin:", error);
         }
     });

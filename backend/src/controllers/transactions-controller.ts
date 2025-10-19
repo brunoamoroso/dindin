@@ -17,6 +17,8 @@ export const addTransaction = async (req: Request, res: Response) => {
   let localDate = toPostgresDate(date.value);
   const installments = parseInt(req.body.installments);
 
+  console.log(req.body);
+
   try {
     if (type === "gain") {
       const queryGainTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, date, created_by)

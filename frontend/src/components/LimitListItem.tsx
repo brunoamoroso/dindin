@@ -4,21 +4,19 @@ import { Progress } from "./ui/progress";
 import { currencyFormat } from "@/utils/currency-format";
 import { cn } from "@/lib/utils";
 import { IconButton } from "./ui/icon-button";
-import { CircleCheck, EllipsisVertical, SquarePen, Trash2 } from "lucide-react";
+import { EllipsisVertical, SquarePen, Trash2 } from "lucide-react";
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "./ui/drawer";
 import { Button } from "./ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteLimit } from "@/api/limitService";
-import { useToast } from "./ui/use-toast";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 export function LimitListItem({ ...props }: LimitType) {
   const badge = getCategoryIcon(props.category);
   const progressValue = (props.amount_spent / props.amount_limit) * 100;
   const queryClient = useQueryClient();
-
-  const { toast } = useToast();
 
   const mutationDelete = useMutation({
     mutationFn: (id: string) => { return deleteLimit(id); },
@@ -28,16 +26,7 @@ export function LimitListItem({ ...props }: LimitType) {
     mutationDelete.mutate(id, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["limits-data"] });
-        toast({
-          title: (
-            <div className="flex gap-3 items-center">
-              <CircleCheck />
-              Limite Excluído
-            </div>
-          ),
-          duration: 2500,
-          variant: "positive",
-        });
+        toast("Limite excluído", { duration: 2000 });
       }
     });
   }
