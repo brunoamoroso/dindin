@@ -3,20 +3,19 @@ import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MenuListItem from "@/components/ui/menu-list-item";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { LimitDataType, useLimitContext } from "@/context/LimitContext";
 import { cn } from "@/lib/utils";
 import { currencyFormat } from "@/utils/currency-format";
 import getCategoryIcon from "@/utils/get-category-icon";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Tag } from "lucide-react";
-import { ChangeEvent, MouseEvent, useCallback, useEffect } from "react";
+import { ChangeEvent, MouseEvent, useEffect } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { id } = useParams();
   const { category, category_id } = location.state || {};
   const { limitData, setLimitData, resetLimitData } = useLimitContext();
@@ -36,14 +35,11 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
     enabled: mode === "edit" && !!id,
   });
 
-  const reset = useCallback(() => {
-    if (mode === "create") resetLimitData();
-  }, [mode, resetLimitData]);
-
   useEffect(() => {
-    reset();
-  }, [reset]);
-
+    return () => {
+      resetLimitData();
+    };
+  }, [resetLimitData]);
 
   useEffect(() => {
     if (mode === "edit" && data && id) {
@@ -110,10 +106,8 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
           const message = error.message.includes("duplicate key")
             ? "Já existe um limite para essa categoria nesse mês."
             : "Ocorreu um erro ao criar o limite.";
-          toast({
-            title: "Erro ao criar limite",
+          toast.error("Erro ao criar limite", {
             description: message,
-            variant: "destructive",
           });
           console.error("Error creating limit:", error);
         },
@@ -129,10 +123,8 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
         const message = error.message.includes("duplicate key")
           ? "Limite já existe"
           : "Ocorreu um erro ao editar o limite.";
-        toast({
-          title: "Erro ao editar limite",
+        toast.error("Erro ao editar limite", {
           description: message,
-          variant: "destructive",
         });
         console.error("Error updating limit:", error);
       },

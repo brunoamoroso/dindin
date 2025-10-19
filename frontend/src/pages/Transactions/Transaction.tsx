@@ -9,7 +9,7 @@ import { ChangeEvent, FormEvent, MouseEvent, useEffect } from "react";
 import { currencyFormat } from "@/utils/currency-format";
 import GainTransaction from "./GainTransaction";
 import ExpenseTransaction from "./ExpenseTransaction";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   TransactionDataType,
@@ -21,8 +21,13 @@ import {
   useOutletContext,
   useParams,
 } from "react-router-dom";
-import { CircleCheck, CircleX } from "lucide-react";
-import { addTransaction, getAllInstallmentsTransaction, getOneTransaction, updateAllInstallmentsTransaction, updateTransaction } from "@/api/transactionService";
+import {
+  addTransaction,
+  getAllInstallmentsTransaction,
+  getOneTransaction,
+  updateAllInstallmentsTransaction,
+  updateTransaction,
+} from "@/api/transactionService";
 
 export default function Transaction({ mode }: { mode: "create" | "edit" }) {
   const navigate = useNavigate();
@@ -32,13 +37,12 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     contextTransactionData,
     setContextTransactionData,
   }: TransactionsContextType = useOutletContext();
-  const { toast } = useToast();
   const { paramId, paramTransactionScope } = useParams();
   let id;
   let transactionScope = "";
 
   mode = location.state?.mode ?? mode;
-  if(mode === "edit"){
+  if (mode === "edit") {
     id = paramId ?? location.state.id;
     transactionScope = paramTransactionScope ?? location.state.transactionScope;
   }
@@ -78,8 +82,6 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       }));
     }
   }, [data, setContextTransactionData]);
-
-
 
   const handleDate = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -178,136 +180,67 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     } = contextTransactionData;
 
     if (amount === 0) {
-      toast({
-        title: "Sua transação não tem um valor",
-        variant: "destructive",
-        duration: 2000,
-      });
-
+      toast.error("Sua transação não tem um valor", { duration: 2000 });
       return;
     }
 
     if (category === undefined) {
-      toast({
-        title: "Selecione ao menos uma categoria",
-        variant: "destructive",
-        duration: 2000,
-      });
-
+      toast.error("Selecione ao menos uma categoria", { duration: 2000 });
       return;
     }
 
     if (account === undefined) {
-      toast({
-        title: "Selecione uma conta para a transação",
-        variant: "destructive",
-        duration: 2000,
-      });
+      toast.error("Selecione uma conta para a transação", { duration: 2000 });
       return;
     }
 
     if (date.value === undefined) {
-      toast({
-        title: "Selecione quando foi a transação",
-        variant: "destructive",
-        duration: 2000,
-      });
+      toast.error("Selecione quando foi a transação", { duration: 2000 });
       return;
     }
 
     if (type === "expense" && paymentCondition === "none") {
-      toast({
-        title: "Selecione uma Condição de Pagamento para a transação",
-        variant: "destructive",
-        duration: 2000,
-      });
+      toast.error("Selecione uma Condição de Pagamento para a transação", { duration: 2000 });
       return;
-    }
+    } 
 
     if (paymentCondition === "multi" && installments === "0") {
-      toast({
-        title: "Informe quantas parcelas terá a sua transação",
-        variant: "destructive",
-        duration: 2000,
-      });
+      toast.error("Informe quantas parcelas terá a sua transação", { duration: 2000 });
       return;
     }
 
     if (mode === "create") {
       mutationAdd.mutate(contextTransactionData, {
         onSuccess: () => {
-          toast({
-            title: (
-              <div className="flex gap-3 items-center">
-                <CircleCheck />
-                Transação registrada!
-              </div>
-            ),
-            duration: 2500,
-            variant: "positive",
-          });
+          toast.success("Transação registrada!", { duration: 2000 });
           navigate("/dashboard");
         },
+        onError: () => {
+          toast.error("Não conseguimos adicionar a transação", { duration: 2000 });
+        }
       });
-      return;
     }
 
-    if ((mode === "edit") && (transactionScope !== "all-installments")){
+    if (mode === "edit" && transactionScope !== "all-installments") {
       mutationUpdate.mutate(contextTransactionData, {
         onSuccess: () => {
-          toast({
-            title: (
-              <div className="flex gap-3 items-center">
-                <CircleCheck />
-                Transação atualizada!
-              </div>
-            ),
-            duration: 2500,
-            variant: "positive",
-          });
+          toast.success("Transação atualizada!", { duration: 2000 });
           navigate(`/transaction/list/${contextTransactionData.date.value}`);
         },
         onError: () => {
-          toast({
-            title: (
-              <div className="flex gap-3 items-center">
-                <CircleX />
-                Não conseguimos editar a transação
-              </div>
-            ),
-            duration: 2500,
-            variant: "destructive",
-          });
+          toast.error("Não conseguimos editar a transação", { duration: 2000 });
         },
       });
     }
 
-    if ((mode === "edit") && (transactionScope === "all-installments")){
+    if (mode === "edit" && transactionScope === "all-installments") {
       mutationUpdateAllInstallments.mutate(contextTransactionData, {
         onSuccess: () => {
-          toast({
-            title: (
-              <div className="flex gap-3 items-center">
-                <CircleCheck />
-                Transação atualizada!
-              </div>
-            ),
-            duration: 2500,
-            variant: "positive",
-          });
+          toast.success("Transação atualizada!", { duration: 2000 });
           navigate(`/transaction/list/${contextTransactionData.date.value}`);
         },
         onError: () => {
-          toast({
-            title: (
-              <div className="flex gap-3 items-center">
-                <CircleX />
-                Não conseguimos editar a transação
-              </div>
-            ),
-            duration: 2500,
-            variant: "destructive",
-          });
+          toast.error("Não conseguimos editar a transação", { duration: 2000 });
         },
       });
     }
@@ -327,11 +260,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
         onValueChange={handleTypeTransaction}
       >
         <InlineTabsList>
-          <InlineTabsTrigger
-            value="gain"
-          >
-            Ganho
-          </InlineTabsTrigger>
+          <InlineTabsTrigger value="gain">Ganho</InlineTabsTrigger>
           <InlineTabsTrigger
             value="expense"
             className={
@@ -341,25 +270,39 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
             Despesa
           </InlineTabsTrigger>
         </InlineTabsList>
-        <InlineTabsContent value="gain" className="flex flex-col flex-1 data-[state='inactive']:hidden">
+        <InlineTabsContent
+          value="gain"
+          className="flex flex-col flex-1 data-[state='inactive']:hidden"
+        >
           <GainTransaction
             handleAmountChange={handleAmountChange}
             handleInputChange={handleInputChange}
             handleAmountPlaceholder={handleAmountPlaceholder}
             handleDateToday={handleDate}
             handleSubmit={handleSubmit}
-            mutationPending={mutationAdd.isPending || mutationUpdate.isPending || mutationUpdateAllInstallments.isPending}
+            mutationPending={
+              mutationAdd.isPending ||
+              mutationUpdate.isPending ||
+              mutationUpdateAllInstallments.isPending
+            }
             mode={mode}
           />
         </InlineTabsContent>
-        <InlineTabsContent value="expense" className="flex flex-col flex-1 data-[state='inactive']:hidden">
+        <InlineTabsContent
+          value="expense"
+          className="flex flex-col flex-1 data-[state='inactive']:hidden"
+        >
           <ExpenseTransaction
             handleAmountChange={handleAmountChange}
             handleInputChange={handleInputChange}
             handleAmountPlaceholder={handleAmountPlaceholder}
             handleDateToday={handleDate}
             handleSubmit={handleSubmit}
-            mutationPending={mutationAdd.isPending || mutationUpdate.isPending || mutationUpdateAllInstallments.isPending}
+            mutationPending={
+              mutationAdd.isPending ||
+              mutationUpdate.isPending ||
+              mutationUpdateAllInstallments.isPending
+            }
             mode={mode}
             transactionScope={transactionScope}
             id={id}

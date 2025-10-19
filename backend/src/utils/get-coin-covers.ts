@@ -11,6 +11,6 @@ export async function getCoinCoversURL(coinImg: string): Promise<string | undefi
         
         return data.signedUrl;
     }catch(err){
-        console.log(err);
+        console.error(err);
     }
 }

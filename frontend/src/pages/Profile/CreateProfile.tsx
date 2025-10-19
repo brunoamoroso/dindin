@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import PasswordValidator from "@/components/ui/passwordvalidator";
 import { Progress } from "@/components/ui/progress";
 import TextField from "@/components/ui/textfield";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { UserProfileType } from "@/types/UserProfileType";
 import { passwordCheck } from "@/utils/password-check";
@@ -15,20 +15,13 @@ import { Camera, LoaderCircle } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const rules = [
-  "Maiúscula",
-  "Minúscula",
-  "Número",
-  "8 Dígitos",
-  "Símbolo"
-];
-
+const rules = ["Maiúscula", "Minúscula", "Número", "8 Dígitos", "Símbolo"];
 
 export default function CreateProfile() {
   const navigate = useNavigate();
-  const {toast} = useToast();
 
-  type UserStateType = Omit<UserProfileType, "photo"> & Partial<Pick<UserProfileType, "photo">>;
+  type UserStateType = Omit<UserProfileType, "photo"> &
+    Partial<Pick<UserProfileType, "photo">>;
 
   const [user, setUser] = useState<UserStateType>({
     name: "",
@@ -56,68 +49,61 @@ export default function CreateProfile() {
     }));
   };
 
-  interface CreationResponse{
+  interface CreationResponse {
     message: string;
     token: string;
   }
-  
+
   const mutation = useMutation<CreationResponse, Error, FormData>({
-    mutationFn: (data: FormData) => {return createProfile(data)}
+    mutationFn: (data: FormData) => {
+      return createProfile(data);
+    },
   });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if(!passwordValid){
-      toast({
-        title: "Tivemos um problema ao tentar criar a sua conta",
-        variant: "destructive",
-        duration: 2000,
-      });
+    if (!passwordValid) {
+      toast.error("Senha inválida. Verifique os requisitos.");
       return;
     }
 
     const formData = new FormData();
 
-    for (const [key, value] of Object.entries(user)){
+    for (const [key, value] of Object.entries(user)) {
       formData.append(key, value as string | File);
     }
 
-    try{
-        mutation.mutate(formData, {
-          onSuccess: (data) => {
-              Cookies.set("token", data.token);
-              navigate("/profile/default-coin", {state: {creationFlow: true}});
-          },
-          onError: () => {
-            toast({
-              title: "Tivemos um problema ao tentar criar a sua conta",
-              variant: "destructive",
-              duration: 2000,
-            })
-          }
-        })
-    }catch(err){
+    try {
+      mutation.mutate(formData, {
+        onSuccess: (data) => {
+          Cookies.set("token", data.token);
+          navigate("/profile/default-coin", { state: { creationFlow: true } });
+        },
+        onError: () => {
+          toast.error("Tivemos um problema ao tentar criar a sua conta");
+        },
+      });
+    } catch (err) {
       console.error(err);
-    }    
-    
+    }
   };
 
   const triggerInputFile = () => {
-    const inputFile = document.getElementById('photoFile');
+    const inputFile = document.getElementById("photoFile");
     inputFile?.click();
-  }
+  };
 
   const changeInputFile = (e: ChangeEvent<HTMLInputElement>) => {
-    if(e.target.files === null){
+    if (e.target.files === null) {
       return;
     }
     const file = e.target.files[0];
     setUser((prevState) => ({
       ...prevState,
-      "photo": file
-    }))
-  }
+      photo: file,
+    }));
+  };
 
   const handlePasswordValidation = (e: ChangeEvent<HTMLInputElement>) => {
     const password = e.target.value;
@@ -126,16 +112,16 @@ export default function CreateProfile() {
 
     setUser((prevState) => ({
       ...prevState,
-      "password": password
-    }))
+      password: password,
+    }));
 
-    if(!Object.values(passValidations).every((check) => check === true)){
+    if (!Object.values(passValidations).every((check) => check === true)) {
       setPasswordValid(false);
       return;
     }
 
     setPasswordValid(true);
-  }
+  };
 
   return (
     <div className="min-h-dvh flex flex-col bg-surface">
@@ -144,49 +130,93 @@ export default function CreateProfile() {
         <Progress value={50} />
       </div>
       <div className="px-6 flex flex-1 py-10">
-          <form className="flex flex-col gap-10 flex-1 justify-between" onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col items-center gap-2" onClick={triggerInputFile}>
-                <Input id="photoFile" type="file" className="hidden" onChange={changeInputFile} />
-                {!user.photo && (
-                  <div className="flex bg-primary text-neutral-950 py-11 px-11 rounded-full">
-                    <Camera />
-                  </div>
-                )}
-                {user.photo && (
-                    <img src={URL.createObjectURL(user.photo as File)} alt="User profile picture" className="h-28 w-28 rounded-full"/>
-                )}
-                <Button variant={"ghost"}>Escolher uma foto</Button>
-              </div>
-
-              <TextField
-                id="name"
-                label="Nome"
-                required={true}
-                onChange={handleChange}
+        <form
+          className="flex flex-col gap-10 flex-1 justify-between"
+          onSubmit={handleSubmit}
+        >
+          <div className="flex flex-col gap-6">
+            <div
+              className="flex flex-col items-center gap-2"
+              onClick={triggerInputFile}
+            >
+              <Input
+                id="photoFile"
+                type="file"
+                className="hidden"
+                onChange={changeInputFile}
               />
-              <TextField id="surname" label="Sobrenome" required={true} onChange={handleChange} />
-              <TextField id="username" label="Nome de Usuário" required={true} onChange={handleChange} />
-              <TextField id="email" label="Email" required={true} onChange={handleChange}/>
-              <div className="flex flex-col gap-2.5">
-                <TextField type="password" id="password" label="Senha"  required={true} onChange={handlePasswordValidation} />
-                <PasswordValidator validations={validations} rules={rules}/>
-              </div>
+              {!user.photo && (
+                <div className="flex bg-primary text-neutral-950 py-11 px-11 rounded-full">
+                  <Camera />
+                </div>
+              )}
+              {user.photo && (
+                <img
+                  src={URL.createObjectURL(user.photo as File)}
+                  alt="User profile picture"
+                  className="h-28 w-28 rounded-full"
+                />
+              )}
+              <Button variant={"ghost"}>Escolher uma foto</Button>
             </div>
 
-            <Button
-              size={"lg"}
-              type="submit"
-              className={cn("w-full", `${mutation.isPending && "opacity-50 cursor-not-allowed pointer-events-none"}`)} 
-            >
-              {mutation.isPending ? (
-                <div className="flex items-center gap-2">
-                  <LoaderCircle size={16} className="animate-spin"/>
-                  Carregando
-                </div>
-              ) : ("Continuar") }
-            </Button>
-          </form>
+            <TextField
+              id="name"
+              label="Nome"
+              required={true}
+              onChange={handleChange}
+            />
+            <TextField
+              id="surname"
+              label="Sobrenome"
+              required={true}
+              onChange={handleChange}
+            />
+            <TextField
+              id="username"
+              label="Nome de Usuário"
+              required={true}
+              onChange={handleChange}
+            />
+            <TextField
+              id="email"
+              label="Email"
+              required={true}
+              onChange={handleChange}
+            />
+            <div className="flex flex-col gap-2.5">
+              <TextField
+                type="password"
+                id="password"
+                label="Senha"
+                required={true}
+                onChange={handlePasswordValidation}
+              />
+              <PasswordValidator validations={validations} rules={rules} />
+            </div>
+          </div>
+
+          <Button
+            size={"lg"}
+            type="submit"
+            className={cn(
+              "w-full",
+              `${
+                mutation.isPending &&
+                "opacity-50 cursor-not-allowed pointer-events-none"
+              }`
+            )}
+          >
+            {mutation.isPending ? (
+              <div className="flex items-center gap-2">
+                <LoaderCircle size={16} className="animate-spin" />
+                Carregando
+              </div>
+            ) : (
+              "Continuar"
+            )}
+          </Button>
+        </form>
       </div>
     </div>
   );

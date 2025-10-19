@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
-import { Toaster } from "./components/ui/toaster";
+import { Toaster } from "./components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 //pages
@@ -70,26 +70,25 @@ function AppRoutes() {
                 <Route path="limits" element={<Limits />} />
                 <Route path="limits/create" element={<CreateLimit mode="create"/>} />
                 <Route path="limits/edit/:id" element={<CreateLimit mode="edit"/>} />
+              </Route>
+              <Route element={<TransactionsContext />}>
+                <Route
+                  path="/transaction/edit/:paramTransactionScope/:paramId"
+                  element={<Transaction mode="edit" />}
+                />
+                <Route
+                  path="/transaction"
+                  element={<Transaction mode="create" />}
+                />
 
-                <Route element={<TransactionsContext />}>
-                  <Route
-                    path="/transaction/edit/:paramTransactionScope/:paramId"
-                    element={<Transaction mode="edit" />}
-                  />
-                  <Route
-                    path="/transaction"
-                    element={<Transaction mode="create" />}
-                  />
-
-                  <Route path="/categories/:type" element={<Categories />} />
-                  <Route
-                    path="/categories/sub/:category"
-                    element={<SubCategories />}
-                  />
-                  <Route path="/accounts/list" element={<Accounts />} />
-                  <Route path="/accounts/create" element={<CreateAccount />} />
-                  <Route path="/recurrency" element={<Recurrency />} />
-                </Route>
+                <Route path="/categories/:type" element={<Categories />} />
+                <Route
+                  path="/categories/sub/:category"
+                  element={<SubCategories />}
+                />
+                <Route path="/accounts/list" element={<Accounts />} />
+                <Route path="/accounts/create" element={<CreateAccount />} />
+                <Route path="/recurrency" element={<Recurrency />} />
               </Route>
             </Route>
 
@@ -113,7 +112,7 @@ function App() {
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
           <AppRoutes />
-          <Toaster />
+          <Toaster richColors closeButton />
         </QueryClientProvider>
       </BrowserRouter>
     </>

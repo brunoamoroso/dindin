@@ -3,15 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import TextField from "@/components/ui/textfield";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Camera, CircleCheck, CircleX, LoaderCircle } from "lucide-react";
+import { Camera, LoaderCircle } from "lucide-react";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { UserProfileType } from "@/types/UserProfileType";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { editProfileData, getUserProfileData } from "@/api/profileService";
 
 export default function EditUserData() {
-  const { toast } = useToast();
   const [user, setUser] = useState<Partial<UserProfileType>>();
 
   const { data, isLoading, isError } = useQuery<UserProfileType>({
@@ -61,34 +60,17 @@ export default function EditUserData() {
       formData.append(key, value as string | File);
     }
 
-      mutation.mutate(formData, {
-        onSuccess: () => {
-          toast({
-            title: (
-              <div className="flex gap-3 items-center">
-                <CircleCheck />
-                Dados atualizados!
-              </div>
-            ),
-            variant: "positive",
-            duration: 1000,
-          });
-        },
-        onError: (err) => {
-          console.error(err);
-          const errorMessage = (err as Error).message || "Erro desconhecido. Tente novamente.";
-          toast({
-            title: (
-              <div className="flex gap-3 items-center">
-                <CircleX />
-                {errorMessage}
-              </div>
-            ),
-            variant: "destructive",
-            duration: 1500,
-          });
-        },
-      });
+    mutation.mutate(formData, {
+      onSuccess: () => {
+        toast.success("Dados atualizados!");
+      },
+      onError: (err) => {
+        console.error(err);
+        const errorMessage =
+          (err as Error).message || "Erro desconhecido. Tente novamente.";
+        toast.error(errorMessage);
+      },
+    });
   };
 
   const triggerInputFile = () => {
@@ -151,7 +133,11 @@ export default function EditUserData() {
                 )}
 
                 {user.photo && user.photo instanceof File && (
-                  <img src={URL.createObjectURL(user.photo)} alt="User profile picture" className="h-28 w-28 rounded-full object-cover"/>
+                  <img
+                    src={URL.createObjectURL(user.photo)}
+                    alt="User profile picture"
+                    className="h-28 w-28 rounded-full object-cover"
+                  />
                 )}
                 <Button variant={"ghost"}>Escolher uma foto</Button>
               </div>
@@ -186,13 +172,25 @@ export default function EditUserData() {
               />
             </div>
 
-            <Button size={"lg"} type="submit" className={cn("w-full", `${mutation.isPending && "opacity-50 cursor-not-allowed pointer-events-none"}`)}>
+            <Button
+              size={"lg"}
+              type="submit"
+              className={cn(
+                "w-full",
+                `${
+                  mutation.isPending &&
+                  "opacity-50 cursor-not-allowed pointer-events-none"
+                }`
+              )}
+            >
               {mutation.isPending ? (
                 <div className="flex items-center gap-2">
                   <LoaderCircle size={16} className="animate-spin" />
                   Carregando
                 </div>
-              ) : ("Salvar")}
+              ) : (
+                "Salvar"
+              )}
             </Button>
           </form>
         </div>

@@ -1,18 +1,17 @@
 import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
 import TextField from "@/components/ui/textfield";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { ChangeEvent, FormEvent, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
-import { CircleX, LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { signIn } from "@/api/profileService";
 
 export default function SignIn() {
   const [userData, setUserData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,20 +27,12 @@ export default function SignIn() {
     e.preventDefault();
 
     if (!userData.username || userData.username === undefined) {
-      toast({
-        title: "Preencha um nome de usuário ou email",
-        variant: "destructive",
-        duration: 2000,
-      });
+      toast.error("Preencha um nome de usuário ou email");
       return;
     }
 
     if (!userData.password || userData.password === undefined) {
-      toast({
-        title: "Preencha sua senha",
-        variant: "destructive",
-        duration: 2000,
-      });
+      toast.error("Preencha sua senha");
       return;
     }
 
@@ -58,18 +49,10 @@ export default function SignIn() {
         navigate("/dashboard");
       }
     } catch (err) {
-      const errorMessage = (err as Error).message || "Erro desconhecido. Tente novamente.";
+      const errorMessage =
+        (err as Error).message || "Erro desconhecido. Tente novamente.";
 
-      toast({
-        title: (
-          <div className="flex gap-3 items-center">
-            <CircleX />
-            {errorMessage}
-          </div>
-        ),
-        variant: "destructive",
-        duration: 2000,
-      });
+      toast.error(errorMessage);
       console.error("Error: ", err);
     } finally {
       setLoading(false);
@@ -96,13 +79,21 @@ export default function SignIn() {
               onChange={handleChange}
             />
           </div>
-          <Button type="submit" size={"lg"} className={`${loading && "opacity-50 cursor-not-allowed pointer-events-none"}`}>
+          <Button
+            type="submit"
+            size={"lg"}
+            className={`${
+              loading && "opacity-50 cursor-not-allowed pointer-events-none"
+            }`}
+          >
             {loading ? (
               <div className="flex items-center gap-2">
                 <LoaderCircle className="animate-spin" />
                 Carregando
               </div>
-            ): "Entrar"}
+            ) : (
+              "Entrar"
+            )}
           </Button>
         </form>
       </div>

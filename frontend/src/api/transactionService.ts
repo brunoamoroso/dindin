@@ -26,7 +26,6 @@ export function getAllInstallmentsTransaction(id: string): Promise<TransactionTy
 }
 
 export function updateAllInstallmentsTransaction<T>(id: string, body: unknown):Promise<T>{
-    console.log(body);
     return api.put<T>(`/transactions/update/all-installments/${id}`, body);
 }
 
