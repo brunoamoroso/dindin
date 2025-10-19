@@ -53,7 +53,7 @@ export const getCoins = async (req: Request, res: Response) =>  {
         res.status(200).json(coinsWithImages);
 
     }catch(err){
-        console.log(err);
+        console.error(err);
         res.status(500).json({message: "Internal server error"});
     }
 }
@@ -75,7 +75,7 @@ export const addNewUserSelectedCoin = async (req: Request, res: Response, next: 
 
         next();
     }catch(err){
-        console.log(err);
+        console.error(err);
         res.status(500).json({message: "Problem with adding new coin to the user"});
     }
 }
@@ -95,7 +95,7 @@ export const setDefaultUserCoin = async (req: Request, res: Response) => {
 
         return res.status(200).json(mutateSetDefaultUserCoin);
     }catch(err){
-        console.log(err);
+        console.error(err);
         res.status(500).json({message: "Internal server error"});
     }
 }
@@ -119,7 +119,7 @@ export const getDefaultUserCoin = async (req: Request, res: Response) => {
 
         res.status(200).json(userDefaultCoin[0]);
     }catch(err){
-        console.log(err);
+        console.error(err);
         res.status(500).json({message: "Internal server error"});
     }
 }

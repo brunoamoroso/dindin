@@ -13,7 +13,7 @@ export const getCategories = async (req: Request, res: Response) => {
 
     return res.status(200).json(categories);
   } catch (err: unknown) {
-    console.log(err);
+    console.error(err);
     return res
       .status(422)
       .send("Houve um erro ao buscar as categorias. Tente novamente.");
@@ -37,7 +37,7 @@ export const getSubCategories = async (req: Request, res: Response) => {
 
     return res.status(200).json(subcategories);
   } catch (err: unknown) {
-    console.log(err);
+    console.error(err);
     return res
       .status(422)
       .json({

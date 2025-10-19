@@ -113,7 +113,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
 
     return res.status(200).json(profile[0]);
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };
 
