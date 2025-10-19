@@ -64,7 +64,7 @@ export function ChangePassword() {
     e.preventDefault();
 
     if (!passwordValid) {
-      toast.error("Senha inválida. Verifique os requisitos.");
+      toast.error("A senha não preenche os requisitos necessários");
       return;
     }
 
