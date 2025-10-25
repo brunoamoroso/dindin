@@ -97,6 +97,17 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
   });
 
   const handleSubmit = () => {
+
+    if (!limitData.amount || limitData.amount === 0) {
+      toast.error("Defina um valor para o limite");
+      return;
+    }
+
+    if (!limitData.category_id || !limitData.category) {
+      toast.error("Selecione uma categoria para o limite");
+      return;
+    }
+
     if (mode === "create") {
       mutationCreateLimit.mutate(limitData, {
         onSuccess: () => {
