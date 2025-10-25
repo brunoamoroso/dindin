@@ -11,6 +11,7 @@ import { MonthPicker } from "../MonthPicker";
 import { getAllTransactionsByMonth } from "@/api/transactionService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DataAllTransactionsType } from "@/types/TransactionTypes";
+import { formatLocalDate } from "@/utils/format-local-date";
 
 export function ListAllTransactions() {
   const { selectedDate, setSelectedDate, coinSelected } = useDashboardContext();
@@ -56,7 +57,7 @@ export function ListAllTransactions() {
                 <div className="flex flex-col">
                   <span className="label-large text-content-primary">{d.category}</span>
                   <span className="body-medium text-content-subtle">
-                    {new Date(d.date).toLocaleDateString()}
+                    {formatLocalDate(d.date)}
                     {d.install_number && " - " + d.install_number + " / " + d.installments}
                   </span>
                 </div>

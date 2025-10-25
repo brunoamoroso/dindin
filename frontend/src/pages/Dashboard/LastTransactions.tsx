@@ -4,6 +4,7 @@ import getCategoryIcon from "@/utils/get-category-icon";
 import { Link } from "react-router-dom";
 import * as Types from "@/types/TransactionTypes";
 import { cn } from "@/lib/utils";
+import { formatLocalDate } from "@/utils/format-local-date";
 
 export default function LastTransactions({
   data,
@@ -33,7 +34,7 @@ export default function LastTransactions({
                   {d.description}
                 </span>
                 <span className="body-medium text-content-subtle">
-                  {new Date(d.date).toLocaleDateString()}
+                  {formatLocalDate(d.date)}
                   {d.install_number &&
                     " - " + d.install_number + " / " + d.installments}
                 </span>
