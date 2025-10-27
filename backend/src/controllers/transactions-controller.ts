@@ -131,6 +131,32 @@ export const addTransaction = async (req: Request, res: Response) => {
   }
 };
 
+export const getSimilarTransactionsByDescription = async (req: Request, res: Response) => {
+  const { description, type } = req.params;
+
+  try{
+    const queryGetSimilarTransactionsByDescription = `
+    SELECT DISTINCT ON (t.description) t.id, t.description, t.category_id, t.subcategory_id, cat.description as category, subcat.description as subcategory
+    FROM transactions t
+    JOIN categories cat ON t.category_id = cat.id
+    JOIN subcategories subcat ON t.subcategory_id = subcat.id
+    WHERE t.description ILIKE $1
+    AND t.type = $2
+    AND t.created_by = $3
+    ORDER BY t.description ASC
+    `;
+
+    const valuesQuery = [`%${description}%`, type, req.user];
+
+    const {rows: similarTransactions} = await db.query(queryGetSimilarTransactionsByDescription, valuesQuery);
+
+    return res.status(200).json(similarTransactions);
+  }catch(err){
+    console.error(err);
+    res.status(422).json({ message: "Couldn't retrieve similar transactions" });
+  }
+};
+
 export const getAllTransactionsByMonth = async (
   req: Request,
   res: Response

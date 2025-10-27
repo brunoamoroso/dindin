@@ -5,6 +5,10 @@ export function addTransaction<T>(body: unknown): Promise<T>{
     return api.post<T>("/transactions/add", body);
 }
 
+export function getSimilarTransactionsByDescription(description: string, type: string): Promise<TransactionType[]>{
+    return api.get(`/transactions/similar-description/${description}/${type}`);
+}
+
 export function updateTransaction<T>(id: string, body: unknown):Promise<T>{
     return api.put<T>(`/transactions/update/${id}`, body);
 }

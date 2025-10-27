@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Command, CommandItem, CommandList } from "@/components/ui/command";
 import {
   Dialog,
   DialogContent,
@@ -10,9 +11,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { InputChips } from "@/components/ui/input-chips";
 import MenuListItem from "@/components/ui/menu-list-item";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import TextField from "@/components/ui/textfield";
 import { TransactionsContextType } from "@/context/TransactionsContext";
 import { cn } from "@/lib/utils";
+import { TransactionType } from "@/types/TransactionTypes";
 import { currencyFormat } from "@/utils/currency-format";
 import getCategoryIcon from "@/utils/get-category-icon";
 import { Landmark, LoaderCircle, Tag } from "lucide-react";
@@ -25,6 +28,8 @@ interface GainTransactionType {
   handleAmountPlaceholder: (e: MouseEvent<HTMLDivElement>) => void;
   handleDateToday: (e: MouseEvent<HTMLButtonElement>) => void;
   handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  handleSelectedSuggestion: (id: string) => void;
+  similarDescriptionData?: TransactionType[];
   mutationPending: boolean;
   mode: string;
 }
@@ -35,6 +40,8 @@ export default function GainTransaction({
   handleAmountPlaceholder,
   handleDateToday,
   handleSubmit,
+  handleSelectedSuggestion,
+  similarDescriptionData,
   mutationPending,
   mode,
 }: GainTransactionType) {
@@ -43,6 +50,11 @@ export default function GainTransaction({
     setContextTransactionData,
   }: TransactionsContextType = useOutletContext();
   const [isDialogpOpen, setIsDialogOpen] = useState(false);
+  const [isAutoCompleteOpen, setIsAutoCompleteOpen] = useState(false);
+  
+  const hasResults = (similarDescriptionData?.length ?? 0) > 0;
+  const showAutoComplete = Boolean(isAutoCompleteOpen && hasResults);
+
   const badge = getCategoryIcon(contextTransactionData.category || "");
 
   const handleDayClick = (day: Date) => {
@@ -96,13 +108,42 @@ export default function GainTransaction({
           className="flex flex-col flex-1 gap-16 justify-between"
         >
           <div className="flex flex-col gap-6">
-            <TextField
-              id="description"
-              label="Descrição"
-              value={contextTransactionData.description}
-              placeholder="Escreva uma descrição"
-              onChange={handleInputChange}
-            />
+            <Popover
+              open={showAutoComplete}
+              onOpenChange={setIsAutoCompleteOpen}
+            >
+              <PopoverTrigger className="text-left">
+                <TextField
+                  id="description"
+                  label="Descrição"
+                  value={contextTransactionData.description}
+                  placeholder="Escreva uma descrição"
+                  onChange={handleInputChange}
+                />
+              </PopoverTrigger>
+              <PopoverContent
+                className="p-0 border-none w-[var(--radix-popover-trigger-width)]"
+                onOpenAutoFocus={(e) => e.preventDefault()}
+                onCloseAutoFocus={(e) => e.preventDefault()}
+              >
+                <Command shouldFilter={false}>
+                  <CommandList>
+                    {similarDescriptionData &&
+                      similarDescriptionData.map((item) => (
+                        <CommandItem
+                          key={item.id}
+                          onSelect={() => {
+                            handleSelectedSuggestion(item.id);
+                            setIsAutoCompleteOpen(false);
+                          }}
+                        >
+                          {item.description}
+                        </CommandItem>
+                      ))}
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
             <div className="flex flex-col gap-1.5">
               <span className="label-large text-content-primary">
                 Categoria
