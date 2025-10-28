@@ -35,7 +35,7 @@ export function TransactionsContext(){
   const [contextTransactionData, setContextTransactionData] =
     useState<TransactionDataType>({
       coin: coinSelected,
-      type: "gain",
+      type: "expense",
       amount: 0,
       description: "",
       category_id: undefined,
