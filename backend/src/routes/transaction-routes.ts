@@ -9,6 +9,7 @@ import {
   getOneTransaction,
   updateAllInstallmentsTransaction,
   updateTransaction,
+  getSimilarTransactionsByDescription,
 } from "../controllers/transactions-controller";
 import { checkToken } from "../utils/check-token";
 
@@ -26,6 +27,7 @@ transactionRoutes.get(
   getAllInstallmentsTransaction
 );
 transactionRoutes.post("/add", checkToken, addTransaction);
+transactionRoutes.get("/similar-description/:description/:type", checkToken, getSimilarTransactionsByDescription);
 transactionRoutes.delete(
   "/delete/one-installment/:id",
   checkToken,

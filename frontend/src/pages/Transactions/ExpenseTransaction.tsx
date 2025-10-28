@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Command, CommandItem, CommandList } from "@/components/ui/command";
 import {
   Dialog,
   DialogContent,
@@ -10,8 +11,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { InputChips } from "@/components/ui/input-chips";
 import MenuListItem from "@/components/ui/menu-list-item";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import TextField from "@/components/ui/textfield";
 import { TransactionsContextType } from "@/context/TransactionsContext";
+import { TransactionType } from "@/types/TransactionTypes";
 import { currencyFormat } from "@/utils/currency-format";
 import getCategoryIcon from "@/utils/get-category-icon";
 import splitInstallmentsDisplay from "@/utils/get-split-installments";
@@ -25,6 +32,8 @@ import { Link, useOutletContext } from "react-router-dom";
 interface ExpenseTransactionType {
   handleAmountChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  similarDescriptionData?: TransactionType[];
+  handleSelectedSuggestion: (id: string) => void;
   handleAmountPlaceholder: (e: MouseEvent<HTMLDivElement>) => void;
   handleDateToday: (e: MouseEvent<HTMLButtonElement>) => void;
   handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
@@ -40,6 +49,8 @@ interface ExpenseTransactionType {
 export default function ExpenseTransaction({
   handleAmountChange,
   handleInputChange,
+  similarDescriptionData,
+  handleSelectedSuggestion,
   handleAmountPlaceholder,
   handleDateToday,
   handleSubmit,
@@ -52,7 +63,12 @@ export default function ExpenseTransaction({
     contextTransactionData,
     setContextTransactionData,
   }: TransactionsContextType = useOutletContext();
-  const [isDialogpOpen, setIsDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAutoCompleteOpen, setIsAutoCompleteOpen] = useState(false);
+
+  const hasResults = (similarDescriptionData?.length ?? 0) > 0;
+  const showAutoComplete = Boolean(isAutoCompleteOpen && hasResults);
+
   const badge = getCategoryIcon(contextTransactionData.category || "");
 
   const handlePaymentChips = (e: MouseEvent<HTMLButtonElement>) => {
@@ -154,13 +170,42 @@ export default function ExpenseTransaction({
           className="flex flex-col flex-1 gap-16 justify-between"
         >
           <div className="flex flex-col gap-6">
-            <TextField
-              id="description"
-              label="Descrição"
-              value={contextTransactionData.description}
-              placeholder="Escreva uma descrição"
-              onChange={handleInputChange}
-            />
+            <Popover
+              open={showAutoComplete}
+              onOpenChange={setIsAutoCompleteOpen}
+            >
+              <PopoverTrigger className="text-left">
+                <TextField
+                  id="description"
+                  label="Descrição"
+                  value={contextTransactionData.description}
+                  placeholder="Escreva uma descrição"
+                  onChange={handleInputChange}
+                />
+              </PopoverTrigger>
+              <PopoverContent
+                className="p-0 border-none w-[var(--radix-popover-trigger-width)]"
+                onOpenAutoFocus={(e) => e.preventDefault()}
+                onCloseAutoFocus={(e) => e.preventDefault()}
+              >
+                <Command shouldFilter={false}>
+                  <CommandList>
+                    {similarDescriptionData &&
+                      similarDescriptionData.map((item) => (
+                        <CommandItem
+                          key={item.id}
+                          onSelect={() => {
+                            handleSelectedSuggestion(item.id);
+                            setIsAutoCompleteOpen(false);
+                          }}
+                        >
+                          {item.description}
+                        </CommandItem>
+                      ))}
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
 
             {((transactionScope !== "one-installment" && mode === "edit") ||
               mode === "create") && (
@@ -317,7 +362,7 @@ export default function ExpenseTransaction({
                 >
                   Hoje
                 </InputChips>
-                <Dialog open={isDialogpOpen} onOpenChange={setIsDialogOpen}>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild onClick={() => setIsDialogOpen(true)}>
                     <InputChips
                       value={"searchDate"}

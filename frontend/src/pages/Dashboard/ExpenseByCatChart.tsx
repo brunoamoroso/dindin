@@ -115,7 +115,7 @@ export default function ExpenseByCatChart({data} : {data: Types.TransactionType[
 
     return(
         <div className="mx-6">
-            <h1 className="title-small text-content-primary">Gasto por Categoria</h1>
+            <h1 className="title-small text-content-primary">Como estou gastando</h1>
             {data.length === 0 && (
                 <span className="flex py-4 text-content-subtle body-large">Sem transções neste mês.</span>
             )}

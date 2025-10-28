@@ -25,6 +25,7 @@ import {
   addTransaction,
   getAllInstallmentsTransaction,
   getOneTransaction,
+  getSimilarTransactionsByDescription,
   updateAllInstallmentsTransaction,
   updateTransaction,
 } from "@/api/transactionService";
@@ -46,6 +47,15 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     id = paramId ?? location.state.id;
     transactionScope = paramTransactionScope ?? location.state.transactionScope;
   }
+
+  const {data: similarDescriptionData} = useQuery({
+    queryKey: ["similar-description", contextTransactionData.description, contextTransactionData.type],
+    queryFn: () => {
+      return getSimilarTransactionsByDescription(contextTransactionData.description, contextTransactionData.type);
+    },
+    enabled: Boolean(contextTransactionData.description !== ""),
+  });
+
 
   const { data } = useQuery({
     queryKey: ["transaction-edit", paramId],
@@ -137,6 +147,20 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       [e.target.id]: e.target.value,
     }));
   };
+
+  const handleSelectedSuggestion = (id: string) => {
+    const selectedSuggestion = similarDescriptionData?.find(item => item.id === id);
+    if (selectedSuggestion) {
+      setContextTransactionData((prevTransaction) => ({
+        ...prevTransaction,
+        description: selectedSuggestion.description,
+        category: selectedSuggestion.category,
+        category_id: selectedSuggestion.category_id,
+        subcategory: selectedSuggestion.subcategory,
+        subcategory_id: selectedSuggestion.subcategory_id,
+      }));
+    }
+  }
 
   const handleTypeTransaction = (e: string) => {
     if (e === "gain" || e === "expense") {
@@ -254,7 +278,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
         <AppBar title="Editar Transação" pageBack="transaction/list" />
       )}
       <InlineTabs
-        defaultValue="gain"
+        defaultValue="expense"
         value={contextTransactionData.type}
         className="pt-8 flex flex-1 flex-col"
         onValueChange={handleTypeTransaction}
@@ -277,9 +301,11 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
           <GainTransaction
             handleAmountChange={handleAmountChange}
             handleInputChange={handleInputChange}
+            similarDescriptionData={similarDescriptionData}
             handleAmountPlaceholder={handleAmountPlaceholder}
             handleDateToday={handleDate}
             handleSubmit={handleSubmit}
+            handleSelectedSuggestion={handleSelectedSuggestion}
             mutationPending={
               mutationAdd.isPending ||
               mutationUpdate.isPending ||
@@ -295,6 +321,8 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
           <ExpenseTransaction
             handleAmountChange={handleAmountChange}
             handleInputChange={handleInputChange}
+            similarDescriptionData={similarDescriptionData}
+            handleSelectedSuggestion={handleSelectedSuggestion}
             handleAmountPlaceholder={handleAmountPlaceholder}
             handleDateToday={handleDate}
             handleSubmit={handleSubmit}
