@@ -1,53 +1,121 @@
-import { Link, NavLink } from "react-router-dom";
-import { IconButton } from "./ui/icon-button";
-import { Gauge, LayoutGrid, Plus } from "lucide-react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { ArrowRightLeft, Gauge, LayoutGrid, Plus } from "lucide-react";
 import { useDashboardContext } from "@/context/DashboardContext";
 import { cn } from "@/lib/utils";
+import { IconButton } from "./ui/icon-button";
+import { useEffect, useState } from "react";
 
-export default function BottomNav(){
-    const {coinSelected} = useDashboardContext();
+export default function BottomNav() {
+  const { coinSelected } = useDashboardContext();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const navButtons = [
-        {
-            link: "/dashboard",
-            icon: <LayoutGrid />,
-            title: "Início"
-        },
-        {
-            link: "/transaction",
-            icon: <Plus strokeWidth={3}/>,
-            title: "+"
-        },
-        {
-            link: "/limits",
-            icon: <Gauge />,
-            title: "Limites de Gastos"
-        }
-    ];
+  const navButtons = [
+    {
+      link: "/dashboard",
+      icon: <LayoutGrid />,
+      title: "Início",
+      end: true,
+      growOnActive: false,
+    },
+    {
+      link: "/dashboard/transactions",
+      icon: <ArrowRightLeft />,
+      title: "Transações",
+      growOnActive: false,
+    },
+    {
+      link: "/dashboard/budget",
+      icon: <Gauge />,
+      title: "Meu Orçamento",
+      growOnActive: true,
+    },
+  ];
 
-    return(
-        <div className="flex flex-1 fixed bottom-10 items-center w-dvw">
-            <div className="flex justify-between items-center px-8 w-full mx-6 bg-neutral-950/75 border border-outline rounded-full backdrop-blur-lg">
-                {navButtons.map((obj, i) => {
-                    if( i === 1 && coinSelected === "global" ) return;
-                    if(i === 1){
-                        return(
-                        <Link to={obj.link} key={i} className="flex flex-1 justify-center">
-                            <IconButton className="w-14 h-14">
-                                {obj.icon}
-                            </IconButton>
-                        </Link>
-                        );
-                    }
+  const fabConfigs = [
+    {
+      match: (path: string) => path.startsWith("/dashboard/transactions"),
+      target: "/transaction",
+    },
+    {
+      match: (path: string) => path.startsWith("/dashboard/budget"),
+      target: "/limits/create",
+    },
+  ];
 
-                    return(
-                        <NavLink to={obj.link} key={i} className={({isActive}) => cn("flex flex-1 flex-col items-center justify-center gap-1 py-5", isActive ? "text-primary" : "text-content-primary")}>
-                            {obj.icon}
-                            <span className="label-small">{obj.title}</span>
-                        </NavLink>
-                    )
-                })}
-            </div>
+  const fabTarget = fabConfigs.find((config) =>
+    config.match(location.pathname)
+  )?.target;
+
+  const shouldShowFab = coinSelected !== "global" && !!fabTarget;
+
+  const [isFabMounted, setIsFabMounted] = useState(shouldShowFab);
+  const [isExiting, setIsExiting] = useState(false);
+
+  useEffect(() => {
+    if(shouldShowFab){
+        setIsFabMounted(true);
+        setIsExiting(false);
+    }else if (isFabMounted){
+        setIsExiting(true);
+    }
+
+  }, [shouldShowFab, isFabMounted]);
+
+  return (
+    <div className="flex flex-1 fixed h-14 bottom-10 items-center w-dvw">
+      <div className="flex flex-1 items-center mx-4 gap-6">
+        <div className="flex items-center px-1.5 py-1.5 w-full bg-neutral-950/75 border border-outline rounded-full backdrop-blur-lg transition-[width] duration-600">
+          {navButtons.map((obj, i) => {
+            if (i === 1 && coinSelected === "global") return;
+            return (
+              <NavLink
+                to={obj.link}
+                end={obj.end}
+                key={i}
+                className={({ isActive }) =>
+                  cn(
+                    "flex w-auto basis-0 items-center justify-center gap-2 py-2.5 px-3 rounded-full transition-[background-color,color] duration-200",
+                    isActive && obj.growOnActive ? "flex-[2.3]" : "flex-1",
+                    isActive
+                      ? "text-primary bg-state-hover"
+                      : "text-content-primary"
+                  )
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    {obj.icon}
+                    {isActive && (
+                      <span className="label-small">{obj.title}</span>
+                    )}
+                  </>
+                )}
+              </NavLink>
+            );
+          })}
         </div>
-    )
+        {isFabMounted && (
+        <div className={cn("overflow-hidden flex justify-end transition-[width] duration-200", isExiting ? "w-0" : "w-18")}>
+            <IconButton
+                className={cn(
+                "h-14 w-18",
+                fabTarget
+                    ? "animate-add-bottom-nav"
+                    : "animate-remove-add-bottom-nav"
+                )}
+                onAnimationEnd={() => {
+                    if(isExiting){
+                        setIsFabMounted(false);
+                    }
+                }}
+                onClick={() => fabTarget && navigate(fabTarget)}
+            >
+                <Plus size={18} strokeWidth={3} />
+            </IconButton>
+            </div>
+        )}
+      </div>
+    </div>
+  );
 }

@@ -56,7 +56,7 @@ export function CoinSelector() {
   };
   
   return (
-    <div className="flex gap-5 scroll-px-6 px-6 snap-none overflow-x-auto no-scrollbar mb-9">
+    <div className="flex gap-5 scroll-px-6 px-6 snap-none overflow-x-auto no-scrollbar mb-4">
       {!loadingUserCoins && (userCoins?.length ?? 0) > 1 && (
         <CoinSelectorItem
          ref={(el) => (coinRefs.current["global"] = el)}

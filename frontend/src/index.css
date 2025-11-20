@@ -167,6 +167,30 @@
   --color-critical: var(--color-red-400);
   --color-critical-subtle: var(--color-red-500);
   --color-critical-on-subtle: var(--color-red-100);
+
+  --animate-add-bottom-nav: add-bottom-nav 0.3s ease forwards;
+  --animate-remove-add-bottom-nav: remove-add-bottom-nav 0.3s ease forwards;
+
+  @keyframes add-bottom-nav {
+    0% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+  }
+  @keyframes remove-add-bottom-nav {
+    0% {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
 }
 
 @layer base {
