@@ -19,6 +19,10 @@ export function MonthPicker() {
     useOutletContext<DashboardContextType>();
   const [open, setOpen] = useState(false);
 
+
+  const date = new Date(selectedDate);
+  const prevMonthLong = new Date(date.getFullYear(), date.getMonth() - 1).toLocaleDateString("pt-BR", { month: "long" });
+  const nextMonthLong = new Date(date.getFullYear(), date.getMonth() + 1).toLocaleDateString("pt-BR", { month: "long" });
   const monthLong = selectedDate.toLocaleDateString("pt-BR", { month: "long" });
 
   const handleMonthClick = (date: Date | null) => {
@@ -50,7 +54,7 @@ export function MonthPicker() {
       <IconButton variant={"outline"} onClick={handleDecreaseMonth}><ChevronLeft /></IconButton>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant={"ghost"} size='sm'>
+          <Button variant={"outline"} size='default' className="pressed">
             {monthLong.charAt(0).toUpperCase() + monthLong.slice(1)}
             {selectedDate.getFullYear() < new Date().getFullYear() && (", " + selectedDate.getFullYear())}
           </Button>
