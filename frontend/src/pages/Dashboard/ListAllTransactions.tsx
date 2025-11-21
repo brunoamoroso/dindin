@@ -24,20 +24,23 @@ export function ListAllTransactions() {
 
   const { data, isLoading } = useQuery<DataAllTransactionsType>({
     queryKey: ["listalltransactions-data", selectedDate],
-    queryFn: () => getAllTransactionsByMonth(selectedDate.toISOString(), coinSelected),
+    queryFn: () =>
+      getAllTransactionsByMonth(selectedDate.toISOString(), coinSelected),
   });
+
+  console.log(data);
 
   return (
     <div className="flex flex-col flex-1 mx-6 text-content-secondary gap-6">
-        {isLoading && (
-          Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-8 mb-4 flex" />
-          ))
-        )}
-        {!isLoading && data?.allTransactionsByMonth.length === 0 && (
-          <span className="body-large">Não houveram transações neste mês.</span>
-        )}
-        {!isLoading && data?.allTransactionsByMonth.map((d, i, arr) => (
+      {isLoading &&
+        Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-8 mb-4 flex" />
+        ))}
+      {!isLoading && data?.allTransactionsByMonth.length === 0 && (
+        <span className="body-large">Não houveram transações neste mês.</span>
+      )}
+      {!isLoading &&
+        data?.allTransactionsByMonth.map((d, i, arr) => (
           <div key={i} className="flex flex-col">
             <div
               key={i}
@@ -46,23 +49,35 @@ export function ListAllTransactions() {
               <div className="flex flex-1 gap-4 items-center">
                 <div>{getCategoryIcon(d.category).icon}</div>
                 <div className="flex flex-col">
-                  <span className="label-large text-content-primary">{d.category}</span>
-                  <span className="body-medium text-content-subtle">
+                  {d.description && (
+                    <span className="body-small text-content-secondary">
+                        {d.category} - {d.subcategory}
+                    </span>
+                  )}
+                  <span className="label-large text-content-primary mb-1 leading-none">
+                    {!d.description ? d.category + " - " + d.subcategory : d.description}
+                  </span>
+                  <span className="body-small text-content-subtle">
                     {formatLocalDate(d.date)}
-                    {d.install_number && " - " + d.install_number + " / " + d.installments}
+                    {d.install_number &&
+                      " - " + d.install_number + " / " + d.installments}
                   </span>
                 </div>
               </div>
               <div className="flex flex-col items-end">
                 <span
                   className={`label-medium ${
-                    d.type === "gain" ? "text-content-positive" : "text-content-negative"
+                    d.type === "gain"
+                      ? "text-content-positive"
+                      : "text-content-negative"
                   }`}
                 >
                   {currencyFormat(d.amount)}
                   <span className="text-content-secondary">{" " + d.code}</span>
                 </span>
-                <span className="body-small text-content-subtle">{d.account}</span>
+                <span className="body-small text-content-subtle">
+                  {d.account}
+                </span>
               </div>
               <ActionsTransaction
                 id={d.id!}
@@ -75,6 +90,6 @@ export function ListAllTransactions() {
             {i !== arr.length - 1 && <Separator />}
           </div>
         ))}
-      </div>
+    </div>
   );
 }

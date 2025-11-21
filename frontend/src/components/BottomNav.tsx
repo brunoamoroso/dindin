@@ -25,7 +25,7 @@ export default function BottomNav() {
       growOnActive: false,
     },
     {
-      link: "/dashboard/budget",
+      link: "/dashboard/limits",
       icon: <Gauge />,
       title: "Meu Orçamento",
       growOnActive: true,
@@ -38,7 +38,7 @@ export default function BottomNav() {
       target: "/transaction",
     },
     {
-      match: (path: string) => path.startsWith("/dashboard/budget"),
+      match: (path: string) => path.startsWith("/dashboard/limits"),
       target: "/limits/create",
     },
   ];

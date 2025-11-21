@@ -111,7 +111,7 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
     if (mode === "create") {
       mutationCreateLimit.mutate(limitData, {
         onSuccess: () => {
-          navigate("/limits");
+          navigate("/dashboard/limits");
         },
         onError: (error) => {
           const message = error.message.includes("duplicate key")
@@ -128,7 +128,7 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
 
     mutationUpdateLimit.mutate(limitData, {
       onSuccess: () => {
-        navigate("/limits");
+        navigate("/dashboard/limits");
       },
       onError: (error) => {
         const message = error.message.includes("duplicate key")
@@ -150,7 +150,6 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
             ? "Adicionar Limite de Gasto"
             : "Editar Limite de Gasto"
         }
-        pageBack="limits"
       />
 
       <div className="mx-6 py-8 flex flex-col">

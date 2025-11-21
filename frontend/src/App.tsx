@@ -62,12 +62,15 @@ function AppRoutes() {
                   path="transactions"
                   element={<ListAllTransactions />}
                 />
-                <Route element={<LimitContext />}>
-                  <Route path="budget" element={<Limits />} />
-                  <Route path="budget/create" element={<CreateLimit mode="create"/>} />
-                  <Route path="budget/edit/:id" element={<CreateLimit mode="edit"/>} />
-                </Route>
+                
+                <Route path="limits" element={<Limits />} />
               </Route>
+
+              <Route element={<LimitContext />}>
+                  <Route path="limits/create" element={<CreateLimit mode="create"/>} />
+                  <Route path="limits/edit/:id" element={<CreateLimit mode="edit"/>} />
+              </Route>
+              
               <Route
                 path="/transaction/list/:dateParams"
                 element={<ListAllTransactions />}
