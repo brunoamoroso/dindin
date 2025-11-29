@@ -59,7 +59,7 @@ export const getSearchCategories = async (req: Request, res: Response) => {
   try {
     const querySearchCategories = `SELECT * 
     FROM categories
-    WHERE type = $1 AND (is_public = true OR created_by = $2) AND description ILIKE $3`;
+    WHERE type = $1 AND (is_public = true OR created_by = $2) AND unaccent(description) ILIKE unaccent($3)`;
 
     const valuesSearchCategories = [type, user, `%${query}%`];
 
@@ -69,7 +69,7 @@ export const getSearchCategories = async (req: Request, res: Response) => {
     FROM subcategories sub
     JOIN categories_subcategories cs ON sub.id = cs.subcategory_id
     JOIN categories cat ON cat.id = cs.category_id
-    WHERE cat.type = $1 AND (sub.is_public = true OR sub.created_by = $2) AND sub.description ILIKE $3`;
+    WHERE cat.type = $1 AND (sub.is_public = true OR sub.created_by = $2) AND unaccent(sub.description) ILIKE unaccent($3)`;
 
     const valuesSearchSubCategories = [type, user, `%${query}%`];
 
