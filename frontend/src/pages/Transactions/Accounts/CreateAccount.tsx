@@ -1,7 +1,7 @@
 import { createAccount } from "@/api/accountService";
 import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
-import TextField from "@/components/ui/textfield";
+import TextField from "@/components/textfield";
 import { toast } from "sonner";
 import { TransactionsContextType } from "@/context/TransactionsContext";
 import { useMutation } from "@tanstack/react-query";

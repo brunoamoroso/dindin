@@ -3,7 +3,7 @@ import getCategoryIcon from "@/utils/get-category-icon";
 import { Progress } from "./ui/progress";
 import { currencyFormat } from "@/utils/currency-format";
 import { cn } from "@/lib/utils";
-import { IconButton } from "./ui/icon-button";
+import { IconButton } from "./icon-button";
 import { EllipsisVertical, SquarePen, Trash2 } from "lucide-react";
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "./ui/drawer";
 import { Button } from "./ui/button";

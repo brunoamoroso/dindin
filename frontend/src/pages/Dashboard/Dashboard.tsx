@@ -7,11 +7,11 @@ import { RemoveCoin } from "@/components/RemoveCoin";
 import { Outlet } from "react-router-dom";
 
 export default function Dashboard() {
-  const {coinSelected, selectedDate} = useDashboardContext();
+  const {coinSelected, selectedDate, setSelectedDate} = useDashboardContext();
 
   return (
     <div className="min-h-dvh bg-surface flex flex-col text-content-secondary">
-      <div className="flex flex-1 flex-col gap-5 pb-40">
+      <div className="flex flex-1 flex-col gap-5 pb-32">
         <div className="flex items-center justify-between py-6 mx-6">
           <AvatarDashboard />
           <RemoveCoin />
@@ -23,7 +23,7 @@ export default function Dashboard() {
           <MonthPicker />
         </div>
 
-        <Outlet context={{ coinSelected, selectedDate }} />
+        <Outlet context={{ coinSelected, selectedDate, setSelectedDate }} />
       </div>
       {coinSelected !== "global" && <BottomNav />}
     </div>

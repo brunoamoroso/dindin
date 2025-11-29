@@ -1,5 +1,5 @@
 import AppBar from "@/components/AppBar";
-import MenuListItem from "@/components/ui/menu-list-item";
+import MenuListItem from "@/components/menu-list-item";
 import { LogOut, SquareAsterisk, UserCircleIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";

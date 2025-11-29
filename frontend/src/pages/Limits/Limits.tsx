@@ -1,12 +1,13 @@
-import { copyPreviousLimits, getLimits } from "@/api/limitService";
+import { copyPreviousLimits } from "@/api/limitService";
 import { LimitListItem } from "@/components/LimitListItem";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardContext } from "@/context/DashboardContext";
-import { LimitType } from "@/types/LimitType";
+import { useBudgetData } from "@/hooks/useBudgetData";
 import { currencyFormat } from "@/utils/currency-format";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Copy } from "lucide-react";
 
 export function Limits() {
   const { selectedDate, coinSelected } = useDashboardContext();
@@ -15,11 +16,7 @@ export function Limits() {
   const monthKey = (d: Date) => d.toISOString().slice(0, 7); // "YYYY-MM"
   const key = ["limits-data", monthKey(selectedDate), coinSelected];
 
-  const { data, isLoading } = useQuery<LimitType[]>({
-    queryKey: key,
-    queryFn: () => getLimits(selectedDate, coinSelected),
-    enabled: !!selectedDate && !!coinSelected,
-  });
+  const { data, isLoading } = useBudgetData(selectedDate, coinSelected);
 
   const totalSpent = data?.reduce((acc, limit) => acc + (limit.amount_spent || 0), 0) ?? 0;
   const totalBudget = data?.reduce((acc, limit) => acc + (limit.amount_limit || 0), 0) ?? 0;
@@ -41,7 +38,7 @@ export function Limits() {
   }
 
   return (
-    <div className="bg-surface min-h-dvh flex flex-col">
+    <div className="bg-surface flex flex-col flex-1">
         {(isLoading || mutation.isPending) && (
           <div className="flex flex-1 flex-col gap-4 w-full self-start">
             {Array.from({ length: 3 }).map((_, index) => (
@@ -71,13 +68,14 @@ export function Limits() {
           </div>
         )}
         {data && data.length > 0 && data[0].id === null && !isLoading && (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 mx-4 flex-1 justify-center">
             <h1 className="title-small text-center text-content-primary">
               Nenhum limite de gasto definido no período
             </h1>
-            <div className="flex self-center flex-col gap-6">
+            <div className="flex self-center">
               {data[0].has_previous_limits && (
                 <Button size="lg" variant="outline" className="flex flex-1" onClick={() => handleCopyPreviousLimits()}>
+                  <Copy />
                   Copiar limites anteriores
                 </Button>
               )}

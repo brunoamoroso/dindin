@@ -1,5 +1,5 @@
 import { ArrowLeft } from "lucide-react";
-import { IconButton } from "./ui/icon-button";
+import { IconButton } from "./icon-button";
 import { useNavigate } from "react-router-dom";
 
 interface IAppBar{

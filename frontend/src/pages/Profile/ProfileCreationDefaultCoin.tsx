@@ -1,7 +1,7 @@
 import {getCoins, addNewUserSelectedCoin } from "@/api/coinService";
 import AppBar from "@/components/AppBar";
-import MenuListItem from "@/components/ui/menu-list-item";
-import TextField from "@/components/ui/textfield";
+import MenuListItem from "@/components/menu-list-item";
+import TextField from "@/components/textfield";
 import { CoinType } from "@/types/CoinTypes";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ChangeEvent, useEffect, useState } from "react";

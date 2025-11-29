@@ -1,5 +1,5 @@
 import DatePicker, { registerLocale } from "react-datepicker";
-import { IconButton } from "@/components/ui/icon-button";
+import { IconButton } from "@/components/icon-button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ptBR } from "date-fns/locale";
 import { useOutletContext } from "react-router-dom";
@@ -19,10 +19,6 @@ export function MonthPicker() {
     useOutletContext<DashboardContextType>();
   const [open, setOpen] = useState(false);
 
-
-  const date = new Date(selectedDate);
-  const prevMonthLong = new Date(date.getFullYear(), date.getMonth() - 1).toLocaleDateString("pt-BR", { month: "long" });
-  const nextMonthLong = new Date(date.getFullYear(), date.getMonth() + 1).toLocaleDateString("pt-BR", { month: "long" });
   const monthLong = selectedDate.toLocaleDateString("pt-BR", { month: "long" });
 
   const handleMonthClick = (date: Date | null) => {

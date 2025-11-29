@@ -1,7 +1,7 @@
 import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
-import PasswordValidator from "@/components/ui/passwordvalidator";
-import TextField from "@/components/ui/textfield";
+import PasswordValidator from "@/components/passwordvalidator";
+import TextField from "@/components/textfield";
 import { toast } from "sonner";
 import { passwordCheck } from "@/utils/password-check";
 import { useMutation } from "@tanstack/react-query";

@@ -1,21 +1,29 @@
-import { useQuery } from "@tanstack/react-query";
 import ExpenseByCatChart from "./ExpenseByCatChart";
-import { getAllTransactionsByMonth } from "@/api/transactionService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { currencyFormat } from "@/utils/currency-format";
 import { Separator } from "@/components/ui/separator";
 import LastTransactions from "./LastTransactions";
 import { useDashboardContext } from "@/context/DashboardContext";
+import { ChevronRight, Gauge } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { IconButton } from "@/components/icon-button";
+import { useNavigate } from "react-router-dom";
+import { useBudgetData } from "@/hooks/useBudgetData";
+import { useAllTransactionsByMonthData } from "@/hooks/useAllTransactionsByMonthData";
+import { HeaderGainedSpent } from "./HeaderGainedSpent";
 
 export function Overview() {
 
   const { coinSelected, selectedDate } = useDashboardContext();
+  const navigate = useNavigate();
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["dashboard-data", selectedDate, coinSelected],
-    queryFn: () =>
-      getAllTransactionsByMonth(selectedDate.toISOString(), coinSelected),
-  });
+  const { data, isLoading, isError } = useAllTransactionsByMonthData(selectedDate.toISOString(), coinSelected);
+
+  const {data: dataBudget} = useBudgetData(selectedDate, coinSelected);
+
+  const totalBudget = dataBudget?.reduce((acc, limit) => acc + (limit.amount_limit || 0), 0) ?? 0;
+  const totalSpent = dataBudget?.reduce((acc, limit) => acc + (limit.amount_spent || 0), 0) ?? 0;
+  const percentualSpent = totalBudget > 0 ? Math.min((totalSpent / totalBudget) * 100, 100) : 0;
 
   return (
     <div className="flex flex-col gap-5">
@@ -30,40 +38,36 @@ export function Overview() {
           </span>
         </div>
       )}
-      {!isError && coinSelected !== "global" && (
-        <div className="flex gap-6 mx-6 mt-3">
-          <div className="flex flex-col flex-1">
-            <span className="label-small text-content-primary">Recebeu</span>
-            {isLoading && <Skeleton className="w-8/12 h-6 rounded-full" />}
-            {!isLoading && data && (
-              <span className="title-medium text-positive">
-                {currencyFormat(
-                  data.sumAllAmountGained,
-                  data.allTransactionsByMonth[0]?.code
-                )}
-              </span>
-            )}
-          </div>
-          <div className="flex flex-col flex-1 text-right">
-            <span className="label-small text-content-primary">Gastou</span>
-            {isLoading && (
-              <Skeleton className="w-8/12 h-6 rounded-xl self-end" />
-            )}
-            {!isLoading && data && (
-              <span className="title-medium text-critical">
-                {currencyFormat(
-                  data.sumAllAmountExpend,
-                  data.allTransactionsByMonth[0]?.code
-                )}
-              </span>
-            )}
-          </div>
-        </div>
-      )}
+
+      <HeaderGainedSpent 
+        query={{ data, isLoading, isError }}
+        coinSelected={coinSelected}
+      />
       
       {!isError && coinSelected !== "global" && <Separator />}
 
-      {!isLoading && data && !isError && (
+      {coinSelected !== "global" && (     
+        <div className="flex flex-1 mx-6 gap-4">
+          <div className="flex flex-1 flex-col gap-3">
+            <div className="flex gap-3 items-center">
+              <Gauge />
+              <div className="flex flex-col">
+                <span className="label-medium text-content-primary">Meu orçamento</span>
+                <span className="body-medium text-content-secondary">
+                  Você planejou {currencyFormat(totalBudget)} e gastou {currencyFormat(totalSpent)}
+                </span>
+              </div>
+            </div>
+
+            <Progress value={percentualSpent} />
+          </div>
+          <IconButton variant={"ghost"} className="self-end" onClick={() => (navigate("limits"))}>
+            <ChevronRight />
+          </IconButton>
+        </div>
+      )}
+
+      {!isLoading && data && !isError && coinSelected === "global" && (
         <LastTransactions data={data.allTransactionsByMonth} />
       )}
 

@@ -2,7 +2,7 @@ import { createLimit, getLimitById, updateLimit } from "@/api/limitService";
 import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import MenuListItem from "@/components/ui/menu-list-item";
+import MenuListItem from "@/components/menu-list-item";
 import { toast } from "sonner";
 import { LimitDataType, useLimitContext } from "@/context/LimitContext";
 import { cn } from "@/lib/utils";

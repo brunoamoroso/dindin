@@ -2,7 +2,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ArrowRightLeft, Gauge, LayoutGrid, Plus } from "lucide-react";
 import { useDashboardContext } from "@/context/DashboardContext";
 import { cn } from "@/lib/utils";
-import { IconButton } from "./ui/icon-button";
+import { IconButton } from "./icon-button";
 import { useEffect, useState } from "react";
 
 export default function BottomNav() {

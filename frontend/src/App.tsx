@@ -62,6 +62,10 @@ function AppRoutes() {
                   path="transactions"
                   element={<ListAllTransactions />}
                 />
+                <Route
+                  path="transactions/:dateParams"
+                  element={<ListAllTransactions />}
+                />
                 
                 <Route path="limits" element={<Limits />} />
               </Route>
