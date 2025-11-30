@@ -29,6 +29,7 @@ import {
   updateAllInstallmentsTransaction,
   updateTransaction,
 } from "@/api/transactionService";
+import splitInstallmentsDisplay from "@/utils/get-split-installments";
 
 export default function Transaction({ mode }: { mode: "create" | "edit" }) {
   const navigate = useNavigate();
@@ -139,6 +140,16 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       ...prevTransaction,
       amount: amountInt,
     }));
+
+    if(contextTransactionData.installments !== null){
+      const installDisplay = document.getElementById("installment-helper");
+      if (installDisplay !== null) {
+        installDisplay.innerText = splitInstallmentsDisplay(
+                amountInt,
+                parseInt(contextTransactionData.installments)
+        );
+      }
+    }
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
