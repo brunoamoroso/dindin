@@ -17,7 +17,7 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { category, category_id } = location.state || {};
+  const { category, category_id, amount } = location.state || {};
   const { limitData, setLimitData, resetLimitData } = useLimitContext();
   const badge = limitData.category ? getCategoryIcon(limitData.category) : null;
 
@@ -52,6 +52,19 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
       }));
     }
   }, [data, mode, setLimitData, id]);
+
+  useEffect(() => {
+    if (amount !== undefined) {
+      const parsedAmount = Number(amount);
+
+      if (!Number.isNaN(parsedAmount)) {
+        setLimitData((prev) => ({
+          ...prev,
+          amount: parsedAmount,
+        }));
+      }
+    }
+  }, [amount, setLimitData]);
 
   useEffect(() => {
     if (category) {
@@ -150,6 +163,8 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
             ? "Adicionar Limite de Gasto"
             : "Editar Limite de Gasto"
         }
+
+        pageBack="dashboard/limits"
       />
 
       <div className="mx-6 py-8 flex flex-col">
@@ -188,7 +203,7 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
       <div className="bg-layer-tertiary px-6 py-10 flex flex-col gap-6 flex-1 rounded-t-lg justify-between">
         <Link
           to="/categories/expense"
-          state={{ flow: "limit", mode: mode, id: id }}
+          state={{ flow: "limit", mode: mode, id: id, amount: limitData.amount }}
         >
           <MenuListItem>
             {!limitData.category && (
