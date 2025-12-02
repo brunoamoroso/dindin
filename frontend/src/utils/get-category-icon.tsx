@@ -4,120 +4,120 @@ export default function getCategoryIcon(category: string): {dataVizColor: string
     const icons: Record<string, {dataVizColor: string, dataVizBorderColor: string, icon: JSX.Element}> = {
         //expenses icons
         transporte: {
-            dataVizColor: "#bf5708",
-            dataVizBorderColor: "#dd6b20",
+            dataVizColor: "var(--color-orange-600)",
+            dataVizBorderColor: "var(--color-orange-500)",
             icon: <Car />
         },
         mantimentos: {
-            dataVizColor: "#188dbe",
-            dataVizBorderColor: "#04a3df",
+            dataVizColor: "var(--color-blue-600)",
+            dataVizBorderColor: "var(--color-blue-500)",
             icon: <ShoppingCart />
         },
         viagens: {
-            dataVizColor: "#ba50de",
-            dataVizBorderColor: "#d36ef6",
+            dataVizColor: "var(--color-pink-600)",
+            dataVizBorderColor: "var(--color-pink-500)",
             icon: <Backpack />
         },
         esportes: {
-            dataVizColor: "#9396fe",
-            dataVizBorderColor: "#a8acfa",
+            dataVizColor: "var(--color-purple-400)",
+            dataVizBorderColor: "var(--color-purple-300)",
             icon: <Dumbbell />
         },
         presentes: {
-            dataVizColor: "#ecb052",
-            dataVizBorderColor: "#ebbb74",
+            dataVizColor: "var(--color-yellow-400)",
+            dataVizBorderColor: "var(--color-yellow-300)",
             icon: <Gift />
         },
         mercadorias: {
-            dataVizColor: "#cb8c13",
-            dataVizBorderColor: "#e29f2b",
+            dataVizColor: "var(--color-yellow-600)",
+            dataVizBorderColor: "var(--color-yellow-500)",
             icon: <Package />
         },
         pessoal: {
-            dataVizColor: "#09908b",
-            dataVizBorderColor: "#10afa9",
+            dataVizColor: "var(--color-cyan-600)",
+            dataVizBorderColor: "var(--color-cyan-500)",
             icon: <Heart />
         },
         taxas: {
-            dataVizColor: "#fd5d62",
-            dataVizBorderColor: "#fe9390",
+            dataVizColor: "var(--color-red-400)",
+            dataVizBorderColor: "var(--color-red-300)",
             icon: <Coins />
         },
         dividas: {
-            dataVizColor: "#ca2a39",
-            dataVizBorderColor: "#f13747",
+            dataVizColor: "var(--color-red-600)",
+            dataVizBorderColor: "var(--color-red-500)",
             icon: <DiamondPercent />
         },
         assinaturas: {
-            dataVizColor: "#55626d",
-            dataVizBorderColor: "#74808c",
+            dataVizColor: "var(--color-neutral-600)",
+            dataVizBorderColor: "var(--color-neutral-500)",
             icon: <TvMinimalPlay />
         },
         casa: {
-            dataVizColor: "#4fb6e9",
-            dataVizBorderColor: "#71ccfb",
+            dataVizColor: "var(--color-blue-400)",
+            dataVizBorderColor: "var(--color-blue-300)",
             icon: <House />
         },
         vestuário: {
-            dataVizColor: "#6962e7",
-            dataVizBorderColor: "#7d7cf7",
+            dataVizColor: "var(--color-purple-600)",
+            dataVizBorderColor: "var(--color-purple-500)",
             icon: <Shirt />
         },
         saúde: {
-            dataVizColor: "#1dc7c0",
-            dataVizBorderColor: "#49d8d1",
+            dataVizColor: "var(--color-cyan-400)",
+            dataVizBorderColor: "var(--color-cyan-300)",
             icon: <Cross />
         },
         lazer:{
-            dataVizColor: "#de8afc",
-            dataVizBorderColor: "#e2a5f7",
+            dataVizColor: "var(--color-pink-400)",
+            dataVizBorderColor: "var(--color-pink-300)",
             icon: <PartyPopper />
         },
         estudos: {
-            dataVizColor: "#11904c",
-            dataVizBorderColor: "#11b761",
+            dataVizColor: "var(--color-purple-400)",
+            dataVizBorderColor: "var(--color-purple-300)",
             icon: <GraduationCap />
         },
         restaurantes: {
-            dataVizColor: "#24cc70",
-            dataVizBorderColor: "#4fe187",
+            dataVizColor: "var(--color-green-400)",
+            dataVizBorderColor: "var(--color-green-300)",
             icon: <Pizza />
         },
         pet: {
-            dataVizColor: "#24cc70",
-            dataVizBorderColor: "#4fe187",
+            dataVizColor: "var(--color-orange-400)",
+            dataVizBorderColor: "var(--color-orange-300)",
             icon: <PawPrint />
         },
         doação:{
-            dataVizColor: "#c2410c",
-            dataVizBorderColor: "#f97316",
+            dataVizColor: "var(--color-neutral-400)",
+            dataVizBorderColor: "var(--color-neutral-300)",
             icon: <HeartHandshake />
         },
         
         //gain icons
         salário: {
-            dataVizColor: "#ca2a39",
-            dataVizBorderColor: "#ca2a39",
+            dataVizColor: "var(--color-green-600)",
+            dataVizBorderColor: "var(--color-green-500)",
             icon: <Banknote />
         },
         investimentos: {
-            dataVizColor: "#ca2a39",
-            dataVizBorderColor: "#ca2a39",
+            dataVizColor: "var(--color-blue-600)",
+            dataVizBorderColor: "var(--color-blue-500)",
             icon: <PiggyBank />
         },
         cashback: {
-            dataVizColor: "#ca2a39",
-            dataVizBorderColor: "#ca2a39",
+            dataVizColor: "var(--color-green-400)",
+            dataVizBorderColor: "var(--color-green-300)",
             icon: <HandCoins />
         },
         "receitas variáveis": {
-            dataVizColor: "#ca2a39",
-            dataVizBorderColor: "#ca2a39",
+            dataVizColor: "var(--color-blue-400)",
+            dataVizBorderColor: "var(--color-blue-300)",
             icon: <BadgePercent />
             },
         transferências: {
-            dataVizColor: "#55626d",
-            dataVizBorderColor: "#74808c",
+            dataVizColor: "var(--color-neutral-600)",
+            dataVizBorderColor: "var(--color-neutral-500)",
             icon: <ArrowRightLeft />
         }
     }
