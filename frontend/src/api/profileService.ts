@@ -1,5 +1,9 @@
 import { api } from './api';
 
+export function checkEmail<T>(body: unknown): Promise<T>{
+    return api.post<T>("/profile/check-email", body);
+} 
+
 export function createProfile<T>(body: unknown): Promise<T>{
     return api.post<T>("/profile/create", body);
 }

@@ -13,12 +13,13 @@ import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { Camera, LoaderCircle } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const rules = ["Maiúscula", "Minúscula", "Número", "8 Dígitos", "Símbolo"];
 
 export default function CreateProfile() {
   const navigate = useNavigate();
+  const { email } = useParams();
 
   type UserStateType = Omit<UserProfileType, "photo"> &
     Partial<Pick<UserProfileType, "photo">>;
@@ -181,6 +182,7 @@ export default function CreateProfile() {
             <TextField
               id="email"
               label="Email"
+              value={email}
               required={true}
               onChange={handleChange}
             />

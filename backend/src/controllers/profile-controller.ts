@@ -8,18 +8,33 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 
+export const CheckEmailExists = async (req: Request, res: Response) => {
+  const {email} = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "O email é obrigatório" });
+  }
+
+  try {
+    const queryEmail = `SELECT 1 FROM users WHERE email = $1 LIMIT 1`;
+    const valuesEmail = [email];
+    const {rows: emailExists} = await db.query(queryEmail, valuesEmail);
+    return res.status(200).json(Boolean(emailExists.length));
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Erro ao verificar email" });
+  }
+};
+
 export const CreateProfile = async (req: Request, res: Response) => {
   const { name, surname, email, password, username } = req.body;
   let photo = "";
 
-  if (req.file) {
-    photo = await uploadToSupabase(req.file);
-  }
-
   try {
-    const queryEmail = `SELECT email FROM users WHERE email = $1`;
+    const queryEmail = `SELECT 1 FROM users WHERE email = $1`;
     const valuesEmail = [email];
     const {rows: emailExists} = await db.query(queryEmail, valuesEmail);
+
 
     if (emailExists.length > 0) {  
       throw new Error ("O email que você utilizou já está cadastrado");
@@ -36,6 +51,10 @@ export const CreateProfile = async (req: Request, res: Response) => {
     //hash the password
     const salt = await bcrypt.genSalt(12);
     const passwordHash = await bcrypt.hash(password, salt);
+
+    if (req.file) {
+      photo = await uploadToSupabase(req.file);
+    }
 
     const queryCreateProfile = `INSERT INTO users (photo, name, surname, email, password, username, user_default_coin) 
     VALUES ($1, $2, $3, $4, $5, $6, (SELECT id FROM coins WHERE code = 'BRL')) RETURNING id`;

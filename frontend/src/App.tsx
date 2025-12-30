@@ -41,8 +41,8 @@ function AppRoutes() {
         <Route element={<AuthContextProvider />}>
           <Route element={<UnauthRoutesContext />}>
             <Route path="/" element={<Home />} />
-            <Route path="/profile/create" element={<CreateProfile />} />
-            <Route path="/profile/signin" element={<SignIn />} />
+            <Route path="/profile/create/:email?" element={<CreateProfile />} />
+            <Route path="/profile/signin/:email?" element={<SignIn />} />
             <Route
               path="/profile/default-coin"
               element={<SplashDefaultCoin />}

@@ -4,7 +4,7 @@ import TextField from "@/components/textfield";
 import { toast } from "sonner";
 import { ChangeEvent, FormEvent, useState } from "react";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
 import { signIn } from "@/api/profileService";
@@ -13,6 +13,7 @@ export default function SignIn() {
   const [userData, setUserData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const {email} = useParams();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUserData((previousData) => ({
@@ -69,6 +70,7 @@ export default function SignIn() {
               label="Nome de Usuário ou Email"
               id="username"
               placeholder="Nome de Usuário ou Email"
+              value={email}
               onChange={handleChange}
             />
             <TextField
