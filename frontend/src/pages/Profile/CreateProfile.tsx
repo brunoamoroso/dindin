@@ -27,7 +27,7 @@ export default function CreateProfile() {
   const [user, setUser] = useState<UserStateType>({
     name: "",
     surname: "",
-    email: "",
+    email: email || "",
     username: "",
     password: "",
   });

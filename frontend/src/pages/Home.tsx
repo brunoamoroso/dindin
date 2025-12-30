@@ -71,7 +71,13 @@ export default function Home() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="email@outlook.com"
             />
-            <Button type="submit" size={"lg"}>
+            <Button
+              type="submit"
+              size={"lg"}
+              className={`${
+                loading && "opacity-50 cursor-not-allowed pointer-events-none"
+              }`}
+            >
               {loading ? (
                 <>
                   <Spinner />

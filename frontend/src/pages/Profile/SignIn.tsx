@@ -2,18 +2,25 @@ import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
 import TextField from "@/components/textfield";
 import { toast } from "sonner";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate, useParams } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
-import { LoaderCircle } from "lucide-react";
 import { signIn } from "@/api/profileService";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function SignIn() {
   const [userData, setUserData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
-  const {email} = useParams();
+  const { email } = useParams();
+
+  useEffect(() => {
+    if (email !== "" && email !== undefined) {
+      setUserData({ username: email, password: "" });
+    }
+  }, [email]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUserData((previousData) => ({
@@ -89,10 +96,10 @@ export default function SignIn() {
             }`}
           >
             {loading ? (
-              <div className="flex items-center gap-2">
-                <LoaderCircle className="animate-spin" />
+              <>
+                <Spinner />
                 Carregando
-              </div>
+              </>
             ) : (
               "Entrar"
             )}
