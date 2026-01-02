@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { getToken } from "./get-token";
 import * as jwt from 'jsonwebtoken';
 
 export const checkToken = (req: Request, res: Response, next: NextFunction) => {
@@ -7,7 +6,8 @@ export const checkToken = (req: Request, res: Response, next: NextFunction) => {
         return res.status(401).json({message: "User Unauthenticated"})
     }
 
-    const token = getToken(req);
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(" ")[1];
 
     if(token === undefined){
         return res.status(401).json({message: "User Unauthenticated"})

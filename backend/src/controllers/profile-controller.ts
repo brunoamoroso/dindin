@@ -118,6 +118,10 @@ export const getUserProfile = async (req: Request, res: Response) => {
 
     const {rows: profile} = await db.query(queryGetUserProfile, valuesGetUserProfile);
 
+    if(profile[0].photo.includes("http")){
+      return res.status(200).json(profile[0]);
+    }
+
     if(profile[0].photo !== ""){
       const supabase = supabaseClient();
   

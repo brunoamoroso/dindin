@@ -10,6 +10,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 
+const googleAuthUrl = `${import.meta.env.VITE_BACKEND_URL}/auth/google`;
+
 export default function Home() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -93,7 +95,7 @@ export default function Home() {
             <span className="text-lg text-content-secondary">ou</span>
             <Separator className="flex flex-1" />
           </div>
-          <Link to={"/profile/signin"} className="flex flex-col">
+          <Link to={googleAuthUrl} className="flex flex-col">
             <Button variant={"outline"} size={"lg"}>
               <GoogleIcon className="size-6 fill-content-primary" />
               Continuar com Google
@@ -103,10 +105,10 @@ export default function Home() {
         <div className="flex mt-2 body-small text-center">
           <span className="text-content-secondary">
             Ao continuar, você concorda com os{" "}
-            <Link className="text-primary underline">
+            <Link to="" className="text-primary underline">
               Termos e Política de Privacidade
             </Link>
-          </span>
+          </span> 
         </div>
       </div>
     </div>
