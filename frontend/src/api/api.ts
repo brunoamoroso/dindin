@@ -26,6 +26,7 @@ class Api{
         const response = await fetch(this.baseURL+endpoint, {
             method: method,
             headers: headers,
+            credentials: "include",
             body: isFormData ? body as BodyInit: JSON.stringify(body)
         });
 

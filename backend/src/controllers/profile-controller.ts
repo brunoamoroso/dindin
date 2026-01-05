@@ -71,43 +71,6 @@ export const CreateProfile = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * username can be username or email
- */
-export const SignIn = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
-
-  if (!username) {
-    return res
-      .status(422)
-      .json({ message: "Usuário ou email são obrigatórios" });
-  }
-
-  if (!password) {
-    return res.status(422).json({ message: "A senha é obrigatória" });
-  }
-
-  const querySignIn = `SELECT id, password FROM users WHERE username = $1 OR email = $1 LIMIT 1`;
-
-  const valuesSignIn = [username];
-
-  const {rows} = await db.query(querySignIn, valuesSignIn);
-  const user = rows[0];
-
-  if (!user) {
-    return res.status(422).json({ message: "Usuário não existe" });
-  }
-
-  //check password
-  const checkPassword = await bcrypt.compare(password, user.password);
-
-  if (!checkPassword) {
-    return res.status(422).json({ message: "Senha inválida" });
-  }
-
-  await createUserToken(user, req, res);
-};
-
 export const getUserProfile = async (req: Request, res: Response) => {
   const user = req.user;
 

@@ -10,28 +10,39 @@ import {
   ResponseBodyError,
 } from "openid-client";
 import { db } from "../db/conn";
+import bcrypt from "bcrypt";
 import { createUserToken } from "../utils/create-user-token";
+import { checkToken } from "../utils/check-token";
 
 const oauthCookie = process.env.SESSION_COOKIE_NAME || "oauth-state";
-const redirectUri = `${process.env.BACKEND_URL}/auth/google/callback`;
 
 export const GoogleAuth = async (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
+    const flow = req.path.endsWith("/link") ? "link" : "sign";
+    const userId = req.user;
     const config = await getGoogleConfig();
     const state = randomState();
     const nonce = randomNonce();
     const codeVerifier = randomPKCECodeVerifier();
     const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
 
-    res.cookie(oauthCookie, JSON.stringify({ state, nonce, codeVerifier }), {
+    res.cookie(oauthCookie, JSON.stringify({ state, nonce, codeVerifier, userId }), {
       httpOnly: true,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "prod",
     });
+
+    let redirectUri;
+
+    if (flow === "link") {
+      redirectUri = new URL("/auth/google/link/callback", process.env.BACKEND_URL).toString();
+    } else {
+      redirectUri = new URL("/auth/google/callback", process.env.BACKEND_URL).toString();
+    }
 
     const url = buildAuthorizationUrl(config, {
       redirect_uri: redirectUri,
@@ -42,11 +53,15 @@ export const GoogleAuth = async (
       nonce,
     });
 
+    if(flow === "link"){
+      return res.json({url: url.toString()});
+    }
+
     res.redirect(url.toString());
   } catch (err) {
     next(err);
   }
-};
+}
 
 export const GoogleAuthCallback = async (
   req: Request,
@@ -54,6 +69,7 @@ export const GoogleAuthCallback = async (
   next: NextFunction
 ) => {
   try {
+    const redirectUri = new URL("/auth/google/callback", process.env.BACKEND_URL).toString();
     const stored = req.cookies?.[oauthCookie];
     if (!stored) return res.status(400).json({ message: "Missing OAuth state" });
 
@@ -145,4 +161,101 @@ export const GoogleAuthCallback = async (
   }
     next(err);
   }
+};
+
+export const GoogleLinkAuthCallback = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+    try {
+    const redirectUri = new URL("/auth/google/link/callback", process.env.BACKEND_URL).toString();
+    const stored = req.cookies?.[oauthCookie];
+    if (!stored) return res.status(400).json({ message: "Missing OAuth state" });
+
+    const { state, nonce, codeVerifier, userId } = JSON.parse(stored);
+    const config = await getGoogleConfig();
+    const currentUrl = new URL(req.originalUrl, process.env.BACKEND_URL);
+
+    const tokens = await authorizationCodeGrant(config, currentUrl, {
+      expectedState: state,
+      expectedNonce: nonce,
+      pkceCodeVerifier: codeVerifier,
+    }, { redirect_uri: redirectUri });
+
+    const claims = tokens.claims(); // from ID token
+    const issuer = claims?.iss;
+    const issuer_sub = claims?.sub;
+    const email = claims?.email;
+
+    const query = `
+      INSERT INTO social_logins (issuer, issuer_sub, user_id, email)
+      VALUES ($1, $2, (SELECT id FROM users WHERE id = $3), $4)
+      ON CONFLICT (issuer, issuer_sub)
+      DO UPDATE SET
+        user_id = EXCLUDED.user_id,
+        email = EXCLUDED.email
+      RETURNING user_id
+    `;
+
+      const values = [issuer, issuer_sub, userId, email];
+
+      await db.query(query, values);
+
+      res.clearCookie(oauthCookie);
+
+      const frontendUrl = process.env.FRONTEND_URL;
+      const redirectTo = frontendUrl
+        ? new URL("/profile/user?linkedAccount=true", frontendUrl).toString()
+        : undefined;
+        
+      res.redirect(redirectTo!);
+  } catch (err) {
+     if (err instanceof ResponseBodyError) {
+    console.error("oauth error", {
+      status: err.status,
+      error: err.error,
+      error_description: err.error_description,
+      body: err.cause,
+    });
+  }
+    next(err);
+  }
+};
+
+/**
+ * username can be username or email
+ */
+export const SignIn = async (req: Request, res: Response) => {
+  const { username, password } = req.body;
+
+  if (!username) {
+    return res
+      .status(422)
+      .json({ message: "Usuário ou email são obrigatórios" });
+  }
+
+  if (!password) {
+    return res.status(422).json({ message: "A senha é obrigatória" });
+  }
+
+  const querySignIn = `SELECT id, password FROM users WHERE username = $1 OR email = $1 LIMIT 1`;
+
+  const valuesSignIn = [username];
+
+  const {rows} = await db.query(querySignIn, valuesSignIn);
+  const user = rows[0];
+
+  if (!user) {
+    return res.status(422).json({ message: "Usuário não existe" });
+  }
+
+  //check password
+  const checkPassword = await bcrypt.compare(password, user.password);
+
+  if (!checkPassword) {
+    return res.status(422).json({ message: "Senha inválida" });
+  }
+
+  await createUserToken(user, req, res);
 };

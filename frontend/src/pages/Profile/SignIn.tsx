@@ -6,7 +6,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate, useParams } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
-import { signIn } from "@/api/profileService";
+import { signIn } from "@/api/authService";
 import { Spinner } from "@/components/ui/spinner";
 
 export default function SignIn() {

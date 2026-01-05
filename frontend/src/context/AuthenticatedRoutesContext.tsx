@@ -3,7 +3,9 @@ import { AuthContextType } from "./AuthContext";
 
 
 export default function AuthenticatedRoutesContext(){
-    const {token} = useOutletContext<AuthContextType>();
+    const {token, authReady} = useOutletContext<AuthContextType>();
+
+    if (!authReady) return null;
 
     if(!token){
         return <Navigate to="/"/>

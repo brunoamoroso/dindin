@@ -1,20 +1,45 @@
 import AppBar from "@/components/AppBar";
 import MenuListItem from "@/components/menu-list-item";
 import { LogOut, SquareAsterisk, UserCircleIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import { UserProfileType } from "@/types/UserProfileType";
 import { Skeleton } from "@/components/ui/skeleton";
 import { signOut } from "@/utils/log-out";
 import { getUserProfileData } from "@/api/profileService";
+import GoogleIcon from "@/assets/google.svg?react";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { linkGoogleAccount } from "@/api/authService";
 
 export function UserProfile() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryClient = new QueryClient();
+
+  useEffect(() => {
+    const linkedAccount = searchParams.get("linkedAccount");
+    if (linkedAccount === "true") {
+      toast.success("Conta do Google vinculada com sucesso!", { id: "google-link" });
+      const next = new URLSearchParams(searchParams);
+      next.delete("linkedAccount");
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const { data, isLoading } = useQuery<UserProfileType>({
     queryKey: ["userData"],
     queryFn: () => getUserProfileData(),
   });
+
+  const handleGoogleLink = async () => {
+    const {url} = await queryClient.fetchQuery({
+      queryKey: ["linkGoogleAccount"],
+      queryFn: () => linkGoogleAccount<{url: string}>(),
+    });
+
+    window.location.assign(url);
+  }
 
   return (
     <div className="bg-surface min-h-dvh">
@@ -69,6 +94,13 @@ export function UserProfile() {
               <SquareAsterisk />
               Mudar Senha
             </MenuListItem>
+              <MenuListItem
+                separator
+                onClick={() => handleGoogleLink()}
+              >
+                <GoogleIcon className="size-5 fill-content-primary"/>
+                Vincular conta do Google
+              </MenuListItem>
             <MenuListItem trailingIcon={false} onClick={() => signOut()}>
               <LogOut />
               Sair
