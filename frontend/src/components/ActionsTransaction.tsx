@@ -139,7 +139,7 @@ export default function ActionsTransaction({
                     </Button>
                   </DialogTrigger>
                   <DialogContent
-                    className="bg-layer-primary max-w-sm rounded-lg"
+                    className="flex flex-col"
                     showCloseButton={false}
                   >
                     <DialogHeader>
@@ -159,24 +159,24 @@ export default function ActionsTransaction({
                         <strong> {"R$" + currencyFormat(amount)}</strong>
                       </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter className="flex flex-row-reverse gap-6">
-                      <Button
-                        className="w-full"
-                        variant={"destructive"}
-                        size={"lg"}
-                        onClick={() => handleDelete(id)}
-                      >
-                        <Trash2 /> Excluir
-                      </Button>
-                      <DrawerClose asChild>
+                    <DialogFooter className="flex gap-6">
+                      <DrawerClose asChild className="flex flex-1">
                         <Button
-                          className="w-full"
+                          className="flex flex-1"
                           variant={"outline"}
                           size={"lg"}
                         >
                           Cancelar
                         </Button>
                       </DrawerClose>
+                      <Button
+                        className="flex flex-1"
+                        variant={"destructive"}
+                        size={"lg"}
+                        onClick={() => handleDelete(id)}
+                      >
+                        <Trash2 /> Excluir
+                      </Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>

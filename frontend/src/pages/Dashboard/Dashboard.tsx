@@ -4,10 +4,19 @@ import { AvatarDashboard } from "@/components/AvatarDashboard";
 import { CoinSelector } from "@/components/CoinSelector";
 import { useDashboardContext } from "@/context/DashboardContext";
 import { RemoveCoin } from "@/components/RemoveCoin";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   const {coinSelected, selectedDate, setSelectedDate} = useDashboardContext();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (coinSelected === "global") {
+      navigate("/dashboard/overview", { replace: true });
+    }
+  }, [coinSelected, location.pathname, navigate]);
 
   return (
     <div className="min-h-dvh bg-surface flex flex-col text-content-secondary">
