@@ -19,3 +19,7 @@ export function editProfileData<T>(body: unknown): Promise<T>{
 export function changePassword<T>(body: unknown): Promise<T>{
     return api.post("/profile/change-password", body)
 }
+
+export function checkPassword<T>(): Promise<T>{
+    return api.get<T>("/profile/check-password");
+}

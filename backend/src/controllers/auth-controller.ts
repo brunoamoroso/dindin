@@ -12,7 +12,6 @@ import {
 import { db } from "../db/conn";
 import bcrypt from "bcrypt";
 import { createUserToken } from "../utils/create-user-token";
-import { checkToken } from "../utils/check-token";
 
 const oauthCookie = process.env.SESSION_COOKIE_NAME || "oauth-state";
 
@@ -220,6 +219,26 @@ export const GoogleLinkAuthCallback = async (
     });
   }
     next(err);
+  }
+};
+
+export const GoogleUnlink = async (req: Request, res: Response) => {
+  const userId = req.user;
+
+  try {
+    const query = `DELETE FROM social_logins WHERE user_id = $1 RETURNING *`;
+    const values = [userId];
+
+    const {rows} = await db.query(query, values);
+
+    if(rows.length === 0){
+      return res.status(422).json({ message: "Nenhuma conta do Google vinculada encontrada" });
+    }
+
+    return res.status(200).json({ message: "Conta do Google desvinculada com sucesso" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Erro ao desvincular conta do Google" });
   }
 };
 

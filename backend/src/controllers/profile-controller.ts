@@ -75,7 +75,17 @@ export const getUserProfile = async (req: Request, res: Response) => {
   const user = req.user;
 
   try {
-    const queryGetUserProfile = `SELECT photo, name, surname, email, username FROM users WHERE id = $1`;
+    const queryGetUserProfile = `
+    SELECT 
+    u.photo, 
+    u.name, 
+    u.surname, 
+    u.email, 
+    u.username, 
+    EXISTS (SELECT 1 FROM social_logins sl WHERE sl.user_id = u.id) AS google_linked
+    FROM users u 
+    LEFT JOIN social_logins sl ON u.id = sl.user_id
+    WHERE u.id = $1`;
     
     const valuesGetUserProfile = [user];
 
@@ -185,20 +195,25 @@ export const ChangePassword = async (req: Request, res: Response) => {
   const { oldPassword, newPassword } = req.body;
   const user = req.user;
 
+  console.log(req.body)
   try {
     const queryOldPassword = `SELECT password FROM users WHERE id = $1`;
     const valuesOldPassword = [user];
 
     const {rows: checkOldPassword} = await db.query(queryOldPassword, valuesOldPassword);
 
-    //check password
-    const checkPassword = await bcrypt.compare(
-      oldPassword,
-      checkOldPassword[0].password
-    );
+    console.log(checkOldPassword);
 
-    if (!checkPassword) {
-      throw new Error("Senha atual inválida, não podemos salvar a senha nova");
+    if(checkOldPassword[0].password !== null && checkOldPassword[0].password !== undefined && checkOldPassword[0].password.trim() !== ""){
+      //check password
+      const checkPassword = await bcrypt.compare(
+        oldPassword,
+        checkOldPassword[0].password
+      );
+
+      if (!checkPassword) {
+        throw new Error("Senha atual inválida, não podemos salvar a senha nova");
+      }
     }
 
     //hash the password
@@ -217,3 +232,23 @@ export const ChangePassword = async (req: Request, res: Response) => {
     return res.status(422).json({ message: message });
   }
 };
+
+export const CheckPassword = async (req: Request, res: Response) => {
+  const user = req.user;
+  
+  try {
+    const queryCheckPassword = `SELECT password FROM users WHERE id = $1`;
+    const valuesCheckPassword = [user];
+
+    const {rows: checkPassword} = await db.query(queryCheckPassword, valuesCheckPassword);
+
+    const passwordSet = checkPassword[0].password !== null;
+
+    return res.status(200).json(passwordSet);
+  } catch (err) {
+    console.error(err);
+    const message = (err instanceof Error && err.message) || "Erro inesperado";
+    return res.status(422).json({ message: message });
+  }
+};
+

@@ -18,9 +18,9 @@ export const AuthContextProvider = () => {
     useEffect(() => {
         const cookieToken = Cookies.get('token')
 
+        setAuthReady(true);
         if(cookieToken){
             setToken(cookieToken);
-            setAuthReady(true);
             if(location.pathname === "/"){
                 navigate("/dashboard");
             }
