@@ -21,8 +21,8 @@ export default function CreateProfile() {
   const navigate = useNavigate();
   const { email } = useParams();
 
-  type UserStateType = Omit<UserProfileType, "photo"> &
-    Partial<Pick<UserProfileType, "photo">>;
+  type UserStateType = Omit<UserProfileType, "photo" | "google_linked"> &
+    Partial<Pick<UserProfileType, "photo" | "google_linked">>;
 
   const [user, setUser] = useState<UserStateType>({
     name: "",
