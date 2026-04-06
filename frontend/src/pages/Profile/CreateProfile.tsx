@@ -2,9 +2,9 @@ import { createProfile } from "@/api/profileService";
 import AppBar from "@/components/AppBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import PasswordValidator from "@/components/ui/passwordvalidator";
+import PasswordValidator from "@/components/passwordvalidator";
 import { Progress } from "@/components/ui/progress";
-import TextField from "@/components/ui/textfield";
+import TextField from "@/components/textfield";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { UserProfileType } from "@/types/UserProfileType";
@@ -13,20 +13,21 @@ import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { Camera, LoaderCircle } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const rules = ["Maiúscula", "Minúscula", "Número", "8 Dígitos", "Símbolo"];
 
 export default function CreateProfile() {
   const navigate = useNavigate();
+  const { email } = useParams();
 
-  type UserStateType = Omit<UserProfileType, "photo"> &
-    Partial<Pick<UserProfileType, "photo">>;
+  type UserStateType = Omit<UserProfileType, "photo" | "google_linked"> &
+    Partial<Pick<UserProfileType, "photo" | "google_linked">>;
 
   const [user, setUser] = useState<UserStateType>({
     name: "",
     surname: "",
-    email: "",
+    email: email || "",
     username: "",
     password: "",
   });
@@ -181,6 +182,7 @@ export default function CreateProfile() {
             <TextField
               id="email"
               label="Email"
+              value={email}
               required={true}
               onChange={handleChange}
             />

@@ -1,6 +1,6 @@
 import { useDashboardContext } from "@/context/DashboardContext";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { IconButton } from "./ui/icon-button";
+import { IconButton } from "./icon-button";
 import { Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";

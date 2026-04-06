@@ -5,26 +5,28 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group relative inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center group relative justify-center gap-2 whitespace-nowrap rounded-full text-sm font-bold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
-        default: "rounded-full bg-primary text-on-primary groupborder-green-700 shadow-button",
+        default: "bg-primary text-primary-foreground shadow-button",
         destructive:
-          "rounded-full bg-destructive border-destructive-border border text-on-destructive hover:bg-destructive-hover shadow-button",
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
-          "rounded-full bg-secondary text-on-secondary border border-input  hover:bg-accent hover:text-accent-foreground shadow-button",
+          "shadow-button bg-secondary text-on-secondary dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "text-primary",
-        link: "text-primary underline underline-offset-4",
+        ghost:
+          "text-primary",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-10 px-4 py-2.5",
-        sm: "h-9 px-3 peer [&>svg]:h-4 [&>svg]:w-4",
-        lg: "py-5 px-8 text-lg",
-        icon: "h-10 w-10",
-        link: "h-10"
+        default: "h-10 px-4 py-2.5 [&>svg]:size-3.5",
+        sm: "h-10 gap-1.5",
+        lg: "h-16 px-8 py-5 text-lg [&>svg]:size-4",
+        icon: "size-9",
+        "icon-sm": "size-8",
+        "icon-lg": "size-10",
       },
     },
     defaultVariants: {
@@ -34,27 +36,29 @@ const buttonVariants = cva(
   }
 )
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean
-}
+function Button({
+  className,
+  variant,
+  size,
+  children,
+  asChild = false,
+  ...props
+}: React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean
+  }) {
+  const Comp = asChild ? Slot : "button"
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, children, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      >
-        {children}
-        <span className='group-hover:block hidden absolute rounded-full inset-0 bg-state-hover' />
-      </Comp>
-    )
-  }
-)
-Button.displayName = "Button"
+  return (
+    <Comp
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    >
+      {children}
+      <span className='group-hover:block hidden absolute rounded-full inset-0 bg-state-hover'/>
+    </Comp>
+  )
+}
 
 export { Button, buttonVariants }

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import { ChevronRight } from "lucide-react";
-import { Separator } from "./separator";
+import { Separator } from "./ui/separator";
 
 const containerMenuVariants = cva("py-4 px-3 flex justify-between items-center text-content-primary", {
   variants: {

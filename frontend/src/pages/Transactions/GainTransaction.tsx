@@ -9,10 +9,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { InputChips } from "@/components/ui/input-chips";
-import MenuListItem from "@/components/ui/menu-list-item";
+import { InputChips } from "@/components/input-chips";
+import MenuListItem from "@/components/menu-list-item";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import TextField from "@/components/ui/textfield";
+import TextField from "@/components/textfield";
 import { TransactionsContextType } from "@/context/TransactionsContext";
 import { cn } from "@/lib/utils";
 import { TransactionType } from "@/types/TransactionTypes";

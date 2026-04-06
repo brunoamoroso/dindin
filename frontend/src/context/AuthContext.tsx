@@ -5,17 +5,20 @@ import Cookies from 'js-cookie';
 
 export interface AuthContextType{
     token: string | null;
+    authReady: boolean;
     setToken: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const AuthContextProvider = () => {
     const [token, setToken] = useState<string | null>(null);
+    const [authReady, setAuthReady] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
 
     useEffect(() => {
         const cookieToken = Cookies.get('token')
 
+        setAuthReady(true);
         if(cookieToken){
             setToken(cookieToken);
             if(location.pathname === "/"){
@@ -25,6 +28,6 @@ export const AuthContextProvider = () => {
     }, [token, navigate, location.pathname]);
 
     return(
-        <Outlet context={{token, setToken}} />
+        <Outlet context={{token, setToken, authReady}} />
     );
 }

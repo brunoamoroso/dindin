@@ -9,14 +9,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { InputChips } from "@/components/ui/input-chips";
-import MenuListItem from "@/components/ui/menu-list-item";
+import { InputChips } from "@/components/input-chips";
+import MenuListItem from "@/components/menu-list-item";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import TextField from "@/components/ui/textfield";
+import TextField from "@/components/textfield";
 import { TransactionsContextType } from "@/context/TransactionsContext";
 import { TransactionType } from "@/types/TransactionTypes";
 import { currencyFormat } from "@/utils/currency-format";
@@ -385,7 +385,7 @@ export default function ExpenseTransaction({
                     </InputChips>
                   </DialogTrigger>
                   <DialogContent
-                    className="w-auto bg-transparent border-none"
+                    className="border-none"
                     showCloseButton={false}
                   >
                     <DialogTitle className="hidden">Calendário</DialogTitle>
@@ -393,8 +393,12 @@ export default function ExpenseTransaction({
                       Escolha a data em que aconteceu a transação
                     </DialogDescription>
                     <Calendar
+                      mode="single"
+                      defaultMonth={contextTransactionData.date.value}
                       selected={contextTransactionData.date.value}
                       onDayClick={handleDayClick}
+                      className="w-full z-10"
+
                     />
                   </DialogContent>
                 </Dialog>

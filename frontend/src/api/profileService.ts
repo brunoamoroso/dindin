@@ -1,11 +1,11 @@
 import { api } from './api';
 
+export function checkEmail<T>(body: unknown): Promise<T>{
+    return api.post<T>("/profile/check-email", body);
+} 
+
 export function createProfile<T>(body: unknown): Promise<T>{
     return api.post<T>("/profile/create", body);
-}
-
-export function signIn<T>(body: {username: string; password: string;}): Promise<T>{
-    return api.post<T>("/profile/signin", body);
 }
 
 export function getUserProfileData<T>(): Promise<T>{
@@ -18,4 +18,8 @@ export function editProfileData<T>(body: unknown): Promise<T>{
 
 export function changePassword<T>(body: unknown): Promise<T>{
     return api.post("/profile/change-password", body)
+}
+
+export function checkPassword<T>(): Promise<T>{
+    return api.get<T>("/profile/check-password");
 }

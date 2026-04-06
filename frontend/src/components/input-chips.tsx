@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 import React from 'react';
 
-const inputChipsVariants = cva("relative rounded shadow-button text-content-primary label-medium py-1.5 px-3 flex items-center disabled:text-disabled disabled:opacity-50", {
+const inputChipsVariants = cva("relative rounded-full shadow-button text-content-primary label-medium py-1.5 px-3 flex items-center disabled:text-disabled disabled:opacity-50", {
     variants: {
         variant: {
             default: "",

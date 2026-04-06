@@ -7,7 +7,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./ui/drawer";
-import { IconButton } from "./ui/icon-button";
+import { IconButton } from "./icon-button";
 import { EllipsisVertical, SquarePen, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";

@@ -5,4 +5,5 @@ export type UserProfileType = {
     username: string;
     email: string;
     password: string;
+    google_linked: boolean;
 }

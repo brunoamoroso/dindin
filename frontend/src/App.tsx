@@ -31,6 +31,7 @@ import { AuthContextProvider } from "./context/AuthContext";
 import AuthenticatedRoutesContext from "./context/AuthenticatedRoutesContext";
 import UnauthRoutesContext from "./context/UnauthRoutesContext";
 import { LimitContext } from "./context/LimitContext";
+import { Overview } from "./pages/Dashboard/Overview";
 
 
 function AppRoutes() {
@@ -40,8 +41,8 @@ function AppRoutes() {
         <Route element={<AuthContextProvider />}>
           <Route element={<UnauthRoutesContext />}>
             <Route path="/" element={<Home />} />
-            <Route path="/profile/create" element={<CreateProfile />} />
-            <Route path="/profile/signin" element={<SignIn />} />
+            <Route path="/profile/create/:email?" element={<CreateProfile />} />
+            <Route path="/profile/signin/:email?" element={<SignIn />} />
             <Route
               path="/profile/default-coin"
               element={<SplashDefaultCoin />}
@@ -54,23 +55,33 @@ function AppRoutes() {
 
           <Route element={<AuthenticatedRoutesContext />}>
             <Route element={<DashboardContext />}>
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} >
+                <Route index element={<Overview />} />
+                <Route path="overview" element={<Overview />} />
+                <Route
+                  path="transactions"
+                  element={<ListAllTransactions />}
+                />
+                <Route
+                  path="transactions/:dateParams"
+                  element={<ListAllTransactions />}
+                />
+                
+                <Route path="limits" element={<Limits />} />
+              </Route>
+
+              <Route element={<LimitContext />}>
+                  <Route path="limits/create" element={<CreateLimit mode="create"/>} />
+                  <Route path="limits/edit/:id" element={<CreateLimit mode="edit"/>} />
+              </Route>
+              
               <Route
                 path="/transaction/list/:dateParams"
-                element={<ListAllTransactions />}
-              />
-              <Route
-                path="/transaction/list"
                 element={<ListAllTransactions />}
               />
 
               <Route path="/coins/search" element={<SearchCoin />} />
 
-              <Route element={<LimitContext />}>
-                <Route path="limits" element={<Limits />} />
-                <Route path="limits/create" element={<CreateLimit mode="create"/>} />
-                <Route path="limits/edit/:id" element={<CreateLimit mode="edit"/>} />
-              </Route>
               <Route element={<TransactionsContext />}>
                 <Route
                   path="/transaction/edit/:paramTransactionScope/:paramId"

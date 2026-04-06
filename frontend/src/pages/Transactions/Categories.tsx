@@ -1,6 +1,6 @@
 import AppBar from "@/components/AppBar";
-import MenuListItem from "@/components/ui/menu-list-item";
-import TextField from "@/components/ui/textfield";
+import MenuListItem from "@/components/menu-list-item";
+import TextField from "@/components/textfield";
 import { ChangeEvent, MouseEvent, useState } from "react";
 import {
   useNavigate,
@@ -24,7 +24,7 @@ export default function Categories() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const flow: "transaction" | "limit" = location.state?.flow || "transaction";
-  const { id, mode, transactionScope } = location.state || {};
+  const { id, mode, transactionScope, amount } = location.state || {};
 
   if (type === undefined) {
     throw new Error("type undefined");
@@ -72,13 +72,20 @@ export default function Categories() {
     }
 
     if (flow === "limit") {
+      const limitState = {
+        ...(location.state || {}),
+        category_id: idCat,
+        category: descCat,
+        amount,
+      };
+
       mode === "create"
         ? navigate(`/limits/create`, {
-            state: { category_id: idCat, category: descCat },
+            state: limitState,
           })
         : navigate(`/limits/${mode}/${id}`, {
             replace: true,
-            state: { category_id: idCat, category: descCat },
+            state: limitState,
           });
       return;
     }

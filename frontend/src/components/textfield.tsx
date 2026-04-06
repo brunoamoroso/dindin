@@ -1,5 +1,5 @@
-import { Input } from "./input";
-import { Label } from "./label";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 /**
  * The basic usage of this component require that you send an id, a label, if it's required
  * @param 

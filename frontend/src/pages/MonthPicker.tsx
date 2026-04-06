@@ -1,5 +1,5 @@
 import DatePicker, { registerLocale } from "react-datepicker";
-import { IconButton } from "@/components/ui/icon-button";
+import { IconButton } from "@/components/icon-button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ptBR } from "date-fns/locale";
 import { useOutletContext } from "react-router-dom";
@@ -46,11 +46,11 @@ export function MonthPicker() {
   registerLocale("ptBR", ptBR);
 
   return (
-    <div className="flex gap-6 items-center">
-      <IconButton variant={"ghost"} onClick={handleDecreaseMonth}><ChevronLeft /></IconButton>
+    <div className="flex flex-1 gap-6 justify-between">
+      <IconButton variant={"outline"} onClick={handleDecreaseMonth}><ChevronLeft /></IconButton>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant={"ghost"} size='sm'>
+          <Button variant={"outline"} size='default' className="pressed">
             {monthLong.charAt(0).toUpperCase() + monthLong.slice(1)}
             {selectedDate.getFullYear() < new Date().getFullYear() && (", " + selectedDate.getFullYear())}
           </Button>
@@ -94,7 +94,7 @@ export function MonthPicker() {
           />
         </DialogContent>
       </Dialog>
-      <IconButton variant={"ghost"} onClick={handleIncreaseMonth}><ChevronRight /></IconButton>
+      <IconButton variant={"outline"} onClick={handleIncreaseMonth}><ChevronRight /></IconButton>
     </div>
   );
 }

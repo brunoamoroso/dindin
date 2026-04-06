@@ -14,8 +14,8 @@ const IconButtonVariants = cva(
         outline: "bg-secondary shadow-button text-on-secondary",
       },
       size: {
-        default: "h-10 w-10 label-small peer [&>svg]:h-6 [&>svg]:w-6",
-        small: "h-10 w-10 label-small peer [&>svg]:h-4 [&>svg]:w-4",
+        default: "h-10 w-10 label-small peer [&>svg]:size-6",
+        small: "h-10 w-10 label-small peer [&>svg]:size-4",
       },
     }, 
     defaultVariants: {

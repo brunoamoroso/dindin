@@ -4,7 +4,7 @@ import {
   InlineTabsContent,
   InlineTabsList,
   InlineTabsTrigger,
-} from "@/components/ui/inline-tabs";
+} from "@/components/inline-tabs";
 import { ChangeEvent, FormEvent, MouseEvent, useEffect } from "react";
 import { currencyFormat } from "@/utils/currency-format";
 import GainTransaction from "./GainTransaction";
@@ -29,6 +29,7 @@ import {
   updateAllInstallmentsTransaction,
   updateTransaction,
 } from "@/api/transactionService";
+import splitInstallmentsDisplay from "@/utils/get-split-installments";
 
 export default function Transaction({ mode }: { mode: "create" | "edit" }) {
   const navigate = useNavigate();
@@ -139,6 +140,16 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       ...prevTransaction,
       amount: amountInt,
     }));
+
+    if(contextTransactionData.installments !== null){
+      const installDisplay = document.getElementById("installment-helper");
+      if (installDisplay !== null) {
+        installDisplay.innerText = splitInstallmentsDisplay(
+                amountInt,
+                parseInt(contextTransactionData.installments)
+        );
+      }
+    }
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -237,7 +248,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       mutationAdd.mutate(contextTransactionData, {
         onSuccess: () => {
           toast.success("Transação registrada!", { duration: 2000 });
-          navigate("/dashboard");
+          navigate("/dashboard/transactions");
         },
         onError: () => {
           toast.error("Não conseguimos adicionar a transação", { duration: 2000 });
@@ -249,7 +260,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       mutationUpdate.mutate(contextTransactionData, {
         onSuccess: () => {
           toast.success("Transação atualizada!", { duration: 2000 });
-          navigate(`/transaction/list/${contextTransactionData.date.value}`);
+          navigate(`/dashboard/transactions/${contextTransactionData.date.value}`);
         },
         onError: () => {
           toast.error("Não conseguimos editar a transação", { duration: 2000 });
@@ -261,7 +272,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       mutationUpdateAllInstallments.mutate(contextTransactionData, {
         onSuccess: () => {
           toast.success("Transação atualizada!", { duration: 2000 });
-          navigate(`/transaction/list/${contextTransactionData.date.value}`);
+          navigate(`/dashboard/transactions/${contextTransactionData.date.value}`);
         },
         onError: () => {
           toast.error("Não conseguimos editar a transação", { duration: 2000 });
@@ -273,9 +284,9 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
   return (
     <div className="bg-surface h-dvh flex flex-col">
       {mode === "create" ? (
-        <AppBar title="Adicionar Transação" pageBack="dashboard" />
+        <AppBar title="Adicionar Transação" pageBack="dashboard/transactions" />
       ) : (
-        <AppBar title="Editar Transação" pageBack="transaction/list" />
+        <AppBar title="Editar Transação" pageBack="dashboard/transactions" />
       )}
       <InlineTabs
         defaultValue="expense"

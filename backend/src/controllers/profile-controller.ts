@@ -8,18 +8,33 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 
+export const CheckEmailExists = async (req: Request, res: Response) => {
+  const {email} = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "O email é obrigatório" });
+  }
+
+  try {
+    const queryEmail = `SELECT 1 FROM users WHERE email = $1 LIMIT 1`;
+    const valuesEmail = [email];
+    const {rows: emailExists} = await db.query(queryEmail, valuesEmail);
+    return res.status(200).json(Boolean(emailExists.length));
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Erro ao verificar email" });
+  }
+};
+
 export const CreateProfile = async (req: Request, res: Response) => {
   const { name, surname, email, password, username } = req.body;
   let photo = "";
 
-  if (req.file) {
-    photo = await uploadToSupabase(req.file);
-  }
-
   try {
-    const queryEmail = `SELECT email FROM users WHERE email = $1`;
+    const queryEmail = `SELECT 1 FROM users WHERE email = $1`;
     const valuesEmail = [email];
     const {rows: emailExists} = await db.query(queryEmail, valuesEmail);
+
 
     if (emailExists.length > 0) {  
       throw new Error ("O email que você utilizou já está cadastrado");
@@ -37,6 +52,10 @@ export const CreateProfile = async (req: Request, res: Response) => {
     const salt = await bcrypt.genSalt(12);
     const passwordHash = await bcrypt.hash(password, salt);
 
+    if (req.file) {
+      photo = await uploadToSupabase(req.file);
+    }
+
     const queryCreateProfile = `INSERT INTO users (photo, name, surname, email, password, username, user_default_coin) 
     VALUES ($1, $2, $3, $4, $5, $6, (SELECT id FROM coins WHERE code = 'BRL')) RETURNING id`;
     
@@ -52,52 +71,29 @@ export const CreateProfile = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * username can be username or email
- */
-export const SignIn = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
-
-  if (!username) {
-    return res
-      .status(422)
-      .json({ message: "Usuário ou email são obrigatórios" });
-  }
-
-  if (!password) {
-    return res.status(422).json({ message: "A senha é obrigatória" });
-  }
-
-  const querySignIn = `SELECT id, password FROM users WHERE username = $1 OR email = $1 LIMIT 1`;
-
-  const valuesSignIn = [username];
-
-  const {rows} = await db.query(querySignIn, valuesSignIn);
-  const user = rows[0];
-
-  if (!user) {
-    return res.status(422).json({ message: "Usuário não existe" });
-  }
-
-  //check password
-  const checkPassword = await bcrypt.compare(password, user.password);
-
-  if (!checkPassword) {
-    return res.status(422).json({ message: "Senha inválida" });
-  }
-
-  await createUserToken(user, req, res);
-};
-
 export const getUserProfile = async (req: Request, res: Response) => {
   const user = req.user;
 
   try {
-    const queryGetUserProfile = `SELECT photo, name, surname, email, username FROM users WHERE id = $1`;
+    const queryGetUserProfile = `
+    SELECT 
+    u.photo, 
+    u.name, 
+    u.surname, 
+    u.email, 
+    u.username, 
+    EXISTS (SELECT 1 FROM social_logins sl WHERE sl.user_id = u.id) AS google_linked
+    FROM users u 
+    LEFT JOIN social_logins sl ON u.id = sl.user_id
+    WHERE u.id = $1`;
     
     const valuesGetUserProfile = [user];
 
     const {rows: profile} = await db.query(queryGetUserProfile, valuesGetUserProfile);
+
+    if(profile[0].photo.includes("http")){
+      return res.status(200).json(profile[0]);
+    }
 
     if(profile[0].photo !== ""){
       const supabase = supabaseClient();
@@ -199,20 +195,25 @@ export const ChangePassword = async (req: Request, res: Response) => {
   const { oldPassword, newPassword } = req.body;
   const user = req.user;
 
+  console.log(req.body)
   try {
     const queryOldPassword = `SELECT password FROM users WHERE id = $1`;
     const valuesOldPassword = [user];
 
     const {rows: checkOldPassword} = await db.query(queryOldPassword, valuesOldPassword);
 
-    //check password
-    const checkPassword = await bcrypt.compare(
-      oldPassword,
-      checkOldPassword[0].password
-    );
+    console.log(checkOldPassword);
 
-    if (!checkPassword) {
-      throw new Error("Senha atual inválida, não podemos salvar a senha nova");
+    if(checkOldPassword[0].password !== null && checkOldPassword[0].password !== undefined && checkOldPassword[0].password.trim() !== ""){
+      //check password
+      const checkPassword = await bcrypt.compare(
+        oldPassword,
+        checkOldPassword[0].password
+      );
+
+      if (!checkPassword) {
+        throw new Error("Senha atual inválida, não podemos salvar a senha nova");
+      }
     }
 
     //hash the password
@@ -231,3 +232,23 @@ export const ChangePassword = async (req: Request, res: Response) => {
     return res.status(422).json({ message: message });
   }
 };
+
+export const CheckPassword = async (req: Request, res: Response) => {
+  const user = req.user;
+  
+  try {
+    const queryCheckPassword = `SELECT password FROM users WHERE id = $1`;
+    const valuesCheckPassword = [user];
+
+    const {rows: checkPassword} = await db.query(queryCheckPassword, valuesCheckPassword);
+
+    const passwordSet = checkPassword[0].password !== null;
+
+    return res.status(200).json(passwordSet);
+  } catch (err) {
+    console.error(err);
+    const message = (err instanceof Error && err.message) || "Erro inesperado";
+    return res.status(422).json({ message: message });
+  }
+};
+
