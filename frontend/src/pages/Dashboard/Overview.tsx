@@ -2,7 +2,6 @@ import ExpenseByCatChart from "./ExpenseByCatChart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { currencyFormat } from "@/utils/currency-format";
 import { Separator } from "@/components/ui/separator";
-import LastTransactions from "./LastTransactions";
 import { useDashboardContext } from "@/context/DashboardContext";
 import { ChevronRight, Gauge } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -65,10 +64,6 @@ export function Overview() {
             <ChevronRight />
           </IconButton>
         </div>
-      )}
-
-      {!isLoading && data && !isError && coinSelected === "global" && (
-        <LastTransactions data={data.allTransactionsByMonth} />
       )}
 
       {isLoading && (

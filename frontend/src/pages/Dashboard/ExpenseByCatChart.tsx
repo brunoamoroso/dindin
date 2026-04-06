@@ -7,7 +7,6 @@ import * as Types from "@/types/TransactionTypes";
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
 import {
   Cell,
-  LabelList,
   Pie,
   PieChart,
   type PieLabelRenderProps,
@@ -138,11 +137,11 @@ export default function ExpenseByCatChart({
     const percentage = entry?.percentage ?? 0;
 
     // distance from center where we want the label
-    const radius = outerRadius + 40;
+    const radius = (outerRadius as number) + 40;
 
     // Recharts angles are in degrees, 0° is to the right, positive is clockwise.
-    const x = cx + radius * Math.cos(-midAngle * RAD);
-    const y = cy + radius * Math.sin(-midAngle * RAD);
+    const x = (cx as number) + radius * Math.cos(-(midAngle as number) * RAD);
+    const y = (cy as number) + radius * Math.sin(-(midAngle as number) * RAD);
 
     const icon =
       entry?.icon &&
