@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useBudgetData } from "@/hooks/useBudgetData";
 import { useAllTransactionsByMonthData } from "@/hooks/useAllTransactionsByMonthData";
 import { HeaderGainedSpent } from "./HeaderGainedSpent";
+import { ListAllTransactions } from "./ListAllTransactions";
 
 export function Overview() {
 
@@ -64,6 +65,10 @@ export function Overview() {
             <ChevronRight />
           </IconButton>
         </div>
+      )}
+
+      {!isLoading && data && !isError && coinSelected === "global" && (
+        <ListAllTransactions />
       )}
 
       {isLoading && (

@@ -180,7 +180,7 @@ export default function ExpenseByCatChart({
           </span>
         )}
         {data && data.length > 0 && (
-        <ChartContainer config={chartConfig} className="min-h-[400px] w-full pt-4">
+        <ChartContainer config={chartConfig} className="min-h-[380px] w-full pt-4">
           <PieChart>
             <Pie
               data={chartData}

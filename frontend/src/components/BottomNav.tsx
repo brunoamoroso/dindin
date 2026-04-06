@@ -27,7 +27,7 @@ export default function BottomNav() {
     {
       link: "/dashboard/limits",
       icon: <Gauge />,
-      title: "Meu Orçamento",
+      title: "Orçamento",
       growOnActive: true,
     },
   ];
@@ -75,7 +75,7 @@ export default function BottomNav() {
                 key={i}
                 className={({ isActive }) =>
                   cn(
-                    "flex w-auto basis-0 items-center justify-center gap-2 py-2.5 px-3 rounded-full transition-[background-color,color] duration-200",
+                    "flex w-auto basis-0 items-center justify-center gap-2 py-2.5 px-3 rounded-full transition-[background-color,color, flex] duration-300",
                     isActive && obj.growOnActive ? "flex-[2.3]" : "flex-1",
                     isActive
                       ? "text-primary bg-state-hover"
