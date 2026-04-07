@@ -12,7 +12,7 @@ export default function BottomNav() {
 
   const navButtons = [
     {
-      link: "/dashboard",
+      link: "/dashboard/overview",
       icon: <LayoutGrid />,
       title: "Início",
       end: true,
