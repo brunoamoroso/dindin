@@ -228,7 +228,7 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
             )}
           </MenuListItem>
         </Link>
-        <Button onClick={handleSubmit} size="lg">
+        <Button onClick={handleSubmit}  >
           Salvar
         </Button>
       </div>

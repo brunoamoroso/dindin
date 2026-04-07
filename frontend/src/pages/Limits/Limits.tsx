@@ -74,7 +74,7 @@ export function Limits() {
             </h1>
             <div className="flex self-center">
               {data[0].has_previous_limits && (
-                <Button size="lg" variant="outline" className="flex flex-1" onClick={() => handleCopyPreviousLimits()}>
+                <Button   variant="outline" className="flex flex-1" onClick={() => handleCopyPreviousLimits()}>
                   <Copy />
                   Copiar limites anteriores
                 </Button>

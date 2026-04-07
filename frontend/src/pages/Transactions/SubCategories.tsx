@@ -98,7 +98,7 @@ export default function SubCategories() {
             <div className="flex flex-col flex-1">
               {data.map((subCategory, index, arr) => (
                     <MenuListItem
-                      size="lg"
+                       
                       trailingIcon={false}
                       key={index}
                       dataId={subCategory.id}

@@ -158,7 +158,7 @@ export default function ActionsTransaction({
                         <strong> {"R$" + currencyFormat(amount)}</strong>
                       </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter className="flex gap-6">
+                    <DialogFooter className="flex-row gap-4">
                       <DrawerClose asChild className="flex flex-1">
                         <Button
                           className="flex flex-1"

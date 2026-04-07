@@ -176,7 +176,7 @@ export default function Categories() {
           <div className="flex flex-col">
             {allCategories.map((category, index, arr) => (
               <MenuListItem
-                size="lg"
+                 
                 key={index}
                 dataId={category.id}
                 value={category.description}
@@ -203,7 +203,7 @@ export default function Categories() {
                       .map((item, index, arr) => {
                         return (
                           <MenuListItem
-                            size="lg"
+                             
                             key={index}
                             dataId={item.id}
                             value={item.description}
@@ -233,7 +233,7 @@ export default function Categories() {
                         ) {
                           return (
                             <MenuListItem
-                              size="lg"
+                               
                               key={`${item.category_id}-${i}`}
                               dataId={item.id}
                               value={item.description}
