@@ -271,7 +271,7 @@ export default function GainTransaction({
           </div>
           <Button
             type="submit"
-            size={"lg"}
+             
             className={cn(
               `${
                 mutationPending &&

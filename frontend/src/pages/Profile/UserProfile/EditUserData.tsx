@@ -173,7 +173,7 @@ export default function EditUserData() {
             </div>
 
             <Button
-              size={"lg"}
+               
               type="submit"
               className={cn(
                 "w-full",

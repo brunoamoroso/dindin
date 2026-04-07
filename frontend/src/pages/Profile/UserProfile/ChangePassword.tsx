@@ -110,7 +110,7 @@ export function ChangePassword() {
           </div>
 
           <Button
-            size={"lg"}
+             
             type="submit"
             className={cn(
               "w-full",

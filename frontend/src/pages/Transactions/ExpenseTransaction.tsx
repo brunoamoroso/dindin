@@ -419,7 +419,7 @@ export default function ExpenseTransaction({
           </div>
           <Button
             type="submit"
-            size={"lg"}
+             
             className={`${
               mutationPending &&
               "opacity-50 cursor-not-allowed pointer-events-none"
