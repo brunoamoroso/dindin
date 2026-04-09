@@ -21,7 +21,7 @@ export type BaseTransaction = {
 export type NewTransactionType = Omit<BaseTransaction, "id">;
 
 // For transactions fetched from the backend
-export type TransactionType = BaseTransaction & { id: string };
+export type TransactionType = BaseTransaction & { id: string, coin: string };
 
 
 

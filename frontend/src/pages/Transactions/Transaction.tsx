@@ -67,11 +67,14 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     enabled: mode === "edit" && !!paramId,
   });
 
+  console.log(data);
+
   useEffect(() => {
     if (data) {
       setContextTransactionData((prev) => ({
         ...prev,
         id: data.id,
+        coin: data.coin,
         type: data.type,
         amount: data.amount,
         description: data.description,
