@@ -28,10 +28,12 @@ export interface TransactionsContextType {
   setContextTransactionData: React.Dispatch<
     React.SetStateAction<TransactionDataType>
   >;
+  selectedDate: Date;
 }
 
 export function TransactionsContext(){
-  const {coinSelected} = useDashboardContext();
+  const {coinSelected, selectedDate} = useDashboardContext();
+  
   const [contextTransactionData, setContextTransactionData] =
     useState<TransactionDataType>({
       coin: coinSelected,
@@ -55,7 +57,7 @@ export function TransactionsContext(){
 
   return (
     <>
-      <Outlet context={{ contextTransactionData, setContextTransactionData }} />
+      <Outlet context={{ contextTransactionData, setContextTransactionData, selectedDate }} />
     </>
   );
 }

@@ -61,7 +61,7 @@ export default function ExpenseTransaction({
 }: ExpenseTransactionType) {
   const {
     contextTransactionData,
-    setContextTransactionData,
+    setContextTransactionData
   }: TransactionsContextType = useOutletContext();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAutoCompleteOpen, setIsAutoCompleteOpen] = useState(false);
