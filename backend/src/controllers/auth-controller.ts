@@ -31,7 +31,7 @@ export const GoogleAuth = async (
 
     res.cookie(oauthCookie, JSON.stringify({ state, nonce, codeVerifier, userId }), {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "prod" ? "none" : "lax",
       secure: process.env.NODE_ENV === "prod",
     });
 
