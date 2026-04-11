@@ -40,7 +40,7 @@ export function RemoveCoin() {
                   <Trash2 />
                 </IconButton>
               </DialogTrigger>
-              <DialogContent showCloseButton={false} className="flex flex-col gap-8">
+              <DialogContent showCloseButton={false} className="flex flex-col">
                 <div className="flex flex-col gap-1.5">
                   <DialogTitle>
                     Deseja remover a moeda?
@@ -49,11 +49,11 @@ export function RemoveCoin() {
                     Remover a moeda não vai excluir as transações associadas a ela, mas apenas a moeda selecionada. Você poderá adicioná-la novamente mais tarde.
                   </DialogDescription>
                 </div>
-                <DialogFooter className="flex flex-row gap-6">
-                  <Button variant="outline" className="flex flex-1" size="lg" onClick={() => setOpenRemoveCoinDialog(false)}>
+                <DialogFooter className="flex flex-row gap-4">
+                  <Button variant="outline" className="flex flex-1" onClick={() => setOpenRemoveCoinDialog(false)}>
                     Cancelar
                   </Button>
-                  <Button variant="destructive" className="flex flex-1" size="lg" onClick={() => mutationRemoveCoin.mutate()}>
+                  <Button variant="destructive" className="flex flex-1" onClick={() => mutationRemoveCoin.mutate()}>
                     Remover
                   </Button>
                 </DialogFooter>

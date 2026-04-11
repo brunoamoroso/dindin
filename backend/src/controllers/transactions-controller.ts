@@ -136,10 +136,10 @@ export const getSimilarTransactionsByDescription = async (req: Request, res: Res
 
   try{
     const queryGetSimilarTransactionsByDescription = `
-    SELECT DISTINCT ON (t.description) t.id, t.description, t.category_id, t.subcategory_id, cat.description as category, subcat.description as subcategory
+    SELECT DISTINCT ON (t.description) t.id, t.description, t.category_id, t.subcategory_id, cat.description as category, COALESCE(subcat.description, '') as subcategory
     FROM transactions t
     JOIN categories cat ON t.category_id = cat.id
-    JOIN subcategories subcat ON t.subcategory_id = subcat.id
+    LEFT JOIN subcategories subcat ON t.subcategory_id = subcat.id
     WHERE t.description ILIKE $1
     AND t.type = $2
     AND t.created_by = $3
@@ -260,12 +260,12 @@ export const deleteTransaction = async (req: Request, res: Response) => {
 export const getOneTransaction = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const queryGetOneTransaction = `SELECT t.*, ac.description as account, cat.description as category, sub.description as subcategory
+    const queryGetOneTransaction = `SELECT t.*, c.code as coin, ac.description as account, cat.description as category, COALESCE(sub.description, '') as subcategory
     FROM transactions t
     JOIN coins c ON t.coin_id = c.id
     JOIN accounts ac ON t.account_id = ac.id
     JOIN categories cat ON t.category_id = cat.id
-    JOIN subcategories sub ON t.subcategory_id = sub.id
+    LEFT JOIN subcategories sub ON t.subcategory_id = sub.id
     WHERE t.id = $1
     `;
 
@@ -293,11 +293,12 @@ export const getAllInstallmentsTransaction = async (req: Request, res: Response)
 
     const groupId = groupInstallmentId[0].group_installment_id;
 
-    const queryAllInstallmentsTransaction = `SELECT t.id, t.coin_id, t.type, t.description, t.amount, t.account_id, acc.description AS account, t.category_id,
-    cat.description as category, t.subcategory_id, sub.description as subcategory, t.installments, t.payment_condition, t.install_number, t.date
+    const queryAllInstallmentsTransaction = `SELECT t.id, t.coin_id, c.code as coin, t.type, t.description, t.amount, t.account_id,  acc.description AS account, t.category_id,
+    cat.description as category, t.subcategory_id, COALESCE(sub.description, '') as subcategory, t.installments, t.payment_condition, t.install_number, t.date
     FROM transactions t
     JOIN transactions seed ON seed.id = $1
     JOIN accounts acc ON t.account_id = acc.id
+    JOIN coins c ON t.coin_id = c.id
     LEFT JOIN categories cat ON t.category_id = cat.id
     LEFT JOIN subcategories sub ON t.subcategory_id = sub.id
     WHERE t.group_installment_id = seed.group_installment_id AND seed.group_installment_id IS NOT NULL
@@ -312,6 +313,7 @@ export const getAllInstallmentsTransaction = async (req: Request, res: Response)
 
     const dataAllInstallmentsSorted = {
       type: allInstallmentsTransaction[0].type,  
+      coin: allInstallmentsTransaction[0].coin,
       description: allInstallmentsTransaction[0].description,
       amount: allInstallmentsTransaction.reduce((totalAmount, transaction) => totalAmount + transaction.amount, 0),
       account: allInstallmentsTransaction[0].account,

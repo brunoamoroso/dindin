@@ -61,7 +61,7 @@ export default function ExpenseTransaction({
 }: ExpenseTransactionType) {
   const {
     contextTransactionData,
-    setContextTransactionData,
+    setContextTransactionData
   }: TransactionsContextType = useOutletContext();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAutoCompleteOpen, setIsAutoCompleteOpen] = useState(false);
@@ -419,7 +419,7 @@ export default function ExpenseTransaction({
           </div>
           <Button
             type="submit"
-            size={"lg"}
+             
             className={`${
               mutationPending &&
               "opacity-50 cursor-not-allowed pointer-events-none"

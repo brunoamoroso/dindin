@@ -90,7 +90,7 @@ export default function SignIn() {
           </div>
           <Button
             type="submit"
-            size={"lg"}
+             
             className={`${
               loading && "opacity-50 cursor-not-allowed pointer-events-none"
             }`}

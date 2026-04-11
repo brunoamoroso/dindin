@@ -69,7 +69,7 @@ export function LimitListItem({ ...props }: LimitType) {
                 <div className="flex flex-col w-full items-center gap-6">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="destructive" size="lg" className="w-full">
+                      <Button variant="destructive"   className="w-full">
                         <Trash2 /> Excluir
                       </Button>
                     </DialogTrigger>
@@ -80,18 +80,18 @@ export function LimitListItem({ ...props }: LimitType) {
                       </DialogDescription>
                       <div className="flex gap-2 mt-8">
                         <DialogClose className="flex flex-1" asChild>
-                          <Button variant="outline" className="w-full" size="lg">
+                          <Button variant="outline" className="w-full"  >
                             Cancelar
                           </Button>
                         </DialogClose>
-                        <Button variant="destructive" className="flex flex-1" size="lg" onClick={() => handleDelete(props.id!)}>
+                        <Button variant="destructive" className="flex flex-1"   onClick={() => handleDelete(props.id!)}>
                           Excluir
                         </Button>
                       </div>
                     </DialogContent>
                   </Dialog>
                   <Link to={`/limits/edit/${props.id}`} className="w-full">
-                    <Button variant="outline" size="lg" className="w-full">
+                    <Button variant="outline"   className="w-full">
                       <SquarePen /> Editar
                     </Button>
                   </Link>

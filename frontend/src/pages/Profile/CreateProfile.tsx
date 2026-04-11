@@ -199,7 +199,7 @@ export default function CreateProfile() {
           </div>
 
           <Button
-            size={"lg"}
+             
             type="submit"
             className={cn(
               "w-full",

@@ -31,7 +31,7 @@ export function ListAllTransactions() {
       />
 
       <Separator />
-      <div className="flex flex-col flex-1 mx-6 text-content-secondary gap-6">
+      <div className="flex flex-col flex-1 mx-6 text-content-secondary">
         {isLoading &&
           Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} className="h-8 mb-4 flex" />
@@ -49,13 +49,13 @@ export function ListAllTransactions() {
                 <div className="flex flex-1 gap-4 items-center">
                   <div>{getCategoryIcon(d.category).icon}</div>
                   <div className="flex flex-col">
-                    {d.description && (
+                    
                       <span className="body-small text-content-secondary">
-                          {d.category} - {d.subcategory}
+                          {d.category} {d.subcategory ? "- " + d.subcategory : ""}
                       </span>
-                    )}
+                   
                     <span className="label-large text-content-primary mb-1 leading-none">
-                      {!d.description ? d.category + " - " + d.subcategory : d.description}
+                      {!d.description ? "Sem descrição": d.description}
                     </span>
                     <span className="body-small text-content-subtle">
                       {formatLocalDate(d.date)}

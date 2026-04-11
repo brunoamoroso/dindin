@@ -133,7 +133,6 @@ export default function ActionsTransaction({
                     <Button
                       className="w-full"
                       variant={"destructive"}
-                      size={"lg"}
                     >
                       <Trash2 /> Excluir
                     </Button>
@@ -159,12 +158,11 @@ export default function ActionsTransaction({
                         <strong> {"R$" + currencyFormat(amount)}</strong>
                       </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter className="flex gap-6">
+                    <DialogFooter className="flex-row gap-4">
                       <DrawerClose asChild className="flex flex-1">
                         <Button
                           className="flex flex-1"
                           variant={"outline"}
-                          size={"lg"}
                         >
                           Cancelar
                         </Button>
@@ -172,7 +170,6 @@ export default function ActionsTransaction({
                       <Button
                         className="flex flex-1"
                         variant={"destructive"}
-                        size={"lg"}
                         onClick={() => handleDelete(id)}
                       >
                         <Trash2 /> Excluir
@@ -182,7 +179,7 @@ export default function ActionsTransaction({
                 </Dialog>
 
                 <Link className="w-full" to={`/transaction/edit/single/${id}`}>
-                  <Button className="w-full" variant={"outline"} size={"lg"}>
+                  <Button className="w-full" variant={"outline"}  >
                     <SquarePen /> Editar
                   </Button>
                 </Link>
@@ -197,7 +194,7 @@ export default function ActionsTransaction({
                     <Button
                       className="w-full"
                       variant={"destructive"}
-                      size={"lg"}
+                       
                     >
                       <Trash2 /> Excluir
                     </Button>
@@ -213,7 +210,7 @@ export default function ActionsTransaction({
                       <Button
                         className="w-full"
                         variant={"outline"}
-                        size={"lg"}
+                         
                         onClick={() => handleDeleteThisInstallment(id)}
                       >
                         Essa parcela
@@ -221,7 +218,7 @@ export default function ActionsTransaction({
                       <Button
                         className="w-full"
                         variant={"outline"}
-                        size={"lg"}
+                         
                         onClick={() => handleDeleteAllInstallments(id)}
                       >
                         Todas as parcelas
@@ -229,7 +226,7 @@ export default function ActionsTransaction({
                       <Button
                         className="w-full text-content-secondary"
                         variant={"ghost"}
-                        size={"lg"}
+                         
                         onClick={() => setDrawerInstallmentDeleteOpen(false)}
                       >
                         Fechar
@@ -243,7 +240,7 @@ export default function ActionsTransaction({
                   onOpenChange={setDrawerInstallmentEditOpen}
                 >
                   <DrawerTrigger asChild>
-                    <Button className="w-full" variant={"outline"} size={"lg"}>
+                    <Button className="w-full" variant={"outline"}  >
                       <SquarePen /> Editar
                     </Button>
                   </DrawerTrigger>
@@ -262,7 +259,7 @@ export default function ActionsTransaction({
                         <Button
                           className="w-full"
                           variant={"outline"}
-                          size={"lg"}
+                           
                         >
                           Essa parcela
                         </Button>
@@ -274,7 +271,7 @@ export default function ActionsTransaction({
                         <Button
                           className="w-full"
                           variant={"outline"}
-                          size={"lg"}
+                           
                         >
                           Todas as parcelas
                         </Button>
@@ -282,7 +279,7 @@ export default function ActionsTransaction({
                       <Button
                         className="w-full text-content-secondary"
                         variant={"ghost"}
-                        size={"lg"}
+                         
                         onClick={() => setDrawerInstallmentEditOpen(false)}
                       >
                         Fechar
@@ -295,7 +292,7 @@ export default function ActionsTransaction({
             <Button
               className="w-full text-content-secondary"
               variant={"ghost"}
-              size={"lg"}
+               
               onClick={() => setDrawerIsOpen(false)}
             >
               Fechar

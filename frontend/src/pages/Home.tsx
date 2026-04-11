@@ -75,7 +75,6 @@ export default function Home() {
             />
             <Button
               type="submit"
-              size={"lg"}
               className={`${
                 loading && "opacity-50 cursor-not-allowed pointer-events-none"
               }`}
@@ -96,7 +95,7 @@ export default function Home() {
             <Separator className="flex flex-1" />
           </div>
           <Link to={googleAuthUrl} className="flex flex-col">
-            <Button variant={"outline"} size={"lg"}>
+            <Button variant={"outline"}>
               <GoogleIcon className="size-6 fill-content-primary" />
               Continuar com Google
             </Button>

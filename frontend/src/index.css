@@ -195,6 +195,7 @@
 
 @layer base {
   :root {
+    color-scheme: dark;
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -228,6 +229,21 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 12px;
+  }
+
+  html {
+    background-color: #080e12;
+  }
+
+  body {
+    min-height: 100dvh;
+    margin: 0;
+    background-color: #080e12;
+  }
+
+  #root {
+    min-height: 100dvh;
+    background-color: #080e12;
   }
 
   .dark {

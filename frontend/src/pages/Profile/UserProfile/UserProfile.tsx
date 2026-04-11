@@ -191,8 +191,8 @@ export function UserProfile() {
               <PasswordValidator validations={validations} rules={rules} />
             </div>
             <DrawerFooter className="gap-6">
-              <Button size={"lg"} onClick={handleNewPasswordSubmit()}>Definir senha</Button>
-              <Button size={"lg"} variant={"outline"} onClick={() => setSheetSetNewPassword(false)}>Cancelar</Button>
+              <Button   onClick={handleNewPasswordSubmit()}>Definir senha</Button>
+              <Button   variant={"outline"} onClick={() => setSheetSetNewPassword(false)}>Cancelar</Button>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>

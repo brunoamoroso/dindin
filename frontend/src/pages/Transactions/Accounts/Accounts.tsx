@@ -73,7 +73,7 @@ export default function Accounts() {
             <div className="flex flex-col">
               {data.map((account, index, arr) => (
                 <MenuListItem
-                  size="lg"
+                   
                   trailingIcon={false}
                   key={index}
                   dataId={account.id}

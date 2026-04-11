@@ -47,7 +47,7 @@ export function CreateAccount() {
             placeholder="Escreva o nome da conta"
             onChange={(e) => setDescription(e.target.value)}
           />
-          <Button variant="default" size="lg" type="submit">
+          <Button variant="default"   type="submit">
             Criar
           </Button>
         </form>

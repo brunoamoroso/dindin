@@ -38,6 +38,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
   const {
     contextTransactionData,
     setContextTransactionData,
+    selectedDate
   }: TransactionsContextType = useOutletContext();
   const { paramId, paramTransactionScope } = useParams();
   let id;
@@ -72,6 +73,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       setContextTransactionData((prev) => ({
         ...prev,
         id: data.id,
+        coin: data.coin,
         type: data.type,
         amount: data.amount,
         description: data.description,
@@ -272,7 +274,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       mutationUpdateAllInstallments.mutate(contextTransactionData, {
         onSuccess: () => {
           toast.success("Transação atualizada!", { duration: 2000 });
-          navigate(`/dashboard/transactions/${contextTransactionData.date.value}`);
+          navigate(`/dashboard/transactions/${selectedDate}`);
         },
         onError: () => {
           toast.error("Não conseguimos editar a transação", { duration: 2000 });
