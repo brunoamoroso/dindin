@@ -49,13 +49,29 @@ export function UserProfile() {
 
   useEffect(() => {
     const linkedAccount = searchParams.get("linkedAccount");
+    const linkError = searchParams.get("linkError");
     if (linkedAccount === "true") {
       toast.success("Conta do Google vinculada com sucesso!", { id: "google-link" });
       const next = new URLSearchParams(searchParams);
       next.delete("linkedAccount");
       setSearchParams(next, { replace: true });
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
+      return;
     }
-  }, [searchParams, setSearchParams]);
+
+    if (linkError) {
+      const errorMessage = {
+        expired: "O link para vincular sua conta expirou. Tente novamente.",
+        invalid: "Não foi possível validar a sua conta do Google. Tente novamente.",
+        conflict: "Esta conta do Google já está vinculada a outro usuário.",
+      }[linkError] || "Não foi possível vincular sua conta do Google.";
+
+      toast.error(errorMessage, { id: "google-link" });
+      const next = new URLSearchParams(searchParams);
+      next.delete("linkError");
+      setSearchParams(next, { replace: true });
+    }
+  }, [queryClient, searchParams, setSearchParams]);
 
   const { data, isLoading } = useQuery<UserProfileType>({
     queryKey: ["userData"],
