@@ -16,6 +16,8 @@ export const addTransaction = async (req: Request, res: Response) => {
   } = req.body;
   let localDate = toPostgresDate(date.value);
   const installments = parseInt(req.body.installments);
+  console.log(req.body);
+  console.log(localDate);
 
   try {
     if (type === "gain") {
