@@ -9,6 +9,9 @@ interface CreateUserTokenOptions {
     redirectTo?: string;
 }
 
+export const generateUserToken = (user: UserTokenType) => jwt.sign({
+    id: user.id
+}, "nw93A4sF6QAQ-dindin");
 
 export const createUserToken = async (
     user: UserTokenType,
@@ -16,9 +19,7 @@ export const createUserToken = async (
     res: Response,
     options: CreateUserTokenOptions = {}
 ) => {
-    const token = jwt.sign({
-        id: user.id
-    }, "nw93A4sF6QAQ-dindin");;
+    const token = generateUserToken(user);
 
     if (options.redirectTo) {
         res.cookie("token", token, {
