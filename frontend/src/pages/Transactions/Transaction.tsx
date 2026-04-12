@@ -246,6 +246,8 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       return;
     }
 
+    console.log(contextTransactionData);
+
     if (mode === "create") {
       mutationAdd.mutate(contextTransactionData, {
         onSuccess: () => {

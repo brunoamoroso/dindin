@@ -130,6 +130,7 @@ export default function ExpenseTransaction({
       },
     }));
     setIsDialogOpen(false);
+    console.log(day);
   };
 
   return (
