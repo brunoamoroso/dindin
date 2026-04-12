@@ -21,7 +21,7 @@ export const addTransaction = async (req: Request, res: Response) => {
     if (type === "gain") {
       const queryGainTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, date, created_by)
       VALUES ((SELECT id FROM coins c WHERE c.code = $1),
-      $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`;
+      $2, $3, $4, $5, $6, $7, $8::date, $9) RETURNING *`;
       const valuesGainTransaction = [coin, type, description, amount, account_id, category_id, subcategory_id || null, localDate, req.user];
 
       const {rows: gainTransaction} = await db.query(queryGainTransaction, valuesGainTransaction);
@@ -43,7 +43,7 @@ export const addTransaction = async (req: Request, res: Response) => {
       queryExpenseTransaction = `
       WITH ins AS (
         INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, date, payment_condition, created_by)
-        VALUES ((SELECT id FROM coins c WHERE c.code = $1),$2, $3, $4, $5, $6, $7, $8, $9, $10) 
+        VALUES ((SELECT id FROM coins c WHERE c.code = $1),$2, $3, $4, $5, $6, $7, $8::date, $9, $10) 
         RETURNING *
       ),
       upd AS(
@@ -358,7 +358,7 @@ export const updateTransaction = async (req: Request, res: Response) => {
       ),
       upd AS (
         UPDATE transactions t
-        SET type = $2, amount = $3, description = $4, account_id = $5, category_id = $6, subcategory_id = $7, date = $8
+        SET type = $2, amount = $3, description = $4, account_id = $5, category_id = $6, subcategory_id = $7, date = $8::date
         FROM old
         WHERE t.id = old.id
         RETURNING t.*
