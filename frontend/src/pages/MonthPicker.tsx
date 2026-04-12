@@ -56,7 +56,6 @@ export function MonthPicker() {
           </Button>
         </DialogTrigger>
         <DialogContent
-          className="w-auto bg-transparent border-none"
           showCloseButton={false}
         >
           <DialogTitle className="hidden">Calendário</DialogTitle>
@@ -71,7 +70,7 @@ export function MonthPicker() {
             inline
             renderCustomHeader={({ date, decreaseYear, increaseYear }) => {
               return (
-                <div className="flex items-center justify-between py-3 gap-6">
+                <div className="flex items-center justify-between gap-6">
                   <IconButton variant={"ghost"} onClick={decreaseYear}>
                     <ChevronLeft />
                   </IconButton>

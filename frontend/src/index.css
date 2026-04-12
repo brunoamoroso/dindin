@@ -332,7 +332,7 @@
 
   /* React Date Picker Customization */
   .react-datepicker {
-    @apply shadow-2xl rounded-md border bg-layer-primary border-outline font-sans p-5;
+    @apply font-sans;
   }
 
   .react-datepicker .react-datepicker__aria-live {
