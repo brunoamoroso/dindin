@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { CookieOptions, NextFunction, Request, Response } from "express";
 import { getGoogleConfig } from "../utils/oidc";
 import {
   authorizationCodeGrant,
@@ -11,9 +11,15 @@ import {
 } from "openid-client";
 import { db } from "../db/conn";
 import bcrypt from "bcrypt";
-import { createUserToken } from "../utils/create-user-token";
+import { createUserToken, generateUserToken } from "../utils/create-user-token";
 
 const oauthCookie = process.env.SESSION_COOKIE_NAME || "oauth-state";
+
+const oAuthCookieOptions: CookieOptions = {
+  httpOnly: true,
+  sameSite: process.env.NODE_ENV === "prod" ? "none" : "lax",
+  secure: process.env.NODE_ENV === "prod",
+}
 
 export const GoogleAuth = async (
   req: Request,
@@ -29,11 +35,7 @@ export const GoogleAuth = async (
     const codeVerifier = randomPKCECodeVerifier();
     const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
 
-    res.cookie(oauthCookie, JSON.stringify({ state, nonce, codeVerifier, userId }), {
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === "prod" ? "none" : "lax",
-      secure: process.env.NODE_ENV === "prod",
-    });
+    res.cookie(oauthCookie, JSON.stringify({ state, nonce, codeVerifier, userId }), oAuthCookieOptions);
 
     let redirectUri;
 
@@ -141,14 +143,21 @@ export const GoogleAuthCallback = async (
       const {rows} = await db.query(query, values);
       const userId = rows[0].id;
 
-      res.clearCookie(oauthCookie);
+      res.clearCookie(oauthCookie, oAuthCookieOptions);
 
       const frontendUrl = process.env.FRONTEND_URL;
       const redirectTo = frontendUrl
-        ? new URL("/dashboard", frontendUrl).toString()
+        ? new URL("/auth/callback", frontendUrl)
         : undefined;
 
-      await createUserToken({ id: userId }, req, res, { redirectTo });
+      if (!redirectTo) {
+        return await createUserToken({ id: userId }, req, res);
+      }
+
+      const token = generateUserToken({ id: userId });
+      redirectTo.hash = new URLSearchParams({ token }).toString();
+
+      return res.redirect(redirectTo.toString());
   } catch (err) {
      if (err instanceof ResponseBodyError) {
     console.error("oauth error", {
@@ -201,7 +210,7 @@ export const GoogleLinkAuthCallback = async (
 
       await db.query(query, values);
 
-      res.clearCookie(oauthCookie);
+      res.clearCookie(oauthCookie, oAuthCookieOptions);
 
       const frontendUrl = process.env.FRONTEND_URL;
       const redirectTo = frontendUrl

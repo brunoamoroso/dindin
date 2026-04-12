@@ -13,6 +13,7 @@ import CreateProfile from "./pages/Profile/CreateProfile";
 import Accounts from "./pages/Transactions/Accounts/Accounts";
 import Recurrency from "./pages/Transactions/Recurrency";
 import SignIn from "./pages/Profile/SignIn";
+import AuthCallback from "./pages/AuthCallback";
 import { ListAllTransactions } from "./pages/Dashboard/ListAllTransactions";
 import { DashboardContext } from "./context/DashboardContext";
 import { UserProfile } from "./pages/Profile/UserProfile/UserProfile";
@@ -41,6 +42,7 @@ function AppRoutes() {
         <Route element={<AuthContextProvider />}>
           <Route element={<UnauthRoutesContext />}>
             <Route path="/" element={<Home />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/profile/create/:email?" element={<CreateProfile />} />
             <Route path="/profile/signin/:email?" element={<SignIn />} />
             <Route

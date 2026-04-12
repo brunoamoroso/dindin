@@ -9,21 +9,20 @@ interface CreateUserTokenOptions {
     redirectTo?: string;
 }
 
+
 export const createUserToken = async (
     user: UserTokenType,
     _req: Request,
     res: Response,
     options: CreateUserTokenOptions = {}
 ) => {
-
-    //create token
     const token = jwt.sign({
         id: user.id
-    }, "nw93A4sF6QAQ-dindin");
+    }, "nw93A4sF6QAQ-dindin");;
 
     if (options.redirectTo) {
         res.cookie("token", token, {
-            sameSite: "lax",
+            sameSite: process.env.NODE_ENV === "prod" ? "none" : "lax",
             secure: process.env.NODE_ENV === "prod",
         });
         return res.redirect(options.redirectTo);
