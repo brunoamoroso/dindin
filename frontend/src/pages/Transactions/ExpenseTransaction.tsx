@@ -385,7 +385,6 @@ export default function ExpenseTransaction({
                     </InputChips>
                   </DialogTrigger>
                   <DialogContent
-                    className="border-none"
                     showCloseButton={false}
                   >
                     <DialogTitle className="hidden">Calendário</DialogTitle>
@@ -398,7 +397,6 @@ export default function ExpenseTransaction({
                       selected={contextTransactionData.date.value}
                       onDayClick={handleDayClick}
                       className="w-full z-10"
-
                     />
                   </DialogContent>
                 </Dialog>
