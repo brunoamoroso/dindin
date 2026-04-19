@@ -30,6 +30,7 @@ import {
   updateTransaction,
 } from "@/api/transactionService";
 import splitInstallmentsDisplay from "@/utils/get-split-installments";
+import { toYMD } from "@/utils/ymd-date";
 
 export default function Transaction({ mode }: { mode: "create" | "edit" }) {
   const navigate = useNavigate();
@@ -85,7 +86,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
         account_id: data.account_id,
         date: {
           chip: "otherDate",
-          value: new Date(data.date),
+          value: data.date,
         },
         paymentCondition: data.payment_condition,
         installments:
@@ -100,16 +101,13 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
     e.preventDefault();
     if (contextTransactionData.date.chip !== "today") {
       const date = new Date();
-      const day = date.getDate();
-      const month = date.getMonth();
-      const year = date.getFullYear();
+      const ymd = toYMD(date);
 
-      const today = new Date(year, month, day);
       setContextTransactionData((prevTransaction) => ({
         ...prevTransaction,
         date: {
           chip: "today",
-          value: today,
+          value: ymd,
         },
       }));
       return;
@@ -245,6 +243,8 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
       toast.error("Informe quantas parcelas terá a sua transação", { duration: 2000 });
       return;
     }
+
+    console.log(contextTransactionData);
 
     if (mode === "create") {
       mutationAdd.mutate(contextTransactionData, {

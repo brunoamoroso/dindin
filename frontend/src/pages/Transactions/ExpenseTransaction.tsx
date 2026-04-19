@@ -25,6 +25,7 @@ import splitInstallmentsDisplay from "@/utils/get-split-installments";
 import { Landmark, LoaderCircle, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
+import { toYMD, ymdToDate, ymdToDateString } from "@/utils/ymd-date";
 
 /**
  * transactionScope is used to understand if I'm going to update one specific transaction or all transaction of a group installment. If single is one, if multi is the whole group.
@@ -122,11 +123,12 @@ export default function ExpenseTransaction({
   };
 
   const handleDayClick = (day: Date) => {
+    const ymd = toYMD(day);
     setContextTransactionData((prevTransaction) => ({
       ...prevTransaction,
       date: {
         chip: "otherDate",
-        value: day,
+        value: ymd,
       },
     }));
     setIsDialogOpen(false);
@@ -156,7 +158,7 @@ export default function ExpenseTransaction({
               pattern="[0-9]"
               id="amount_input"
               type="text"
-              className="hidden text-critical bg-transparent focus-visible:ring-0"
+              className="hidden text-critical bg-transparent focus-visible:ring-0 rounded-none"
               placeholder="0.00"
               onChange={handleAmountChange}
               value={currencyFormat(contextTransactionData.amount)}
@@ -379,13 +381,12 @@ export default function ExpenseTransaction({
                     >
                       {contextTransactionData.date.chip === "otherDate" &&
                         contextTransactionData.date.value !== undefined &&
-                        contextTransactionData.date.value.toLocaleDateString()}
+                        ymdToDateString(contextTransactionData.date.value)}
                       {contextTransactionData.date.chip !== "otherDate" &&
                         "Outra Data"}
                     </InputChips>
                   </DialogTrigger>
                   <DialogContent
-                    className="border-none"
                     showCloseButton={false}
                   >
                     <DialogTitle className="hidden">Calendário</DialogTitle>
@@ -394,11 +395,10 @@ export default function ExpenseTransaction({
                     </DialogDescription>
                     <Calendar
                       mode="single"
-                      defaultMonth={contextTransactionData.date.value}
-                      selected={contextTransactionData.date.value}
+                      defaultMonth={ymdToDate(contextTransactionData.date.value || toYMD(new Date()))}
+                      selected={ymdToDate(contextTransactionData.date.value || toYMD(new Date()))}
                       onDayClick={handleDayClick}
                       className="w-full z-10"
-
                     />
                   </DialogContent>
                 </Dialog>
