@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { db } from "../db/conn";
-import { toPostgresDate } from "../utils/to-postgres-date";
+import { toYMD } from "../utils/ymd-date";
 
 export const addTransaction = async (req: Request, res: Response) => {
   const {
@@ -14,7 +14,6 @@ export const addTransaction = async (req: Request, res: Response) => {
     date,
     paymentCondition,
   } = req.body;
-  let localDate = toPostgresDate(date.value);
   const installments = parseInt(req.body.installments);
 
   try {
@@ -22,7 +21,7 @@ export const addTransaction = async (req: Request, res: Response) => {
       const queryGainTransaction = `INSERT INTO transactions (coin_id, type, description, amount, account_id, category_id, subcategory_id, date, created_by)
       VALUES ((SELECT id FROM coins c WHERE c.code = $1),
       $2, $3, $4, $5, $6, $7, $8::date, $9) RETURNING *`;
-      const valuesGainTransaction = [coin, type, description, amount, account_id, category_id, subcategory_id || null, localDate, req.user];
+      const valuesGainTransaction = [coin, type, description, amount, account_id, category_id, subcategory_id || null, date.value, req.user];
 
       const {rows: gainTransaction} = await db.query(queryGainTransaction, valuesGainTransaction);
       res.status(201).json(gainTransaction);
@@ -33,7 +32,7 @@ export const addTransaction = async (req: Request, res: Response) => {
     if (paymentCondition === undefined) {
       return res
         .status(422)
-        .json({ message: "Payment Condition is mandatory" });
+        .json({ message: "Payment Condition is mandatory" }); 
     }
 
     let queryExpenseTransaction;
@@ -57,16 +56,17 @@ export const addTransaction = async (req: Request, res: Response) => {
       )
       SELECT * FROM ins`;
 
-      expenseValues = [coin, type, description, amount, account_id, category_id, subcategory_id || null, localDate, paymentCondition, req.user];
+      expenseValues = [coin, type, description, amount, account_id, category_id, subcategory_id || null, date.value, paymentCondition, req.user];
 
       const {rows: expenseTransaction} = await db.query(queryExpenseTransaction, expenseValues);
+      console.log(expenseTransaction);
 
       return res.status(201).json(expenseTransaction);
     }
 
     if (type === "expense" && paymentCondition === "multi"){
 
-      const valuesAddTransaction = [coin, description, amount, installments, account_id, category_id, subcategory_id || null, localDate, req.user];
+      const valuesAddTransaction = [coin, description, amount, installments, account_id, category_id, subcategory_id || null, date.value, req.user];
 
       queryExpenseTransaction = `
       WITH coin AS (
@@ -163,15 +163,15 @@ export const getAllTransactionsByMonth = async (
 ) => {
   const { selectedDate, coinSelected } = req.params;
   const date = new Date(selectedDate);
-  const createStartDate = toPostgresDate(new Date(date.getFullYear(), date.getMonth(), 1).toISOString());
-  const createEndDate = toPostgresDate(new Date(
+  const createStartDate = toYMD(new Date(date.getFullYear(), date.getMonth(), 0));
+  const createEndDate = toYMD(new Date(
     date.getFullYear(),
     date.getMonth() + 1,
     0
-  ).toISOString());
+  ));
 
   try {
-    let queryAllTransactionsByMonth = `SELECT t.id, t.type, t.description, t.amount, t.account_id, acc.description AS account, t.category_id, t.subcategory_id, t.date,
+    let queryAllTransactionsByMonth = `SELECT t.id, t.type, t.description, t.amount, t.account_id, acc.description AS account, t.category_id, t.subcategory_id, t.date::text as date,
     cat.description AS category, sub.description AS subcategory, t.installments, t.install_number, c.code
     FROM transactions t
     JOIN users u ON t.created_by = u.id
@@ -260,7 +260,7 @@ export const deleteTransaction = async (req: Request, res: Response) => {
 export const getOneTransaction = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const queryGetOneTransaction = `SELECT t.*, c.code as coin, ac.description as account, cat.description as category, COALESCE(sub.description, '') as subcategory
+    const queryGetOneTransaction = `SELECT t.*, t.date::text as date, c.code as coin, ac.description as account, cat.description as category, COALESCE(sub.description, '') as subcategory
     FROM transactions t
     JOIN coins c ON t.coin_id = c.id
     JOIN accounts ac ON t.account_id = ac.id
@@ -294,7 +294,7 @@ export const getAllInstallmentsTransaction = async (req: Request, res: Response)
     const groupId = groupInstallmentId[0].group_installment_id;
 
     const queryAllInstallmentsTransaction = `SELECT t.id, t.coin_id, c.code as coin, t.type, t.description, t.amount, t.account_id,  acc.description AS account, t.category_id,
-    cat.description as category, t.subcategory_id, COALESCE(sub.description, '') as subcategory, t.installments, t.payment_condition, t.install_number, t.date
+    cat.description as category, t.subcategory_id, COALESCE(sub.description, '') as subcategory, t.installments, t.payment_condition, t.install_number, t.date::text as date
     FROM transactions t
     JOIN transactions seed ON seed.id = $1
     JOIN accounts acc ON t.account_id = acc.id
@@ -346,7 +346,6 @@ export const updateTransaction = async (req: Request, res: Response) => {
     account_id,
     date,
   } = req.body;
-  const localDate = toPostgresDate(date.value);
   try {
 
     //bucket here refers to the month and category, if it changes I have to update the old bucket
@@ -401,7 +400,7 @@ export const updateTransaction = async (req: Request, res: Response) => {
       SELECT * FROM upd
       `;
 
-      const queryValues = [id, type, amount, description, account_id, category_id, subcategory_id || null, localDate];
+      const queryValues = [id, type, amount, description, account_id, category_id, subcategory_id || null, date.value];
       
       const {rows: responseUpdateTransaction} = await db.query(queryUpdateTransaction, queryValues);
       
@@ -424,7 +423,6 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
   const newInstallments = parseInt(req.body.installments);
 
   const {id} = req.params;
-  const localDate = toPostgresDate(date.value);
 
   try{
     const queryUpdateAllInstallments = `
@@ -537,7 +535,7 @@ export const updateAllInstallmentsTransaction = async (req: Request, res: Respon
     SELECT * FROM upsert
     `;
 
-    const valuesUpdateallInstallments = [id, newInstallments, amount, description, account_id, category_id, subcategory_id || null, localDate];
+    const valuesUpdateallInstallments = [id, newInstallments, amount, description, account_id, category_id, subcategory_id || null, date.value];
 
     const {rows: updateTransactions } = await db.query(queryUpdateAllInstallments, valuesUpdateallInstallments);
 

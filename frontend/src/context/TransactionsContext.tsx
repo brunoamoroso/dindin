@@ -16,7 +16,7 @@ export interface TransactionDataType {
   account: string | undefined;
   date: {
     chip: "none" | "today" | "otherDate";
-    value: Date | undefined;
+    value: string | undefined;
   };
   paymentCondition: string;
   installments: string;
@@ -28,7 +28,7 @@ export interface TransactionsContextType {
   setContextTransactionData: React.Dispatch<
     React.SetStateAction<TransactionDataType>
   >;
-  selectedDate: Date;
+  selectedDate: string;
 }
 
 export function TransactionsContext(){

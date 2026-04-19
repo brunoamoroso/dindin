@@ -6,9 +6,9 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useDashboardContext } from "@/context/DashboardContext";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatLocalDate } from "@/utils/format-local-date";
 import { useAllTransactionsByMonthData } from "@/hooks/useAllTransactionsByMonthData";
 import { HeaderGainedSpent } from "./HeaderGainedSpent";
+import { ymdToDateString } from "@/utils/ymd-date";
 
 export function ListAllTransactions() {
   const { selectedDate, setSelectedDate, coinSelected } = useDashboardContext();
@@ -49,7 +49,6 @@ export function ListAllTransactions() {
                 <div className="flex flex-1 gap-4 items-center">
                   <div>{getCategoryIcon(d.category).icon}</div>
                   <div className="flex flex-col">
-                    
                       <span className="body-small text-content-secondary">
                           {d.category} {d.subcategory ? "- " + d.subcategory : ""}
                       </span>
@@ -58,7 +57,7 @@ export function ListAllTransactions() {
                       {!d.description ? "Sem descrição": d.description}
                     </span>
                     <span className="body-small text-content-subtle">
-                      {formatLocalDate(d.date)}
+                      {ymdToDateString(d.date)}
                       {d.install_number &&
                         " - " + d.install_number + " / " + d.installments}
                     </span>
