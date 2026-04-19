@@ -13,9 +13,14 @@ import { db } from "../db/conn";
 import bcrypt from "bcrypt";
 import { createUserToken, generateUserToken } from "../utils/create-user-token";
 import * as jwt from "jsonwebtoken";
+import dotenv from 'dotenv';
+
+dotenv.config({path: '.env.local'});
 
 const oauthCookie = process.env.SESSION_COOKIE_NAME || "oauth-state";
-const jwtSecret = "nw93A4sF6QAQ-dindin";
+
+const jwtSecret = process.env.ALLIE_JWT_SECRET;
+
 const googleLinkInitType = "google-link-init";
 
 const oAuthCookieOptions: CookieOptions = {
@@ -58,12 +63,20 @@ const redirectGoogleLinkResult = (
   return res.redirect(redirectTo);
 };
 
-const createGoogleLinkInitToken = (userId: string) =>
-  jwt.sign({ sub: userId, type: googleLinkInitType }, jwtSecret, {
+const createGoogleLinkInitToken = (userId: string) => {
+  if (!jwtSecret) {
+    throw new jwt.JsonWebTokenError("JWT secret not configured");
+  }
+  return jwt.sign({ sub: userId, type: googleLinkInitType }, jwtSecret, {
     expiresIn: "5m",
   });
+};
 
 const getUserIdFromGoogleLinkInitToken = (token: string) => {
+  if (!jwtSecret) {
+    throw new jwt.JsonWebTokenError("JWT secret not configured");
+  }
+
   const decoded = jwt.verify(token, jwtSecret) as jwt.JwtPayload;
 
   if (decoded.type !== googleLinkInitType || typeof decoded.sub !== "string") {
