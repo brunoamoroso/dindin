@@ -158,7 +158,7 @@ export default function ExpenseTransaction({
               pattern="[0-9]"
               id="amount_input"
               type="text"
-              className="hidden text-critical bg-transparent focus-visible:ring-0"
+              className="hidden text-critical bg-transparent focus-visible:ring-0 rounded-none"
               placeholder="0.00"
               onChange={handleAmountChange}
               value={currencyFormat(contextTransactionData.amount)}

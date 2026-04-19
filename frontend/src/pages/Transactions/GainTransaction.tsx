@@ -21,6 +21,7 @@ import getCategoryIcon from "@/utils/get-category-icon";
 import { Landmark, LoaderCircle, Tag } from "lucide-react";
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
+import { toYMD, ymdToDate, ymdToDateString } from "@/utils/ymd-date";
 
 interface GainTransactionType {
   handleAmountChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -49,7 +50,7 @@ export default function GainTransaction({
     contextTransactionData,
     setContextTransactionData,
   }: TransactionsContextType = useOutletContext();
-  const [isDialogpOpen, setIsDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAutoCompleteOpen, setIsAutoCompleteOpen] = useState(false);
   
   const hasResults = (similarDescriptionData?.length ?? 0) > 0;
@@ -58,11 +59,12 @@ export default function GainTransaction({
   const badge = getCategoryIcon(contextTransactionData.category || "");
 
   const handleDayClick = (day: Date) => {
+    const ymd = toYMD(day);
     setContextTransactionData((prevTransaction) => ({
       ...prevTransaction,
       date: {
         chip: "otherDate",
-        value: day,
+        value: ymd,
       },
     }));
     setIsDialogOpen(false);
@@ -94,7 +96,7 @@ export default function GainTransaction({
               pattern="[0-9]"
               id="amount_input"
               type="text"
-              className="hidden text-positive bg-transparent focus-visible:ring-0"
+              className="hidden text-positive bg-transparent focus-visible:ring-0 rounded-none"
               placeholder="0.00"
               onChange={handleAmountChange}
               value={currencyFormat(contextTransactionData.amount)}
@@ -220,7 +222,7 @@ export default function GainTransaction({
                 >
                   Hoje
                 </InputChips>
-                <Dialog open={isDialogpOpen} onOpenChange={setIsDialogOpen}>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild onClick={() => setIsDialogOpen(true)}>
                     <InputChips
                       value={"searchDate"}
@@ -237,13 +239,12 @@ export default function GainTransaction({
                     >
                       {contextTransactionData.date.chip === "otherDate" &&
                         contextTransactionData.date.value !== undefined &&
-                        contextTransactionData.date.value.toLocaleDateString()}
+                        ymdToDateString(contextTransactionData.date.value)}
                       {contextTransactionData.date.chip !== "otherDate" &&
                         "Outra Data"}
                     </InputChips>
                   </DialogTrigger>
                   <DialogContent
-                    className="w-auto bg-transparent border-none"
                     showCloseButton={false}
                   >
                     <DialogTitle className="hidden">Calendário</DialogTitle>
@@ -251,7 +252,7 @@ export default function GainTransaction({
                       Escolha a data em que aconteceu a transação
                     </DialogDescription>
                     <Calendar
-                      selected={contextTransactionData.date.value}
+                      selected={ymdToDate(contextTransactionData.date.value || toYMD(new Date()))}
                       onDayClick={handleDayClick}
                     />
                   </DialogContent>
