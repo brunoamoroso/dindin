@@ -96,7 +96,7 @@ function AppRoutes() {
 
                 <Route path="/categories/:type" element={<Categories />} />
                 <Route
-                  path="/categories/sub/:category"
+                  path="/categories/:category/sub/"
                   element={<SubCategories />}
                 />
                 <Route path="/accounts/list" element={<Accounts />} />
@@ -124,7 +124,7 @@ function App() {
     <>
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
-          <AppRoutes />
+          <AppRoutes/>
           <Toaster richColors closeButton />
         </QueryClientProvider>
       </BrowserRouter>

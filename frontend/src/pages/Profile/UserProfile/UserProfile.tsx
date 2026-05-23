@@ -130,7 +130,7 @@ export function UserProfile() {
   }
 
   return (
-    <div className="bg-surface min-h-dvh">
+    <div className="bg-surface min-h-dvh pt-11">
       <AppBar title="Perfil" />
       <main className="px-6 flex flex-1 flex-col mt-6">
         {isLoading && (
@@ -197,7 +197,7 @@ export function UserProfile() {
           </div>
         </div>
         <Drawer open={sheetSetNewPassword} onOpenChange={setSheetSetNewPassword}>
-          <DrawerContent className="mb-10">
+          <DrawerContent>
             <DrawerHeader>
               <DrawerTitle>Defina uma senha para a sua conta</DrawerTitle>
               <DrawerDescription>Sua conta ainda não tem uma senha. Para desvincular sua conta do Google, você precisa definir uma senha primeiro.</DrawerDescription>
@@ -206,9 +206,9 @@ export function UserProfile() {
               <TextField label="Nova senha" type="password" className="mb-3" onChange={handlePasswordValidation}/>
               <PasswordValidator validations={validations} rules={rules} />
             </div>
-            <DrawerFooter className="gap-6">
-              <Button   onClick={handleNewPasswordSubmit()}>Definir senha</Button>
-              <Button   variant={"outline"} onClick={() => setSheetSetNewPassword(false)}>Cancelar</Button>
+            <DrawerFooter className="gap-6 mb-10">
+              <Button onClick={handleNewPasswordSubmit()}>Definir senha</Button>
+              <Button variant={"outline"} onClick={() => setSheetSetNewPassword(false)}>Cancelar</Button>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>

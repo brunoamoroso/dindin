@@ -97,7 +97,7 @@ export default function Categories() {
       category: descCat,
     }));
 
-    navigate(`/categories/sub/${descCat}`, {
+    navigate(`/categories/${descCat}/sub`, {
       state: { mode: mode, id: id, transactionScope: transactionScope },
     });
   };
@@ -134,7 +134,7 @@ export default function Categories() {
   };
 
   return (
-    <div className="bg-surface h-dvh flex flex-col">
+    <div className="bg-surface h-dvh flex flex-col pt-11">
       <AppBar title="Escolha uma categoria" />
       <div className="px-6 flex flex-1 flex-col bg-layer-tertiary rounded-t-lg py-10 gap-6">
         <TextField
@@ -176,7 +176,6 @@ export default function Categories() {
           <div className="flex flex-col">
             {allCategories.map((category, index, arr) => (
               <MenuListItem
-                 
                 key={index}
                 dataId={category.id}
                 value={category.description}

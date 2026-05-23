@@ -33,7 +33,7 @@ export function CreateAccount() {
   };
 
   return (
-    <div className="bg-surface min-h-dvh flex flex-col">
+    <div className="bg-surface min-h-dvh flex flex-col pt-11">
       <AppBar title="Criar conta" />
       <div className="container flex flex-col flex-1 bg-layer-tertiary rounded-t-lg py-10">
         <form

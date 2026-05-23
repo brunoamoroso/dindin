@@ -125,7 +125,7 @@ export default function CreateProfile() {
   };
 
   return (
-    <div className="min-h-dvh flex flex-col bg-surface">
+    <div className="min-h-dvh flex flex-col bg-surface pt-11">
       <div className="flex flex-col">
         <AppBar title="Configurar Conta" />
         <Progress value={50} />

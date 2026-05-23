@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import { ChevronRight } from "lucide-react";
 import { Separator } from "./ui/separator";
+import React from "react";
 
 const containerMenuVariants = cva("py-4 px-3 flex justify-between items-center text-content-primary", {
   variants: {
@@ -36,15 +37,17 @@ interface MenuListItemProps{
   value?: string;
   separator?: boolean;
   disabled?: boolean;
+  action?: React.ReactNode;
 }
 
-const MenuListItem = ({dataId, size = "md", children, trailingIcon = true, onClick, value, separator = false, disabled = false}: MenuListItemProps) => {
+const MenuListItem = ({dataId, size = "md", children, trailingIcon = true, onClick, value, separator = false, disabled = false , action }: MenuListItemProps) => {
   return (
     <div onClick={onClick} data-id={dataId} data-value={value} data-disabled={disabled} className={"data-[disabled=true]:opacity-50 data-[disabled=true]:pointer-events-none"}>
       <div className={cn(containerMenuVariants({size}))} >
           <div className={cn(contentMenuVariants({size}))}>
               {children}
           </div>
+          {action && action}
           {trailingIcon && (
             <ChevronRight />
           )}
