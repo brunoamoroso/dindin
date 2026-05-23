@@ -90,7 +90,7 @@ export default function EditUserData() {
   };
 
   return (
-    <div className="bg-surface min-h-dvh flex flex-1 flex-col">
+    <div className="bg-surface min-h-dvh flex flex-1 flex-col pt-11">
       <AppBar title="Editar Dados Cadastrais" />
       {isError && (
         <div className="container flex flex-1">

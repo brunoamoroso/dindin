@@ -68,7 +68,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="h-dvh bg-surface flex flex-col">
+    <div className="h-dvh bg-surface flex flex-col pt-11">
       <AppBar title="Entrar" />
       <div className="flex flex-1 flex-col justify-center px-6">
         <form onSubmit={handleSubmit} className="flex flex-col gap-10">

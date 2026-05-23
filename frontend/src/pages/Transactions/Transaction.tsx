@@ -284,7 +284,7 @@ export default function Transaction({ mode }: { mode: "create" | "edit" }) {
   };
 
   return (
-    <div className="bg-surface h-dvh flex flex-col">
+    <div className="bg-surface h-dvh flex flex-col pt-11">
       {mode === "create" ? (
         <AppBar title="Adicionar Transação" pageBack="dashboard/transactions" />
       ) : (

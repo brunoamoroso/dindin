@@ -19,7 +19,7 @@ export default function Dashboard() {
   }, [coinSelected, location.pathname, navigate]);
 
   return (
-    <div className="min-h-dvh bg-surface flex flex-col text-content-secondary">
+    <div className="min-h-dvh bg-surface flex flex-col text-content-secondary pt-11">
       <div className="flex flex-1 flex-col gap-5 pb-32">
         <div className="flex items-center justify-between py-6 mx-6">
           <AvatarDashboard />

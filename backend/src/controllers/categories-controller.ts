@@ -85,3 +85,109 @@ export const getSearchCategories = async (req: Request, res: Response) => {
     console.error(err);
   }
 };
+
+export const createSubCategory = async (req: Request, res: Response) => {
+  const { description } = req.body;
+  const { category } = req.params;
+  const user = req.user;
+
+  try{
+    if (description === null || description === undefined || description.trim() === ""){
+      return res.status(400).json({ message: "A descrição da subcategoria é obrigatória." });
+    }
+
+    if (category === null || category === undefined || category.trim() === ""){
+      return res.status(400).json({ message: "A categoria é obrigatória para criar uma subcategoria." });
+    }
+
+    const queryInsertSubCategory = `
+    WITH new_subcategory AS (
+      INSERT INTO subcategories (description, is_public, created_by) 
+      VALUES ($1, $2, $3) 
+      RETURNING id
+    ),
+    link_category_sub AS (
+      INSERT INTO categories_subcategories (category_id, subcategory_id)
+      SELECT id, (SELECT id FROM new_subcategory) FROM categories WHERE description = $4
+    )
+      SELECT id FROM new_subcategory;
+    `;
+    const valuesInsertSubCategory = [description, false, user, category];
+
+    const { rows } = await db.query(queryInsertSubCategory, valuesInsertSubCategory);
+    return res.status(201).json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Houve um erro ao criar a subcategoria." });
+  }
+}
+
+export const editSubCategory = async (req: Request, res: Response) => {
+  const { description } = req.body;
+  const { id } = req.params;
+  const user = req.user;
+
+  try{
+    if (description === null || description === undefined || description.trim() === ""){
+      return res.status(422).json({ message: "A descrição da subcategoria é obrigatória." });
+    }
+
+    if (id === null || id === undefined || id.trim() === ""){
+      return res.status(422).json({ message: "O ID da subcategoria é obrigatório para editá-la." });
+    }
+
+    const queryEditSubCategory = `
+    UPDATE subcategories 
+    SET description = $1 
+    WHERE id = $2 AND created_by = $3
+    RETURNING id;
+    `;
+    const valuesEditSubCategory = [description, id, user];
+
+    const { rows } = await db.query(queryEditSubCategory, valuesEditSubCategory);
+    
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Subcategoria não encontrada ou você não tem permissão para editá-la." });
+    }
+
+    return res.status(200).json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Houve um erro ao editar a subcategoria." });
+  }
+}
+
+export const deleteSubCategory = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const user = req.user;
+
+  try{
+    if (id === null || id === undefined || id.trim() === ""){
+      return res.status(422).json({ message: "O ID da subcategoria é obrigatório para deletá-la." });
+    }
+
+    const queryDeleteSubCategory = ` WITH delete_category_subcategory_link AS (
+      DELETE FROM categories_subcategories
+      WHERE subcategory_id = $1
+    ),
+    delete_subcategory AS (
+      DELETE FROM subcategories 
+      WHERE id = $1 AND created_by = $2
+      RETURNING id
+    )
+    SELECT id FROM delete_subcategory;
+    `;
+    const valuesDeleteSubCategory = [id, user];
+
+    const { rows } = await db.query(queryDeleteSubCategory, valuesDeleteSubCategory);
+    
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Subcategoria não encontrada ou você não tem permissão para deletá-la." });
+    }
+
+    return res.status(200).json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Houve um erro ao deletar a subcategoria." });
+  }
+}

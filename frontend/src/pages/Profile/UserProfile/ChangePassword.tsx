@@ -82,7 +82,7 @@ export function ChangePassword() {
   };
 
   return (
-    <div className="bg-surface min-h-dvh flex flex-1 flex-col">
+    <div className="bg-surface min-h-dvh flex flex-1 flex-col pt-11">
       <AppBar title="Mudar Senha" />
       <div className="px-6 flex flex-1 flex-col py-10">
         <form

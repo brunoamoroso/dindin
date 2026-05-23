@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { db } from "../db/conn";
-import { toPostgresDate } from "../utils/ymd-date";
 
 export const createLimit = async (req: Request, res: Response) => {
   const user = req.user;

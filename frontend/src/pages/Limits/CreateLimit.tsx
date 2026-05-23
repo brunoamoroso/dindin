@@ -156,7 +156,7 @@ export function CreateLimit({ mode }: { mode: "create" | "edit" }) {
   };
 
   return (
-    <div className="bg-surface min-h-dvh flex flex-col">
+    <div className="bg-surface min-h-dvh flex flex-col pt-11">
       <AppBar
         title={
           mode === "create"

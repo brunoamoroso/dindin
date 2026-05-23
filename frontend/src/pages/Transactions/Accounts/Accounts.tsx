@@ -48,7 +48,7 @@ export default function Accounts() {
   };
 
   return (
-    <div className="bg-surface h-dvh flex flex-col">
+    <div className="bg-surface h-dvh flex flex-col pt-11">
       <AppBar title="Escolha uma conta" />
       <div className="px-6 flex flex-1 flex-col rounded-t-lg bg-layer-tertiary py-10 justify-between">
         {isError && (
